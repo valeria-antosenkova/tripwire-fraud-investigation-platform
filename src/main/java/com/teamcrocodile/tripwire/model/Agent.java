@@ -2,20 +2,21 @@ package com.teamcrocodile.tripwire.model;
 
 public class Agent {
 
+    private int id;
     private String name;
     private String email;
-    private String phoneNumber;
+    private String pass_hash;
 
-    public Agent(String name, String email, String phoneNumber) {
-        this.name = name;
-        this.email = email;
-        this.phoneNumber = phoneNumber;
+    public int getId() {
+        return id;
+    }
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getName() {
         return name;
     }
-
     public void setName(String name) {
         this.name = name;
     }
@@ -23,16 +24,15 @@ public class Agent {
     public String getEmail() {
         return email;
     }
-
     public void setEmail(String email) {
         this.email = email;
     }
 
-    public String getPhoneNumber() {
-        return phoneNumber;
+    public String getPass_hash() {
+        return pass_hash;
+    }
+    public void setPass_hash(String pass_hash) {
+        this.pass_hash = pass_hash;
     }
 
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
-    }
 }
