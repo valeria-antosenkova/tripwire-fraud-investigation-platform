@@ -4,9 +4,9 @@ public class Account {
 
     private int id;
     private String email;
-    private String ip_address;
+    private String ipAddress;
     private String iban;
-    private String phone_number;
+    private String phoneNumber;
 
 
     public int getId() {
@@ -23,11 +23,11 @@ public class Account {
         this.email = email;
     }
 
-    public String getIp_address() {
-        return ip_address;
+    public String getIpAddress() {
+        return ipAddress;
     }
-    public void setIp_address(String ip_address) {
-        this.ip_address = ip_address;
+    public void setIpAddress(String ip_address) {
+        this.ipAddress = ip_address;
     }
 
     public String getIban() {
@@ -37,11 +37,11 @@ public class Account {
         this.iban = iban;
     }
 
-    public String getPhone_number() {
-        return phone_number;
+    public String getPhoneNumber() {
+        return phoneNumber;
     }
-    public void setPhone_number(String phone_number) {
-        this.phone_number = phone_number;
+    public void setPhoneNumber(String phone_number) {
+        this.phoneNumber = phone_number;
     }
 
 
