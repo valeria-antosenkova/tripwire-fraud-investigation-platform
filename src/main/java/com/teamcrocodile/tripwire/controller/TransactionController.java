@@ -1,6 +1,6 @@
 package com.teamcrocodile.tripwire.controller;
 
-import com.teamcrocodile.tripwire.service.TransactionServicceImpl;
+import com.teamcrocodile.tripwire.service.TransactionServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 public class TransactionController {
 
     @Autowired
-    TransactionServicceImpl transactionService;
+    TransactionServiceImpl transactionService;
 
     @GetMapping("/transactions")
     public String getAllTransactions() {
