@@ -28,17 +28,18 @@ private final TransactionDao transactionDao;
     }
 
     @Override
-    public Transaction findTransactionById(int id) {
+    public Transaction getTransactionById(int id) {
 
-        return transactionDao.findTransactionById(id);
+        return transactionDao.getTransactionById(id);
 
     }
 
     @Override
-    public void updateTransaction(Transaction transaction) {
+    public Transaction updateTransaction(Transaction transaction) {
 
         transactionDao.updateTransaction(transaction);
 
+        return transaction;
     }
 
     @Override

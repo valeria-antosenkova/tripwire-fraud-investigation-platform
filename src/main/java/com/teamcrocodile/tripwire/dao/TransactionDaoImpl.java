@@ -62,7 +62,7 @@ public class TransactionDaoImpl implements TransactionDao{
     }
 
     @Override
-    public Transaction findTransactionById(int id) {
+    public Transaction getTransactionById(int id) {
         //TODO
         final String SELECT_TRANSACTION_BY_ID = "SELECT * FROM transactions WHERE transaction_id = ?";
         return jdbc.queryForObject(SELECT_TRANSACTION_BY_ID, new TransactionMapper(), id);

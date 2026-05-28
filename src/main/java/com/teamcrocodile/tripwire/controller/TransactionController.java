@@ -1,8 +1,11 @@
 package com.teamcrocodile.tripwire.controller;
 
+import com.teamcrocodile.tripwire.model.Transaction;
 import com.teamcrocodile.tripwire.service.TransactionServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/transaction")
@@ -13,32 +16,31 @@ public class TransactionController {
     TransactionServiceImpl transactionService;
 
     @GetMapping("/transactions")
-    public String getAllTransactions() {
-        //TODO
-        return null;
+    public List<Transaction> getAllTransactions() {
+
+        return transactionService.getAllTransactions();
     }
 
-    @GetMapping("/{id}")
-    public String getTransactionById() {
-        //TODO
-        return null;
+    @GetMapping
+    public Transaction getTransactionById(@PathVariable int id) {
+        return transactionService.getTransactionById(id);
     }
+
 
     @PostMapping("/add")
-    public String addTransaction() {
-        //TODO
-        return null;
+    public Transaction addTransaction(@RequestBody Transaction transaction) {
+        return transactionService.createTransaction(transaction);
     }
 
-    @PutMapping("/{id}")
-    public String updateTransaction() {
-        //TODO
-        return null;
+    @PutMapping
+    public Transaction updateTransaction(@RequestBody Transaction transaction) {
+        return transactionService.updateTransaction(transaction);
     }
 
-    @DeleteMapping("/{id}")
-    public void deleteTransaction() {
-        //TODO
-    }
+
+        @DeleteMapping("/{id}")
+    public void deleteTransaction(@PathVariable int id) {
+            transactionService.deleteTransaction(id);
+        }
 
 }
