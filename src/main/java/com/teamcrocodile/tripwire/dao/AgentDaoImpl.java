@@ -35,7 +35,7 @@ public class AgentDaoImpl implements AgentDao {
     }
 
     @Override
-    public Agent findAgentById(int id) {
+    public Agent getAgentById(int id) {
 
         final String sql = "SELECT * FROM agent WHERE agentId = ?;";
         return jdbcTemplate.queryForObject(sql, new Object[]{id}, (rs, rowNum) -> {
