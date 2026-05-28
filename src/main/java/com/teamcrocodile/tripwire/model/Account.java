@@ -7,6 +7,7 @@ public class Account {
     private String ipAddress;
     private String iban;
     private String phoneNumber;
+    private String createdAt;
 
 
     public int getId() {
@@ -42,6 +43,14 @@ public class Account {
     }
     public void setPhoneNumber(String phone_number) {
         this.phoneNumber = phone_number;
+    }
+
+    public String getCreatedAt(){
+        return createdAt;
+    }
+
+    public void setCreatedAt(String createdAt){
+        this.createdAt = createdAt;
     }
 
 
