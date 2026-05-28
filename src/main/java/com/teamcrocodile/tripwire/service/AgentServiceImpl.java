@@ -2,9 +2,11 @@ package com.teamcrocodile.tripwire.service;
 
 import com.teamcrocodile.tripwire.dao.AgentDao;
 import com.teamcrocodile.tripwire.model.Agent;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 public class AgentServiceImpl implements AgentService {
 
     private final AgentDao agentDao;

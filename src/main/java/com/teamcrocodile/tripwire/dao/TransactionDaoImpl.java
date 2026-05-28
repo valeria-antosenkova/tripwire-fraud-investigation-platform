@@ -1,9 +1,11 @@
 package com.teamcrocodile.tripwire.dao;
 
 import com.teamcrocodile.tripwire.model.Transaction;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+@Repository
 public class TransactionDaoImpl implements TransactionDao{
     @Override
     public Transaction createTransaction(Transaction transaction) {

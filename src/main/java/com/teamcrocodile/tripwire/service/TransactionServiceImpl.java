@@ -2,9 +2,11 @@ package com.teamcrocodile.tripwire.service;
 
 import com.teamcrocodile.tripwire.dao.TransactionDao;
 import com.teamcrocodile.tripwire.model.Transaction;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 public class TransactionServiceImpl implements TransactionService {
 
 private final TransactionDao transactionDao;

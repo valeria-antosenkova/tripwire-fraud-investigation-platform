@@ -1,12 +1,17 @@
 package com.teamcrocodile.tripwire.dao;
 
 import com.teamcrocodile.tripwire.model.Agent;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+@Repository
 public class AgentDaoImpl implements AgentDao {
 
+@Autowired
     private final JdbcTemplate jdbcTemplate;
 
     public AgentDaoImpl(JdbcTemplate jdbcTemplate) {
@@ -14,6 +19,7 @@ public class AgentDaoImpl implements AgentDao {
     }
 
     @Override
+    @Transactional
     public Agent createAgent(Agent agent) {
 
             final String sql = "INSERT INTO agent(agentName, agentEmail) VALUES(?,?);";
