@@ -33,9 +33,9 @@ public class AgentDaoImpl implements AgentDao {
         final String sql = "SELECT * FROM agent;";
         return jdbcTemplate.query(sql, (rs, rowNum) -> {
             Agent agent = new Agent();
-            agent.setId(rs.getInt("agentId"));
-            agent.setName(rs.getString("agentName"));
-            agent.setEmail(rs.getString("agentEmail"));
+            agent.setId(rs.getInt("agent_id"));
+            agent.setName(rs.getString("name"));
+            agent.setEmail(rs.getString("email"));
             return agent;
         });
     }
@@ -43,19 +43,19 @@ public class AgentDaoImpl implements AgentDao {
     @Override
     public Agent getAgentById(int id) {
 
-        final String sql = "SELECT * FROM agent WHERE agentId = ?;";
+        final String sql = "SELECT * FROM agent WHERE agent_id = ?;";
         return jdbcTemplate.queryForObject(sql, new Object[]{id}, (rs, rowNum) -> {
             Agent agent = new Agent();
-            agent.setId(rs.getInt("agentId"));
-            agent.setName(rs.getString("agentName"));
-            agent.setEmail(rs.getString("agentEmail"));
+            agent.setId(rs.getInt("agent_id"));
+            agent.setName(rs.getString("name"));
+            agent.setEmail(rs.getString("email"));
             return agent;
         });
     }
 
     @Override
     public void updateAgent(Agent agent) {
-        final String sql = "UPDATE agent SET agentName = ?, agentEmail = ? WHERE agentId = ?;";
+        final String sql = "UPDATE agent SET name = ?, email = ? WHERE agent_id = ?;";
         jdbcTemplate.update(sql, agent.getName(), agent.getEmail(), agent.getId());
 
     }
@@ -63,7 +63,7 @@ public class AgentDaoImpl implements AgentDao {
     @Override
     public void deleteAgent(int id) {
 
-        final String sql = "DELETE FROM agent WHERE agentId = ?;";
+        final String sql = "DELETE FROM agent WHERE agent_id = ?;";
         jdbcTemplate.update(sql, id);
 
     }
