@@ -1,8 +1,3 @@
-CREATE DATABASE tripwire;
-
-USE tripwire;
-
-
 CREATE TABLE Status (
                         status_id   INT          PRIMARY KEY AUTO_INCREMENT,
                         status_name VARCHAR(50)  NOT NULL
@@ -27,9 +22,17 @@ CREATE TABLE Account (
 
 CREATE TABLE Agent (
                        agent_id      INT          PRIMARY KEY AUTO_INCREMENT,
-                       name          VARCHAR(100) NOT NULL,
-                       email         VARCHAR(150) UNIQUE NOT NULL,
-                       password_hash VARCHAR(255) NOT NULL
+                        name          VARCHAR(100) NOT NULL,
+                        email         VARCHAR(150) UNIQUE NOT NULL,
+                        password_hash VARCHAR(255) NOT NULL
+);
+
+
+-- Compatibility table for DAO (lowercase 'agent' with different column names)
+CREATE TABLE IF NOT EXISTS agent (
+    agentId INT PRIMARY KEY AUTO_INCREMENT,
+    agentName VARCHAR(100),
+    agentEmail VARCHAR(150)
 );
 
 

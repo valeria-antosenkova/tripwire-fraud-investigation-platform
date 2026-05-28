@@ -4,7 +4,6 @@
 --  Insert order respects FK constraints.
 -- ============================================================
 
-USE tripwire;
 
 -- ----------------------------------------------------------
 -- 1. Reason
@@ -58,7 +57,7 @@ VALUES (
            NULL,
            1,
            4,
-           3_499.00,
+            3499.00,
            'USD',
            0.00,                          -- your engine fills this in
            'Not received',
