@@ -1,38 +1,48 @@
 package com.teamcrocodile.tripwire.service;
 
+import com.teamcrocodile.tripwire.dao.TransactionDao;
 import com.teamcrocodile.tripwire.model.Transaction;
 
 import java.util.List;
 
 public class TransactionServiceImpl implements TransactionService {
 
+private final TransactionDao transactionDao;
+
+    public TransactionServiceImpl(TransactionDao transactionDao) {
+        this.transactionDao = transactionDao;
+    }
+
     @Override
     public Transaction createTransaction(Transaction transaction) {
-        //TODO
-        return null;
+
+        return transactionDao.createTransaction(transaction);
+
     }
 
     @Override
     public List<Transaction> getAllTransactions() {
-        //TODO
-        return List.of();
+        return transactionDao.getAllTransactions();
     }
 
     @Override
     public Transaction findTransactionById(int id) {
-        //TODO
-        return null;
+
+        return transactionDao.findTransactionById(id);
+
     }
 
     @Override
     public void updateTransaction(Transaction transaction) {
-        //TODO
+
+        transactionDao.updateTransaction(transaction);
 
     }
 
     @Override
     public void deleteTransaction(int id) {
-        //TODO
+
+        transactionDao.deleteTransaction(id);
 
     }
 }

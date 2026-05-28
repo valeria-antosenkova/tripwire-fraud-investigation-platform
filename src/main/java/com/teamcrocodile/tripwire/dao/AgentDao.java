@@ -8,7 +8,7 @@ public interface AgentDao {
 
     Agent createAgent(Agent agent);
     List<Agent> getAllAgents();
-    Agent findAgentById(int id);
+    Agent getAgentById(int id);
     void updateAgent(Agent agent);
     void deleteAgent(int id);
 

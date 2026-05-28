@@ -1,37 +1,64 @@
 package com.teamcrocodile.tripwire.dao;
 
 import com.teamcrocodile.tripwire.model.Agent;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.util.List;
 
 public class AgentDaoImpl implements AgentDao {
+
+    private final JdbcTemplate jdbcTemplate;
+
+    public AgentDaoImpl(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
+    }
+
     @Override
     public Agent createAgent(Agent agent) {
-        //TODO
-        return null;
+
+            final String sql = "INSERT INTO agent(agentName, agentEmail) VALUES(?,?);";
+            jdbcTemplate.update(sql, agent.getName(), agent.getEmail());
+            return agent;
     }
 
     @Override
     public List<Agent> getAllAgents() {
-        //TODO
-        return null;
+
+        final String sql = "SELECT * FROM agent;";
+        return jdbcTemplate.query(sql, (rs, rowNum) -> {
+            Agent agent = new Agent();
+            agent.setId(rs.getInt("agentId"));
+            agent.setName(rs.getString("agentName"));
+            agent.setEmail(rs.getString("agentEmail"));
+            return agent;
+        });
     }
 
     @Override
-    public Agent findAgentById(int id) {
-        //TODO
-        return null;
+    public Agent getAgentById(int id) {
+
+        final String sql = "SELECT * FROM agent WHERE agentId = ?;";
+        return jdbcTemplate.queryForObject(sql, new Object[]{id}, (rs, rowNum) -> {
+            Agent agent = new Agent();
+            agent.setId(rs.getInt("agentId"));
+            agent.setName(rs.getString("agentName"));
+            agent.setEmail(rs.getString("agentEmail"));
+            return agent;
+        });
     }
 
     @Override
     public void updateAgent(Agent agent) {
-        //TODO
+        final String sql = "UPDATE agent SET agentName = ?, agentEmail = ? WHERE agentId = ?;";
+        jdbcTemplate.update(sql, agent.getName(), agent.getEmail(), agent.getId());
 
     }
 
     @Override
     public void deleteAgent(int id) {
-        //TODO
+
+        final String sql = "DELETE FROM agent WHERE agentId = ?;";
+        jdbcTemplate.update(sql, id);
 
     }
 }
