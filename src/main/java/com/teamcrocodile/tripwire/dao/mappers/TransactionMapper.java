@@ -20,13 +20,9 @@ public class TransactionMapper implements RowMapper<Transaction> {
         transaction.setStatus(Status.valueOf(rs.getString("status")));
         transaction.setAmount(rs.getBigDecimal("amount"));
         transaction.setCurrency(rs.getString("currency"));
-
         transaction.setRiskScore(rs.getDouble("risk_score"));
-
         transaction.setReasonId(rs.getString("reason_text"));
-
         transaction.setCreatedAt(rs.getTimestamp("created_at"));
-
         return transaction;
     }
 }
