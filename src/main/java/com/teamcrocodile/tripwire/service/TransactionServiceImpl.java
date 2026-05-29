@@ -21,7 +21,6 @@ private final DymoService dymoService;
 
     @Override
     public Transaction createTransaction(Transaction transaction) {
-
         return transactionDao.createTransaction(transaction);
 
     }
@@ -33,7 +32,6 @@ private final DymoService dymoService;
 
     @Override
     public Transaction getTransactionById(int id) {
-
         return transactionDao.getTransactionById(id);
 
     }
@@ -42,7 +40,6 @@ private final DymoService dymoService;
     public Transaction updateTransaction(Transaction transaction) {
 
         transactionDao.updateTransaction(transaction);
-
         return transaction;
     }
 
