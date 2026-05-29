@@ -39,7 +39,6 @@ public class TransactionDaoImpl implements TransactionDao{
                 transaction.getCurrency(),
                 transaction.getRiskScore(),
                 getStatusId(transaction.getStatus()));
-
         return transaction;
     }
 
@@ -90,6 +89,5 @@ public class TransactionDaoImpl implements TransactionDao{
         //TODO
         final String DELETE_TRANSACTION = "DELETE FROM transactions WHERE transaction_id = ?";
         jdbc.update(DELETE_TRANSACTION, id);
-
     }
 }
