@@ -17,30 +17,34 @@ public class TransactionController {
 
     @GetMapping("/transactions")
     public List<Transaction> getAllTransactions() {
-
         return transactionService.getAllTransactions();
     }
 
-    @GetMapping
+    @GetMapping("/{id}")
     public Transaction getTransactionById(@PathVariable int id) {
         return transactionService.getTransactionById(id);
     }
-
 
     @PostMapping("/add")
     public Transaction addTransaction(@RequestBody Transaction transaction) {
         return transactionService.createTransaction(transaction);
     }
 
-    @PutMapping
-    public Transaction updateTransaction(@RequestBody Transaction transaction) {
-        return transactionService.updateTransaction(transaction);
+    @PutMapping("/{id}")
+    public Transaction updateTransaction(@PathVariable int id, @RequestBody Transaction transaction) {
+        // Make sure the path id is authoritative
+        transaction.setId(id);
+
+        // Perform the update
+        transactionService.updateTransaction(transaction);
+
+        // Return the updated resource (fetch from DB to ensure latest state)
+        return transactionService.getTransactionById(id);
     }
 
-
-        @DeleteMapping("/{id}")
+    @DeleteMapping("/{id}")
     public void deleteTransaction(@PathVariable int id) {
-            transactionService.deleteTransaction(id);
-        }
+        transactionService.deleteTransaction(id);
+    }
 
 }

@@ -15,10 +15,10 @@ public class TransactionMapper implements RowMapper<Transaction> {
         Transaction transaction = new Transaction();
 
         transaction.setId(rs.getInt("transaction_id"));
-        transaction.setAgentId(rs.getInt("agent_id"));
+        Integer agentId = (Integer) rs.getObject("agent_id");
+        transaction.setAgentId(agentId);
         transaction.setAccountId(rs.getInt("account_id"));
-        transaction.setStatus(Status.valueOf(rs.getString("status")));
-        transaction.setAmount(rs.getBigDecimal("amount"));
+        transaction.setStatus(Status.fromId(rs.getInt("status_id")));        transaction.setAmount(rs.getBigDecimal("amount"));
         transaction.setCurrency(rs.getString("currency"));
         transaction.setRiskScore(rs.getDouble("risk_score"));
         transaction.setReasonId(rs.getString("reason_text"));

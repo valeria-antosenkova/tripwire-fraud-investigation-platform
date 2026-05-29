@@ -82,3 +82,5 @@ CREATE TABLE Transaction_Reason (
                                         FOREIGN KEY (reason_id) REFERENCES Reason(reason_id)
                                             ON DELETE RESTRICT
 );
+
+ALTER TABLE Transactions ALTER COLUMN transaction_id RESTART WITH 2;

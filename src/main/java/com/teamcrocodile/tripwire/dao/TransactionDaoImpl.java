@@ -46,10 +46,10 @@ public class TransactionDaoImpl implements TransactionDao{
     //helper function since Status is not of type int
     private int getStatusId(Status status) {
         return switch (status) {
-            case APPROVED -> 1;
-            case DENIED -> 2;
-            case UNASSIGNED -> 3;
-            case UNDER_REVIEW -> 4;
+            case APPROVED -> 2;
+            case DENIED -> 3;
+            case UNASSIGNED -> 4;
+            case UNDER_REVIEW -> 1;
         };
     }
 
@@ -71,9 +71,18 @@ public class TransactionDaoImpl implements TransactionDao{
     @Override
     public void updateTransaction(Transaction transaction) {
         //TODO
-        final String UPDATE_TRANSACTIONS = "UPDATE transactions SET agent_id = ?, status_id = ?, risk_score = ? WHERE transaction_id = ?";
-        jdbc.update(UPDATE_TRANSACTIONS, transaction.getAgentId(), getStatusId(
-                transaction.getStatus()), transaction.getRiskScore(),transaction.getId());
+        final String UPDATE_TRANSACTIONS =
+                "UPDATE transactions " +
+                        "SET agent_id = ?, status_id = ?, risk_score = ?, amount = ? " +
+                        "WHERE transaction_id = ?";
+        jdbc.update(
+                UPDATE_TRANSACTIONS,
+                transaction.getAgentId(),
+                getStatusId(transaction.getStatus()),
+                transaction.getRiskScore(),
+                transaction.getAmount(),
+                transaction.getId()
+        );
     }
 
     @Override

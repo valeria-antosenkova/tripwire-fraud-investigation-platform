@@ -6,7 +6,7 @@ import java.util.Date;
 public class Transaction {
 
     private int id;
-    private int agentId;
+    private Integer agentId;
     private int accountId;
     private BigDecimal amount;
     private String currency;
@@ -22,10 +22,10 @@ public class Transaction {
         this.id = id;
     }
 
-    public int getAgentId() {
+    public Integer getAgentId() {
         return agentId;
     }
-    public void setAgentId(int agentId) {
+    public void setAgentId(Integer agentId) {
         this.agentId = agentId;
     }
 
