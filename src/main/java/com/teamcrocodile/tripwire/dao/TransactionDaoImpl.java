@@ -1,11 +1,12 @@
 package com.teamcrocodile.tripwire.dao;
 
+import com.teamcrocodile.tripwire.dao.mappers.AccountMapper;
 import com.teamcrocodile.tripwire.dao.mappers.TransactionMapper;
+import com.teamcrocodile.tripwire.model.Account;
 import com.teamcrocodile.tripwire.model.Status;
 import com.teamcrocodile.tripwire.model.Transaction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -90,4 +91,5 @@ public class TransactionDaoImpl implements TransactionDao{
         final String DELETE_TRANSACTION = "DELETE FROM transactions WHERE transaction_id = ?";
         jdbc.update(DELETE_TRANSACTION, id);
     }
+
 }

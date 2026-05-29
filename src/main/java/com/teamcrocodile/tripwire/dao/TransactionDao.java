@@ -1,5 +1,6 @@
 package com.teamcrocodile.tripwire.dao;
 
+import com.teamcrocodile.tripwire.model.Account;
 import com.teamcrocodile.tripwire.model.Transaction;
 
 import java.math.BigDecimal;
@@ -11,4 +12,5 @@ public interface TransactionDao {
         Transaction getTransactionById(int id);
         void updateTransaction(Transaction transaction);
         void deleteTransaction(int id);
+
 }

@@ -1,6 +1,7 @@
 package com.teamcrocodile.tripwire.service;
 
 import com.teamcrocodile.tripwire.dao.TransactionDao;
+import com.teamcrocodile.tripwire.model.Account;
 import com.teamcrocodile.tripwire.model.Transaction;
 import org.springframework.stereotype.Service;
 
@@ -10,8 +11,11 @@ import java.util.List;
 public class TransactionServiceImpl implements TransactionService {
 
 private final TransactionDao transactionDao;
+private final DymoService dymoService;
+
 
     public TransactionServiceImpl(TransactionDao transactionDao) {
+        this.dymoService =  new DymoService();
         this.transactionDao = transactionDao;
     }
 
@@ -48,4 +52,6 @@ private final TransactionDao transactionDao;
         transactionDao.deleteTransaction(id);
 
     }
+
+
 }
