@@ -1,0 +1,4 @@
+package com.teamcrocodile.tripwire.client.dto;
+
+public class DymoResponse {
+}
