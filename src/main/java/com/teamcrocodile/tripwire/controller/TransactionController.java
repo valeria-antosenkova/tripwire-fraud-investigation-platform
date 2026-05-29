@@ -1,5 +1,6 @@
 package com.teamcrocodile.tripwire.controller;
 
+import com.teamcrocodile.tripwire.client.dto.DymoResponse;
 import com.teamcrocodile.tripwire.model.Transaction;
 import com.teamcrocodile.tripwire.service.TransactionServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +41,11 @@ public class TransactionController {
 
         // Return the updated resource (fetch from DB to ensure latest state)
         return transactionService.getTransactionById(id);
+    }
+
+    @PostMapping("/{id}/score")
+    public DymoResponse scoreTransaction(@PathVariable int id) {
+        return transactionService.scoreTransaction(id);
     }
 
     @DeleteMapping("/{id}")

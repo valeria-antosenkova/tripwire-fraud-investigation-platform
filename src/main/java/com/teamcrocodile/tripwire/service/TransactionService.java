@@ -1,6 +1,7 @@
 package com.teamcrocodile.tripwire.service;
 
 import com.teamcrocodile.tripwire.model.Transaction;
+import com.teamcrocodile.tripwire.client.dto.DymoResponse;
 
 import java.util.List;
 
@@ -9,5 +10,6 @@ public interface TransactionService {
         List<Transaction> getAllTransactions();
         Transaction getTransactionById(int id);
         Transaction updateTransaction(Transaction transaction);
+        DymoResponse scoreTransaction(int id);
         void deleteTransaction(int id);
 }
