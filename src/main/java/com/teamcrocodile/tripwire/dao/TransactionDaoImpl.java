@@ -69,6 +69,12 @@ public class TransactionDaoImpl implements TransactionDao{
     }
 
     @Override
+    public Account getAccountById(int id) {
+        final String SELECT_ACCOUNT_BY_ID = "SELECT * FROM account WHERE account_id = ?";
+        return jdbc.queryForObject(SELECT_ACCOUNT_BY_ID, new AccountMapper(), id);
+    }
+
+    @Override
     public void updateTransaction(Transaction transaction) {
         //TODO
         final String UPDATE_TRANSACTIONS =

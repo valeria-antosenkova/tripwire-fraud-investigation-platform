@@ -10,6 +10,7 @@ public interface TransactionDao {
         Transaction createTransaction(Transaction transaction);
         List<Transaction> getAllTransactions();
         Transaction getTransactionById(int id);
+        Account getAccountById(int id);
         void updateTransaction(Transaction transaction);
         void deleteTransaction(int id);
 

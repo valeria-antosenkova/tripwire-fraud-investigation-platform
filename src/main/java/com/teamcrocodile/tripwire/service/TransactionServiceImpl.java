@@ -1,7 +1,9 @@
 package com.teamcrocodile.tripwire.service;
 
-import com.teamcrocodile.tripwire.client.service.DymoService;
 import com.teamcrocodile.tripwire.dao.TransactionDao;
+import com.teamcrocodile.tripwire.client.dto.DymoResponse;
+import com.teamcrocodile.tripwire.model.Account;
+import com.teamcrocodile.tripwire.model.Status;
 import com.teamcrocodile.tripwire.model.Transaction;
 import org.springframework.stereotype.Service;
 
@@ -10,18 +12,18 @@ import java.util.List;
 @Service
 public class TransactionServiceImpl implements TransactionService {
 
-private final TransactionDao transactionDao;
-private final DymoService dymoService;
+    private final TransactionDao transactionDao;
+    private final DymoService dymoService;
 
 
-    public TransactionServiceImpl(TransactionDao transactionDao) {
-        this.dymoService =  new DymoService();
+    public TransactionServiceImpl(TransactionDao transactionDao, DymoService dymoService) {
+        this.dymoService = dymoService;
         this.transactionDao = transactionDao;
     }
 
     @Override
     public Transaction createTransaction(Transaction transaction) {
-
+        scoreTransaction(transaction);
         return transactionDao.createTransaction(transaction);
 
     }
@@ -40,7 +42,7 @@ private final DymoService dymoService;
 
     @Override
     public Transaction updateTransaction(Transaction transaction) {
-
+        scoreTransaction(transaction);
         transactionDao.updateTransaction(transaction);
 
         return transaction;
@@ -53,5 +55,30 @@ private final DymoService dymoService;
 
     }
 
+    @Override
+    public DymoResponse scoreTransaction(int id) {
+        Transaction transaction = transactionDao.getTransactionById(id);
+        DymoResponse response = scoreTransaction(transaction);
+        transactionDao.updateTransaction(transaction);
+        return response;
+    }
+
+    private DymoResponse scoreTransaction(Transaction transaction) {
+        Account account = transactionDao.getAccountById(transaction.getAccountId());
+        DymoResponse response = dymoService.checkAccount(account);
+        transaction.setRiskScore(response.getScore());
+        transaction.setStatus(statusFromScore(response.getScore()));
+        return response;
+    }
+
+    private Status statusFromScore(double score) {
+        if (score >= 80) {
+            return Status.DENIED;
+        }
+        if (score >= 50) {
+            return Status.UNDER_REVIEW;
+        }
+        return Status.APPROVED;
+    }
 
 }
