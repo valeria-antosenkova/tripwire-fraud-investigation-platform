@@ -1,15 +1,6 @@
-package com.teamcrocodile.tripwire.service;
+package com.teamcrocodile.tripwire.client.service;
 
-import com.teamcrocodile.tripwire.model.Account;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
-
-import org.springframework.http.HttpHeaders;
-import java.util.HashMap;
-import java.util.Map;
 
 @Service
 public class DymoService {

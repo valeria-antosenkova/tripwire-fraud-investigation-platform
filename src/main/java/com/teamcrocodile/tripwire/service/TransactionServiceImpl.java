@@ -1,7 +1,7 @@
 package com.teamcrocodile.tripwire.service;
 
+import com.teamcrocodile.tripwire.client.service.DymoService;
 import com.teamcrocodile.tripwire.dao.TransactionDao;
-import com.teamcrocodile.tripwire.model.Account;
 import com.teamcrocodile.tripwire.model.Transaction;
 import org.springframework.stereotype.Service;
 

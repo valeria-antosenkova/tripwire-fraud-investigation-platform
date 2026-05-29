@@ -1,4 +1,4 @@
-package com.teamcrocodile.tripwire.client;
+package com.teamcrocodile.tripwire.client.dto;
 
 public class IbanRules {
 }
