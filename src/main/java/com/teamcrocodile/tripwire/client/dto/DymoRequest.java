@@ -3,6 +3,8 @@ package com.teamcrocodile.tripwire.client.dto;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.teamcrocodile.tripwire.model.Account;
 
+// The data we send to the Dymo API when we want to check if an account is fraudulent.
+// Only non-null fields are included in the JSON request body (@JsonInclude NON_NULL).
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class DymoRequest {
 
@@ -16,6 +18,11 @@ public class DymoRequest {
     private String iban;
     private CreditCard creditCard;
 
+    // Builds a DymoRequest directly from an Account object.
+    // This is the main way we create a request — we pass in the account
+    // and this method maps its fields to what the Dymo API expects.
+    // It also extracts the email domain (e.g. "gmail.com") separately,
+    // because Dymo uses it to check if the domain is disposable or suspicious.
     public static DymoRequest fromAccount(Account account) {
         DymoRequest request = new DymoRequest();
         request.setEmail(account.getEmail());
@@ -26,6 +33,9 @@ public class DymoRequest {
         return request;
     }
 
+    // Pulls out the domain part after the "@" in an email address.
+    // Example: "user@guerrillamail.com" -> "guerrillamail.com"
+    // Returns null if the email is null or has no "@".
     private static String extractDomain(String email) {
         if (email == null || !email.contains("@")) {
             return null;
