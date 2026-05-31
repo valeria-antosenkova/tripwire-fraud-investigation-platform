@@ -6,6 +6,13 @@ public enum Status {
     DENIED,
     UNASSIGNED;
 
+    public static Status defaultNewCaseStatus() {
+        return UNASSIGNED;
+    }
+
+    public boolean isFinalDecision() {
+        return this == APPROVED || this == DENIED;
+    }
 
     public static Status fromId(int id) {
         return switch (id) {

@@ -977,6 +977,8 @@
         const profile = state.caseProfile || syntheticProfile(tx);
         const scoreValue = Math.round(state.score?.score ?? tx.riskScore ?? 0);
         const currentDecision = state.manualDecision || tx.status || (scoreValue >= 80 ? 'DENIED' : scoreValue >= 50 ? 'UNDER_REVIEW' : scoreValue ? 'APPROVED' : 'UNASSIGNED');
+        const txStatus = tx.status || 'UNASSIGNED';
+        const canAct = txStatus === 'UNDER_REVIEW' && tx.agentId != null;
         const riskTone = statusTone(scoreValue);
         const recommended = recommendedAction(scoreValue);
         const label = statusLabel(scoreValue);
@@ -999,8 +1001,13 @@
         els.decisionScore.className = `decision-score ${riskTone}`;
         els.currentDecision.textContent = currentDecision.replaceAll('_', ' ');
         els.decisionHint.textContent = state.score
-            ? 'Use the buttons above to record the analyst decision, then document your rationale below.'
+            ? (canAct
+                ? 'Use the buttons above to record the analyst decision, then document your rationale below.'
+                : 'Assign the case before making a final decision.')
             : 'Waiting for scoring output.';
+        els.approveBtn.disabled = !canAct;
+        els.reviewBtn.disabled = !canAct;
+        els.denyBtn.disabled = !canAct;
         els.riskScore.textContent = scoreValue || '--';
         els.riskRing.className = `risk-ring ${riskTone}`;
         els.riskLabel.textContent = label;
@@ -1096,6 +1103,10 @@
 
     async function persistDecision(status) {
         if (!state.transaction) return;
+        if (state.transaction.status !== 'UNDER_REVIEW' || state.transaction.agentId == null) {
+            showError('Assign the case before recording an approval or denial.');
+            return;
+        }
         setLoading(true, `${status.replaceAll('_', ' ')}…`);
         clearError();
         try {
