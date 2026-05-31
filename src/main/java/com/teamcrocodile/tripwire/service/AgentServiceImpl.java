@@ -2,6 +2,8 @@ package com.teamcrocodile.tripwire.service;
 
 import com.teamcrocodile.tripwire.dao.AgentDao;
 import com.teamcrocodile.tripwire.model.Agent;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -10,6 +12,7 @@ import java.util.List;
 public class AgentServiceImpl implements AgentService {
 
     private final AgentDao agentDao;
+    private final PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
 
     public AgentServiceImpl(AgentDao agentDao) {
         this.agentDao = agentDao;
@@ -19,6 +22,30 @@ public class AgentServiceImpl implements AgentService {
     public Agent getAgentById(int id) {
          return agentDao.getAgentById(id);
      }
+
+      @Override
+      public Agent getAgentByEmail(String email) {
+          return agentDao.getAgentByEmail(email);
+      }
+
+      @Override
+      public boolean authenticateAgent(String email, String password) {
+          Agent agent = agentDao.getAgentByEmail(email);
+            if (agent == null || password == null) {
+                return false;
+            }
+
+            String stored = agent.getPass_hash();
+            if (stored == null) {
+                return false;
+            }
+
+            if (stored.startsWith("{")) {
+                return passwordEncoder.matches(password, stored);
+            }
+
+            return password.equals(stored);
+      }
 
     @Override
     public Agent addNewAgent(Agent agent) {

@@ -18,7 +18,7 @@ VALUES (
            1,
            'Sarah Okafor',
            'sarah.okafor@tripwire.internal',
-           '$2b$12$KIXQz3Jv0Nf6kLmPqRtOuO3n8wYsZxBvDcEfGhIjKlMnOpQrStUv'
+           '{noop}tripwire123'
        );
 
 -- ----------------------------------------------------------
@@ -196,7 +196,7 @@ VALUES (
            2,
            'Vanessa Lee',
            'vanessa_lee@internal.com',
-           '$2b$12$KIXQz3Jv0Nf6kLmPqRtOuO3n8wYsZxBvDcEfGhIjKlMnOpQrStUv'
+           '{noop}tripwire123'
        );
 
 -- 3. Account
@@ -291,7 +291,7 @@ VALUES (
            3,
            'John Smith',
            'john.smith@tripwire.internal',
-           '$2b$12$KIXQz3Jv0Nf6kLmPqRtOuO3n8wYsZxBvDcEfGhIjKlMnOpQrStUv'
+           '{noop}tripwire123'
        );
 
 -- 3. Account
