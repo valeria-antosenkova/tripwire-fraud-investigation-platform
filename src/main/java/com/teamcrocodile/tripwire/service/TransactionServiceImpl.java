@@ -76,15 +76,8 @@ public class TransactionServiceImpl implements TransactionService {
         Account account = transactionDao.getAccountById(transaction.getAccountId());
         DymoResponse response = dymoService.checkAccount(account);
         transaction.setRiskScore(response.getScore());
-        transaction.setStatus(statusFromScore(response.getScore()));
         return response;
     }
 
-    private Status statusFromScore(double score) {
-        if (score >= 50) {
-            return Status.DENIED;
-        }
-        return Status.APPROVED;
-    }
 
 }
