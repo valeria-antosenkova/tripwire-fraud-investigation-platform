@@ -72,11 +72,8 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     private Status statusFromScore(double score) {
-        if (score >= 80) {
-            return Status.DENIED;
-        }
         if (score >= 50) {
-            return Status.UNDER_REVIEW;
+            return Status.DENIED;
         }
         return Status.APPROVED;
     }
