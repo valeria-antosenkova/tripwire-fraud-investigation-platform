@@ -60,6 +60,12 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
+    public Transaction unassignTransaction(int transactionId, int agentId) {
+        transactionDao.unassignTransaction(transactionId, agentId);
+        return transactionDao.getTransactionById(transactionId);
+    }
+
+    @Override
     public List<Transaction> getTransactionsByAgentId(int agentId) {
         return transactionDao.getTransactionsByAgentId(agentId);
     }
