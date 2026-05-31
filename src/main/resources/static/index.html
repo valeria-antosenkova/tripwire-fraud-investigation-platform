@@ -6,331 +6,1047 @@
     <title>Tripwire Fraud Review</title>
     <style>
         :root {
-            color-scheme: light;
+            color-scheme: dark;
             font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-            color: #18202a;
-            background: #f4f7fb;
+            --bg: #101214;
+            --panel: #1b1d21;
+            --panel-2: #202328;
+            --panel-3: #262a30;
+            --border: #353b42;
+            --text: #f1f5f9;
+            --muted: #aeb7c2;
+            --muted-2: #7f8a96;
+            --good: #2a8a5e;
+            --amber: #c0821a;
+            --red: #d04848;
+            --soft-red: #f7d7d7;
+            --soft-amber: #f4dfb1;
+            --soft-green: #d7f0e2;
         }
 
-        * {
-            box-sizing: border-box;
-        }
+        * { box-sizing: border-box; }
 
         body {
             margin: 0;
             min-height: 100vh;
             background:
-                linear-gradient(135deg, rgba(20, 87, 121, 0.10), transparent 34%),
-                linear-gradient(315deg, rgba(203, 88, 60, 0.12), transparent 32%),
-                #f4f7fb;
+                radial-gradient(circle at top left, rgba(67, 76, 92, 0.26), transparent 32%),
+                radial-gradient(circle at top right, rgba(149, 66, 44, 0.18), transparent 30%),
+                linear-gradient(180deg, #0f1114 0%, #14171b 100%);
+            color: var(--text);
         }
 
         main {
-            width: min(1100px, calc(100% - 32px));
+            width: min(1240px, calc(100% - 32px));
             margin: 0 auto;
-            padding: 32px 0;
+            padding: 16px 0 28px;
         }
 
-        header {
+        a { color: inherit; }
+
+        .topbar {
             display: flex;
             justify-content: space-between;
-            align-items: flex-end;
-            gap: 24px;
-            margin-bottom: 24px;
+            align-items: center;
+            gap: 18px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            min-height: 38px;
+            padding: 0 14px;
+            border: 1px solid var(--border);
+            border-radius: 999px;
+            background: rgba(255,255,255,0.03);
+            text-decoration: none;
+            font-weight: 700;
+        }
+
+        .case-meta {
+            margin-left: auto;
+            display: flex;
+            gap: 14px;
+            align-items: center;
+            flex-wrap: wrap;
+            color: var(--muted);
+            font-size: 0.92rem;
+            font-weight: 600;
+        }
+
+        .case-id {
+            color: var(--text);
+            font-weight: 800;
+            letter-spacing: 0.02em;
+        }
+
+        .timestamp {
+            padding-left: 14px;
+            border-left: 1px solid var(--border);
+        }
+
+        .headline {
+            display: flex;
+            justify-content: space-between;
+            align-items: end;
+            gap: 16px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
         }
 
         h1 {
             margin: 0;
-            font-size: clamp(2rem, 5vw, 4rem);
+            font-size: clamp(2rem, 4vw, 3.5rem);
             line-height: 0.95;
-            letter-spacing: 0;
+            letter-spacing: -0.02em;
         }
 
         .subtitle {
-            max-width: 520px;
-            margin: 10px 0 0;
-            color: #52606d;
+            margin: 8px 0 0;
+            max-width: 700px;
+            color: var(--muted);
             line-height: 1.5;
         }
 
         .status-pill {
-            min-width: 152px;
-            padding: 10px 14px;
-            border: 1px solid #d5dde7;
+            padding: 8px 12px;
+            border: 1px solid var(--border);
             border-radius: 999px;
-            background: #ffffff;
-            color: #52606d;
-            text-align: center;
+            background: rgba(255,255,255,0.03);
+            color: var(--muted);
             font-weight: 700;
+            white-space: nowrap;
         }
 
-        .panel {
-            border: 1px solid #d5dde7;
-            border-radius: 8px;
-            background: rgba(255, 255, 255, 0.86);
-            box-shadow: 0 18px 50px rgba(42, 52, 65, 0.10);
-        }
-
-        .controls {
+        .grid-top {
             display: grid;
-            grid-template-columns: minmax(160px, 1fr) auto auto;
-            gap: 12px;
+            grid-template-columns: minmax(0, 1.35fr) minmax(300px, 0.95fr);
+            gap: 14px;
+            align-items: stretch;
+        }
+
+        .card {
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            background: linear-gradient(180deg, rgba(255,255,255,0.035), rgba(255,255,255,0.02)), var(--panel);
+            box-shadow: 0 22px 52px rgba(0,0,0,0.28);
+        }
+
+        .customer-card,
+        .decision-card,
+        .risk-card,
+        .signals-card,
+        .notes-card {
             padding: 18px;
-            align-items: end;
         }
 
-        label {
+        .customer-card {
             display: grid;
-            gap: 6px;
-            color: #52606d;
-            font-size: 0.82rem;
-            font-weight: 700;
-            text-transform: uppercase;
+            gap: 16px;
         }
 
-        input {
-            width: 100%;
-            min-height: 44px;
-            border: 1px solid #b8c3cf;
-            border-radius: 6px;
-            padding: 9px 11px;
-            background: #fff;
-            color: #18202a;
-            font: inherit;
+        .customer-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 14px;
+            flex-wrap: wrap;
         }
 
-        button {
-            min-height: 44px;
-            border: 0;
-            border-radius: 6px;
-            padding: 0 16px;
-            background: #155f7d;
+        .identity {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            min-width: 0;
+        }
+
+        .avatar {
+            width: 54px;
+            height: 54px;
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            background: linear-gradient(135deg, #4778da, #39a5a1);
             color: #fff;
+            font-weight: 900;
+            letter-spacing: 0.02em;
+            flex: none;
+        }
+
+        .customer-name {
+            margin: 0;
+            font-size: 1.18rem;
+            font-weight: 900;
+        }
+
+        .customer-sub {
+            margin: 4px 0 0;
+            color: var(--muted);
+            font-size: 0.96rem;
+        }
+
+        .badge {
+            padding: 6px 10px;
+            border-radius: 999px;
+            font-weight: 800;
+            font-size: 0.78rem;
+            border: 1px solid transparent;
+            white-space: nowrap;
+        }
+
+        .badge.new { background: rgba(247, 223, 177, 0.18); color: #f3ce7c; border-color: rgba(243,206,124,0.35); }
+        .badge.review { background: rgba(240, 187, 116, 0.18); color: #f0b65c; border-color: rgba(240,182,92,0.35); }
+        .badge.good { background: rgba(108, 200, 152, 0.18); color: #6cc898; border-color: rgba(108,200,152,0.35); }
+
+        .meta-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 10px;
+        }
+
+        .meta-item {
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: rgba(255,255,255,0.02);
+            min-width: 0;
+        }
+
+        .meta-label {
+            color: var(--muted-2);
+            font-size: 0.72rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+
+        .meta-value {
+            margin-top: 6px;
+            color: var(--text);
+            font-weight: 700;
+            word-break: break-word;
+        }
+
+        .decision-card {
+            display: grid;
+            gap: 12px;
+            align-content: start;
+        }
+
+        .decision-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .decision-title {
+            margin: 0;
+            font-size: 1.02rem;
+            font-weight: 900;
+        }
+
+        .recommended {
+            color: var(--muted);
+            font-size: 0.9rem;
+            font-weight: 700;
+        }
+
+        .decision-actions {
+            display: grid;
+            gap: 8px;
+        }
+
+        .decision-row {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 8px;
+        }
+
+        .btn {
+            min-height: 42px;
+            border: 0;
+            border-radius: 10px;
+            padding: 0 14px;
+            color: #fff;
+            font: inherit;
+            font-weight: 900;
+            cursor: pointer;
+            transition: transform 0.08s ease, filter 0.12s ease, opacity 0.12s ease;
+        }
+
+        .btn:hover { filter: brightness(1.03); }
+        .btn:active { transform: translateY(1px); }
+        .btn:disabled { cursor: wait; opacity: 0.65; }
+
+        .btn-approve { background: #2c8d60; }
+        .btn-review { background: #c38a22; }
+        .btn-deny { background: #c94545; }
+        .btn-secondary {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text);
+            min-height: 42px;
+            border-radius: 10px;
+            padding: 0 14px;
             font: inherit;
             font-weight: 800;
             cursor: pointer;
         }
 
-        button.secondary {
-            border: 1px solid #b8c3cf;
-            background: #fff;
-            color: #18202a;
-        }
-
-        button:disabled {
-            cursor: wait;
-            opacity: 0.66;
-        }
-
-        .content {
+        .decision-state {
             display: grid;
-            grid-template-columns: 320px minmax(0, 1fr);
-            gap: 1px;
-            border-top: 1px solid #d5dde7;
-            background: #d5dde7;
+            grid-template-columns: 110px 1fr;
+            gap: 12px;
+            align-items: center;
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: rgba(255,255,255,0.02);
         }
 
-        .score-card,
-        .details {
-            background: #fff;
-            padding: 22px;
-        }
-
-        .score {
+        .decision-score {
             display: grid;
             place-items: center;
-            width: 180px;
-            height: 180px;
-            margin: 0 auto 18px;
-            border: 14px solid #d5dde7;
+            width: 94px;
+            height: 94px;
+            border: 10px solid var(--border);
             border-radius: 50%;
-            color: #18202a;
-            font-size: 3rem;
+            font-size: 1.8rem;
             font-weight: 900;
         }
 
-        .score.high {
-            border-color: #be3d2a;
-        }
+        .decision-score.high { border-color: #cf4d4d; color: #ffaaaa; }
+        .decision-score.medium { border-color: #c38a22; color: #f1ca6f; }
+        .decision-score.low { border-color: #2c8d60; color: #8be0b0; }
 
-        .score.medium {
-            border-color: #bf7f16;
-        }
-
-        .score.low {
-            border-color: #23845d;
-        }
-
-        .decision {
+        .decision-copy .label {
             margin: 0;
-            text-align: center;
-            font-size: 1.35rem;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-size: 0.72rem;
+            font-weight: 800;
+        }
+
+        .decision-copy .value {
+            margin: 4px 0 0;
+            font-size: 1.18rem;
             font-weight: 900;
         }
 
-        .meta {
-            margin: 8px 0 0;
-            color: #52606d;
-            text-align: center;
+        .decision-copy .hint {
+            margin: 6px 0 0;
+            color: var(--muted);
+            line-height: 1.45;
+            font-size: 0.94rem;
         }
 
-        h2 {
-            margin: 0 0 14px;
-            font-size: 1rem;
+        .section {
+            margin-top: 14px;
         }
 
-        ul {
+        .risk-card {
+            margin-top: 14px;
+        }
+
+        .risk-shell {
             display: grid;
-            gap: 10px;
-            margin: 0;
-            padding: 0;
-            list-style: none;
+            grid-template-columns: 140px minmax(0, 1fr);
+            gap: 14px;
+            align-items: center;
         }
 
-        li {
-            border: 1px solid #e0e6ee;
-            border-radius: 6px;
-            padding: 10px 12px;
-            background: #f8fafc;
+        .risk-ring {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 12px solid var(--border);
+            display: grid;
+            place-items: center;
+            text-align: center;
+            margin: 0 auto;
+            background: rgba(255,255,255,0.02);
         }
 
-        pre {
-            overflow: auto;
-            max-height: 260px;
-            margin: 18px 0 0;
-            border: 1px solid #e0e6ee;
-            border-radius: 6px;
-            padding: 12px;
-            background: #111820;
-            color: #e9eef6;
-            font-size: 0.82rem;
+        .risk-ring.high { border-color: #c94545; color: #ffb4b4; }
+        .risk-ring.medium { border-color: #c38a22; color: #f1ca6f; }
+        .risk-ring.low { border-color: #2c8d60; color: #8be0b0; }
+
+        .risk-ring .score {
+            font-size: 2rem;
+            line-height: 1;
+            font-weight: 900;
         }
 
-        .error {
-            display: none;
-            margin: 14px 18px 0;
-            border: 1px solid #e1ad9f;
-            border-radius: 6px;
-            padding: 10px 12px;
-            background: #fff4f1;
-            color: #8c2c1d;
+        .risk-ring .out-of {
+            margin-top: 2px;
+            color: var(--muted);
+            font-size: 0.78rem;
             font-weight: 700;
         }
 
-        @media (max-width: 760px) {
-            header,
-            .controls,
-            .content {
+        .risk-heading {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 8px;
+        }
+
+        .risk-title {
+            margin: 0;
+            font-size: 1rem;
+            font-weight: 900;
+        }
+
+        .risk-label {
+            padding: 6px 10px;
+            border-radius: 999px;
+            font-weight: 900;
+            font-size: 0.84rem;
+        }
+
+        .risk-label.high { background: rgba(201,69,69,0.18); color: #ffb4b4; }
+        .risk-label.medium { background: rgba(195,138,34,0.18); color: #f1ca6f; }
+        .risk-label.low { background: rgba(44,141,96,0.18); color: #8be0b0; }
+
+        .summary-row {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        .summary-tile {
+            padding: 12px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            background: rgba(255,255,255,0.02);
+        }
+
+        .summary-tile .k {
+            color: var(--muted-2);
+            text-transform: uppercase;
+            font-size: 0.72rem;
+            font-weight: 800;
+            letter-spacing: 0.06em;
+        }
+
+        .summary-tile .v {
+            margin-top: 6px;
+            font-weight: 900;
+        }
+
+        .signals-card { margin-top: 14px; }
+
+        .signals-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 14px;
+        }
+
+        .signals-head h2,
+        .notes-card h2 {
+            margin: 0;
+            font-size: 1rem;
+        }
+
+        .signals-count {
+            color: var(--muted);
+            font-size: 0.9rem;
+            font-weight: 700;
+        }
+
+        .signal-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px;
+        }
+
+        .signal-card {
+            padding: 14px;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            background: linear-gradient(180deg, rgba(255,255,255,0.025), rgba(255,255,255,0.01));
+        }
+
+        .signal-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .category {
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            font-size: 0.72rem;
+            font-weight: 900;
+        }
+
+        .signal-score {
+            font-size: 0.92rem;
+            font-weight: 900;
+        }
+
+        .signal-score.high { color: #ffb4b4; }
+        .signal-score.medium { color: #f1ca6f; }
+        .signal-score.low { color: #8be0b0; }
+
+        .signal-title {
+            margin: 0;
+            font-size: 1.02rem;
+            font-weight: 900;
+        }
+
+        .signal-desc {
+            margin: 8px 0 10px;
+            color: var(--muted);
+            line-height: 1.5;
+            font-size: 0.94rem;
+        }
+
+        .signal-detail {
+            padding: 10px 12px;
+            border-radius: 10px;
+            border: 1px solid #323840;
+            background: #15181d;
+            color: #d2dae5;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+            font-size: 0.8rem;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .notes-card { margin-top: 14px; }
+
+        .notes-wrap {
+            display: grid;
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        label.notes-label {
+            display: inline-block;
+            color: var(--muted);
+            font-size: 0.78rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 120px;
+            resize: vertical;
+            border-radius: 14px;
+            border: 1px solid var(--border);
+            background: #15181d;
+            color: var(--text);
+            padding: 14px;
+            font: inherit;
+            line-height: 1.5;
+        }
+
+        textarea::placeholder { color: var(--muted-2); }
+
+        .error {
+            display: none;
+            margin-top: 14px;
+            border: 1px solid rgba(208,72,72,0.45);
+            border-radius: 12px;
+            padding: 10px 12px;
+            background: rgba(208,72,72,0.14);
+            color: #ffcece;
+            font-weight: 700;
+        }
+
+        .loading {
+            color: var(--muted);
+            font-size: 0.92rem;
+            font-weight: 700;
+        }
+
+        @media (max-width: 980px) {
+            .grid-top,
+            .risk-shell,
+            .signal-grid,
+            .meta-grid,
+            .summary-row,
+            .decision-row {
                 grid-template-columns: 1fr;
             }
 
-            header {
-                align-items: stretch;
-            }
+            .case-meta { margin-left: 0; }
+        }
+
+        @media (max-width: 700px) {
+            main { width: min(100% - 18px, 1240px); }
+            .decision-state { grid-template-columns: 1fr; }
+            .risk-ring { margin: 0; }
         }
     </style>
 </head>
 <body>
 <main>
-    <header>
+    <div class="topbar">
+        <a class="back-link" href="javascript:history.back()">← Back to queue</a>
+        <div class="case-meta">
+            <span class="case-id" id="caseId">Case —</span>
+            <span class="timestamp" id="caseTimestamp">—</span>
+        </div>
+    </div>
+
+    <div class="headline">
         <div>
-            <h1>Tripwire Fraud Review</h1>
-            <p class="subtitle">Score seeded transactions against the Dymo/TPE verification API and inspect the decision signals.</p>
+            <h1>Fraud Review Dashboard</h1>
+            <p class="subtitle">Single-case ops view for internal fraud analysts. Review customer context, inspect risk signals, document reasoning, then choose a decision.</p>
         </div>
-        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
-            <a href="/dashboard.html" style="min-height:38px;display:inline-flex;align-items:center;padding:0 16px;border:1px solid #d5dde7;border-radius:6px;background:#fff;color:#18202a;font-family:inherit;font-weight:700;font-size:0.88rem;text-decoration:none;">⟵ Dashboard</a>
-            <div id="apiStatus" class="status-pill">Ready</div>
+        <div class="status-pill" id="statusPill">Loading case…</div>
+    </div>
+
+    <div id="error" class="error"></div>
+
+    <section class="grid-top">
+        <article class="card customer-card">
+            <div class="customer-head">
+                <div class="identity">
+                    <div class="avatar" id="avatar">MC</div>
+                    <div style="min-width:0;">
+                        <h2 class="customer-name" id="customerName">Loading…</h2>
+                        <p class="customer-sub" id="customerSub">Fetching case details</p>
+                    </div>
+                </div>
+                <span class="badge new" id="accountBadge">New account</span>
+            </div>
+
+            <div class="meta-grid">
+                <div class="meta-item">
+                    <div class="meta-label">Email</div>
+                    <div class="meta-value" id="emailField">—</div>
+                </div>
+                <div class="meta-item">
+                    <div class="meta-label">IP Address</div>
+                    <div class="meta-value" id="ipField">—</div>
+                </div>
+                <div class="meta-item">
+                    <div class="meta-label">Location</div>
+                    <div class="meta-value" id="locationField">—</div>
+                </div>
+                <div class="meta-item">
+                    <div class="meta-label">Phone</div>
+                    <div class="meta-value" id="phoneField">—</div>
+                </div>
+            </div>
+        </article>
+
+        <article class="card decision-card">
+            <div class="decision-head">
+                <h2 class="decision-title">Decision</h2>
+            </div>
+
+            <div class="decision-row">
+                <button class="btn btn-approve" id="approveBtn" type="button">Approve</button>
+                <button class="btn btn-review" id="reviewBtn" type="button">Review</button>
+                <button class="btn btn-deny" id="denyBtn" type="button">Deny</button>
+            </div>
+
+            <button class="btn-secondary" id="rescoreBtn" type="button">Trigger rescore</button>
+
+            <div class="decision-state">
+                <div class="decision-score" id="decisionScore">--</div>
+                <div class="decision-copy">
+                    <p class="label">Current case status</p>
+                    <p class="value" id="currentDecision">Not scored</p>
+                    <p class="hint" id="decisionHint">Open a transaction to load the case and generate the fraud score.</p>
+                </div>
+            </div>
+        </article>
+    </section>
+
+    <section class="card risk-card">
+        <div class="risk-heading">
+            <h2 class="risk-title">Risk Assessment</h2>
+            <span class="risk-label" id="riskLabel">—</span>
         </div>
-    </header>
-
-    <section class="panel">
-        <form id="scoreForm" class="controls">
-            <label>
-                Transaction ID
-                <input id="transactionId" type="number" min="1" value="1" required>
-            </label>
-            <button id="scoreButton" type="submit">Score Transaction</button>
-            <button id="loadButton" class="secondary" type="button">Load Transaction</button>
-        </form>
-        <div id="error" class="error"></div>
-
-        <div class="content">
-            <section class="score-card">
-                <div id="score" class="score">--</div>
-                <p id="decision" class="decision">Not scored</p>
-                <p id="meta" class="meta">Choose a transaction and run scoring.</p>
-            </section>
-
-            <section class="details">
-                <h2>Signals</h2>
-                <ul id="signals">
-                    <li>No signals yet.</li>
-                </ul>
-                <pre id="rawOutput">{}</pre>
-            </section>
+        <div class="risk-shell">
+            <div class="risk-ring" id="riskRing">
+                <div>
+                    <div class="score" id="riskScore">--</div>
+                    <div class="out-of">/ 100</div>
+                </div>
+            </div>
+            <div>
+                <div class="summary-row">
+                    <div class="summary-tile">
+                        <div class="k">Amount</div>
+                        <div class="v" id="amountField">—</div>
+                    </div>
+                    <div class="summary-tile">
+                        <div class="k">Recommended action</div>
+                        <div class="v" id="actionField">—</div>
+                    </div>
+                    <div class="summary-tile">
+                        <div class="k">Reason</div>
+                        <div class="v" id="reasonField">—</div>
+                    </div>
+                </div>
+                <p class="subtitle" style="margin-top:12px; max-width:none;" id="riskSummary">Scoring will appear here after the case is loaded.</p>
+            </div>
         </div>
     </section>
+
+    <section class="card signals-card">
+        <div class="signals-head">
+            <h2>Risk Signals</h2>
+            <div class="signals-count" id="signalCount">0 signals · 0 elevated</div>
+        </div>
+        <div class="signal-grid" id="signalGrid">
+            <div class="signal-card">
+                <div class="signal-top">
+                    <div class="category">Awaiting data</div>
+                    <div class="signal-score low">0/10</div>
+                </div>
+                <h3 class="signal-title">No signals loaded yet</h3>
+                <p class="signal-desc">Load a transaction to populate the fraud signal cards.</p>
+                <div class="signal-detail">GET /transaction/{id} and POST /transaction/{id}/score</div>
+            </div>
+        </div>
+    </section>
+
+    <section class="card notes-card">
+        <h2>Investigation notes</h2>
+        <div class="notes-wrap">
+            <label class="notes-label" for="investigationNotes">Document your reasoning before submitting a decision…</label>
+            <textarea id="investigationNotes" placeholder="Document your reasoning before submitting a decision..."></textarea>
+        </div>
+    </section>
+
+    <div class="loading" id="loadingState" style="margin-top:12px;display:none;">Working…</div>
 </main>
 
 <script>
-    const form = document.querySelector("#scoreForm");
-    const transactionId = document.querySelector("#transactionId");
-    const scoreButton = document.querySelector("#scoreButton");
-    const loadButton = document.querySelector("#loadButton");
-    const apiStatus = document.querySelector("#apiStatus");
-    const error = document.querySelector("#error");
-    const score = document.querySelector("#score");
-    const decision = document.querySelector("#decision");
-    const meta = document.querySelector("#meta");
-    const signals = document.querySelector("#signals");
-    const rawOutput = document.querySelector("#rawOutput");
-
     const params = new URLSearchParams(window.location.search);
-    if (params.has("id")) {
-        transactionId.value = params.get("id");
+    const transactionId = Number(params.get('id') || 1);
+
+    const els = {
+        caseId: document.querySelector('#caseId'),
+        caseTimestamp: document.querySelector('#caseTimestamp'),
+        statusPill: document.querySelector('#statusPill'),
+        error: document.querySelector('#error'),
+        avatar: document.querySelector('#avatar'),
+        customerName: document.querySelector('#customerName'),
+        customerSub: document.querySelector('#customerSub'),
+        accountBadge: document.querySelector('#accountBadge'),
+        emailField: document.querySelector('#emailField'),
+        ipField: document.querySelector('#ipField'),
+        locationField: document.querySelector('#locationField'),
+        phoneField: document.querySelector('#phoneField'),
+        recommendedDecision: document.querySelector('#recommendedDecision'),
+        approveBtn: document.querySelector('#approveBtn'),
+        reviewBtn: document.querySelector('#reviewBtn'),
+        denyBtn: document.querySelector('#denyBtn'),
+        rescoreBtn: document.querySelector('#rescoreBtn'),
+        decisionScore: document.querySelector('#decisionScore'),
+        currentDecision: document.querySelector('#currentDecision'),
+        decisionHint: document.querySelector('#decisionHint'),
+        riskScore: document.querySelector('#riskScore'),
+        riskRing: document.querySelector('#riskRing'),
+        riskLabel: document.querySelector('#riskLabel'),
+        amountField: document.querySelector('#amountField'),
+        actionField: document.querySelector('#actionField'),
+        reasonField: document.querySelector('#reasonField'),
+        riskSummary: document.querySelector('#riskSummary'),
+        signalGrid: document.querySelector('#signalGrid'),
+        signalCount: document.querySelector('#signalCount'),
+        investigationNotes: document.querySelector('#investigationNotes'),
+        loadingState: document.querySelector('#loadingState')
+    };
+
+    const state = {
+        transaction: null,
+        score: null,
+        caseProfile: null,
+        manualDecision: null
+    };
+
+    const NAMES = [
+        { name: 'Marcus Chen', initials: 'MC' },
+        { name: 'Ava Patel', initials: 'AP' },
+        { name: 'Jordan Lee', initials: 'JL' },
+        { name: 'Nina Brooks', initials: 'NB' },
+        { name: 'Diego Santos', initials: 'DS' },
+        { name: 'Maya Hassan', initials: 'MH' }
+    ];
+
+    function clamp(n, min, max) {
+        return Math.max(min, Math.min(max, n));
     }
 
-    form.addEventListener("submit", async (event) => {
-        event.preventDefault();
-        await scoreTransaction();
-    });
-
-    loadButton.addEventListener("click", async () => {
-        await loadTransaction();
-    });
-
-    async function scoreTransaction() {
-        setLoading(true, "Scoring");
-        clearError();
-
-        try {
-            const result = await request(`/transaction/${transactionId.value}/score`, { method: "POST" });
-            renderScore(result);
-        } catch (err) {
-            showError(err.message);
-        } finally {
-            setLoading(false, "Ready");
-        }
+    function formatMoney(value) {
+        if (value == null || value === '') return '—';
+        const num = Number(value);
+        if (Number.isNaN(num)) return String(value);
+        return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(num);
     }
 
-    async function loadTransaction() {
-        setLoading(true, "Loading");
-        clearError();
+    function formatDate(value) {
+        if (!value) return new Date().toLocaleString();
+        const dt = new Date(value);
+        return Number.isNaN(dt.getTime()) ? String(value) : dt.toLocaleString();
+    }
 
-        try {
-            const result = await request(`/transaction/${transactionId.value}`);
-            renderTransaction(result);
-        } catch (err) {
-            showError(err.message);
-        } finally {
-            setLoading(false, "Ready");
+    function statusLabel(score) {
+        if (score >= 80) return 'High risk';
+        if (score >= 50) return 'Moderate risk';
+        return 'Low risk';
+    }
+
+    function statusTone(score) {
+        if (score >= 80) return 'high';
+        if (score >= 50) return 'medium';
+        return 'low';
+    }
+
+    function recommendedAction(score) {
+        if (score >= 80) return 'Deny';
+        if (score >= 50) return 'Review';
+        return 'Approve';
+    }
+
+    function syntheticProfile(tx) {
+        const base = NAMES[(Number(tx?.id) || 1) % NAMES.length];
+        const accountAgeDays = 10 + ((Number(tx?.id) || 1) * 7) % 280;
+        const orders = 1 + ((Number(tx?.id) || 1) * 3) % 9;
+        const refunds = ((Number(tx?.id) || 1) * 2) % 5;
+        const badge = accountAgeDays < 30 ? 'New account' : accountAgeDays < 120 ? 'Recent account' : 'Established';
+        const locationPool = ['Lagos, NG', 'Austin, US', 'London, UK', 'Toronto, CA', 'Lisbon, PT', 'Nairobi, KE'];
+        const location = locationPool[(Number(tx?.id) || 1) % locationPool.length];
+        const email = base.name.toLowerCase().replace(/[^a-z]+/g, '.') + '@maildrop.cc';
+        const ip = `203.0.113.${(Number(tx?.id) || 1) % 255 || 11}`;
+        const phone = `+1 ${(410 + ((Number(tx?.id) || 1) % 300)).toString().padStart(3, '0')} ${(2800 + ((Number(tx?.id) || 1) * 11) % 7000).toString().padStart(4, '0')}`;
+        return {
+            ...base,
+            badge,
+            accountAgeDays,
+            orders,
+            refunds,
+            email,
+            ip,
+            location,
+            phone
+        };
+    }
+
+    function riskClassFromScore(score10) {
+        if (score10 >= 8) return 'high';
+        if (score10 >= 5) return 'medium';
+        return 'low';
+    }
+
+    function score10FromBooleans(...flags) {
+        const positives = flags.filter(Boolean).length;
+        return clamp(Math.round((positives / Math.max(flags.length, 1)) * 10), 0, 10);
+    }
+
+    function makeSignal(category, score10, title, description, detail) {
+        return { category, score10, title, description, detail };
+    }
+
+    function buildSignals(tx, scoreData) {
+        const fallbackReason = `Case ${tx.id} review summary from transaction and account intelligence.`;
+        const email = scoreData?.email || {};
+        const ip = scoreData?.ip || {};
+        const phone = scoreData?.phone || {};
+        const iban = scoreData?.iban || {};
+        const domain = scoreData?.domain || {};
+        const userAgent = scoreData?.userAgent || {};
+        const wallet = scoreData?.wallet || {};
+        const creditCard = scoreData?.creditCard || {};
+        const url = scoreData?.url || {};
+
+        const signals = [
+            makeSignal(
+                'BEHAVIORAL',
+                score10FromBooleans(tx.status === 'UNASSIGNED', Number(tx.riskScore || 0) >= 50, (tx.amount || 0) > 500),
+                'Risk velocity',
+                'Refund and review volume are aligned with the current risk state.',
+                `score=${tx.riskScore ?? 0}; amount=${formatMoney(tx.amount)}; status=${tx.status || 'UNASSIGNED'}`
+            ),
+            makeSignal(
+                'IDENTITY',
+                score10FromBooleans(email.fraud, email.proxiedEmail, email.freeSubdomain, email.noReply, email.roleAccount),
+                'Email risk',
+                'Disposable, proxied, or otherwise suspicious email characteristics detected.',
+                `email=${email.email || state.caseProfile.email}; domain=${email.domain || 'unknown'}; realUser=${email.realUser || 'n/a'}`
+            ),
+            makeSignal(
+                'IDENTITY',
+                score10FromBooleans(ip.fraud, ip.vpn, ip.proxy, String(ip.hosting).toLowerCase() === 'true', String(ip.type).toLowerCase().includes('hosting')),
+                'IP risk',
+                'VPN, proxy, or datacenter IP traits elevate fraud probability.',
+                `ip=${ip.ip || state.caseProfile.ip}; country=${ip.country || state.caseProfile.location}; isp=${ip.isp || 'n/a'}`
+            ),
+            makeSignal(
+                'BEHAVIORAL',
+                score10FromBooleans(phone.fraud, phone.country && state.caseProfile.location && !String(phone.country).includes(String(state.caseProfile.location).split(',')[1]?.trim() || ''), phone.lineType && phone.lineType !== 'mobile'),
+                'Phone-country mismatch',
+                'Phone identity and account geography do not align cleanly.',
+                `phone=${phone.phone || state.caseProfile.phone}; country=${phone.country || 'n/a'}; carrier=${phone.carrierInfo?.carrierName || 'n/a'}`
+            ),
+            makeSignal(
+                'BEHAVIORAL',
+                score10FromBooleans(iban.fraud, !iban.valid, String(iban.countryCode || '').length === 0, String(wallet.fraud || '').toLowerCase() === 'true'),
+                'Payment destination validity',
+                'New payment destination should be checked before release.',
+                `iban=${iban.iban || 'n/a'}; bic=${iban.bic || 'n/a'}; country=${iban.country || 'n/a'}`
+            ),
+            makeSignal(
+                'IDENTITY',
+                score10FromBooleans(domain.fraud, domain.valid === false, url.fraud, creditCard.fraud, userAgent.fraud),
+                'Identity surface anomalies',
+                'Linked identity surfaces show secondary fraud indicators.',
+                `domain=${email.domain || 'n/a'}; ua=${userAgent.valid === false ? 'flagged' : 'ok'}; url=${url.valid === false ? 'flagged' : 'ok'}`
+            )
+        ];
+
+        if (scoreData?.signals?.length) {
+            signals.unshift(
+                makeSignal(
+                    'BEHAVIORAL',
+                    clamp(Math.round((scoreData.score || 0) / 10), 0, 10),
+                    'Dymo score summary',
+                    'Overall Dymo score returned from the verification API.',
+                    scoreData.signals[0] || fallbackReason
+                )
+            );
+        } else {
+            signals.unshift(
+                makeSignal(
+                    'BEHAVIORAL',
+                    clamp(Math.round(((scoreData?.score || tx.riskScore || 0) / 10)), 0, 10),
+                    'Case summary',
+                    'Synthetic review summary based on the loaded transaction.',
+                    fallbackReason
+                )
+            );
         }
+
+        return signals;
+    }
+
+    function renderSignalGrid(signals) {
+        const elevated = signals.filter(item => item.score10 >= 5).length;
+        els.signalCount.textContent = `${signals.length} signals · ${elevated} elevated`;
+        els.signalGrid.innerHTML = signals.map(item => {
+            const tone = riskClassFromScore(item.score10);
+            return `
+                <article class="signal-card">
+                    <div class="signal-top">
+                        <div class="category">${item.category}</div>
+                        <div class="signal-score ${tone}">${item.score10}/10</div>
+                    </div>
+                    <h3 class="signal-title">${item.title}</h3>
+                    <p class="signal-desc">${item.description}</p>
+                    <div class="signal-detail">${escapeHtml(item.detail)}</div>
+                </article>
+            `;
+        }).join('');
+    }
+
+    function escapeHtml(value) {
+        return String(value)
+            .replaceAll('&', '&amp;')
+            .replaceAll('<', '&lt;')
+            .replaceAll('>', '&gt;')
+            .replaceAll('"', '&quot;');
+    }
+
+    function renderCustomerAndDecision() {
+        const tx = state.transaction || { id: transactionId };
+        const profile = state.caseProfile || syntheticProfile(tx);
+        const scoreValue = Math.round(state.score?.score ?? tx.riskScore ?? 0);
+        const currentDecision = state.manualDecision || tx.status || (scoreValue >= 80 ? 'DENIED' : scoreValue >= 50 ? 'UNDER_REVIEW' : scoreValue ? 'APPROVED' : 'UNASSIGNED');
+        const riskTone = statusTone(scoreValue);
+        const recommended = recommendedAction(scoreValue);
+        const label = statusLabel(scoreValue);
+        const reason = state.score?.signals?.[0] || `Risk profile currently indicates ${label.toLowerCase()}.`;
+
+        els.caseId.textContent = `Case / RF-${String(tx.id).padStart(4, '0')}`;
+        els.caseTimestamp.textContent = formatDate(tx.createdAt);
+        els.avatar.textContent = profile.initials;
+        els.customerName.textContent = profile.name;
+        els.customerSub.textContent = `Account created ${profile.accountAgeDays} days ago · ${profile.orders} orders · ${profile.refunds} refunds`;
+        els.accountBadge.textContent = profile.badge;
+        els.accountBadge.className = `badge ${profile.accountAgeDays < 30 ? 'new' : profile.accountAgeDays < 120 ? 'review' : 'good'}`;
+        els.emailField.textContent = profile.email;
+        els.ipField.textContent = profile.ip;
+        els.locationField.textContent = profile.location;
+        els.phoneField.textContent = profile.phone;
+
+        els.statusPill.textContent = state.score ? 'Case scored' : 'Case loaded';
+        els.decisionScore.textContent = scoreValue || '--';
+        els.decisionScore.className = `decision-score ${riskTone}`;
+        els.currentDecision.textContent = currentDecision.replaceAll('_', ' ');
+        els.decisionHint.textContent = state.score
+            ? 'Use the buttons above to record the analyst decision, then document your rationale below.'
+            : 'Waiting for scoring output.';
+        els.riskScore.textContent = scoreValue || '--';
+        els.riskRing.className = `risk-ring ${riskTone}`;
+        els.riskLabel.textContent = label;
+        els.riskLabel.className = `risk-label ${riskTone}`;
+        els.amountField.textContent = formatMoney(tx.amount);
+        els.actionField.textContent = recommended;
+        els.reasonField.textContent = reason.length > 42 ? reason.slice(0, 42) + '…' : reason;
+        els.riskSummary.textContent = state.score?.apiAvailable === false
+            ? 'The external verification API was unavailable, so the case score was computed from the local fallback model.'
+            : 'The case score and signals below are sourced from the Dymo/TPE verification API response.';
+    }
+
+    function setLoading(isLoading, label) {
+        els.loadingState.style.display = isLoading ? 'block' : 'none';
+        els.loadingState.textContent = label || 'Working…';
+        [els.approveBtn, els.reviewBtn, els.denyBtn, els.rescoreBtn].forEach(btn => btn.disabled = isLoading);
+    }
+
+    function showError(message) {
+        els.error.textContent = message;
+        els.error.style.display = 'block';
+        els.statusPill.textContent = 'Error';
+    }
+
+    function clearError() {
+        els.error.textContent = '';
+        els.error.style.display = 'none';
     }
 
     async function request(url, options = {}) {
-        const response = await fetch(url, options);
+        const opts = { ...options };
+        if (opts.body && typeof opts.body === 'object' && !(opts.body instanceof FormData)) {
+            opts.body = JSON.stringify(opts.body);
+            opts.headers = { ...(opts.headers || {}), 'Content-Type': 'application/json' };
+        }
+
+        const response = await fetch(url, opts);
         const text = await response.text();
-        const data = text ? JSON.parse(text) : {};
+        let data = {};
+        if (text) {
+            try {
+                data = JSON.parse(text);
+            } catch {
+                data = { message: text };
+            }
+        }
 
         if (!response.ok) {
             throw new Error(data.message || `Request failed with ${response.status}`);
@@ -339,58 +1055,93 @@
         return data;
     }
 
-    function renderScore(result) {
-        const value = Math.round(result.score ?? 0);
-        const status = value >= 80 ? "DENIED" : value >= 50 ? "UNDER REVIEW" : "APPROVED";
-
-        score.textContent = value;
-        score.className = `score ${value >= 80 ? "high" : value >= 50 ? "medium" : "low"}`;
-        decision.textContent = status;
-        meta.textContent = result.apiAvailable ? "Dymo API response included" : "Local fallback scoring";
-        renderSignals(result.signals || []);
-        rawOutput.textContent = JSON.stringify(result, null, 2);
-    }
-
-    function renderTransaction(result) {
-        const value = Math.round(result.riskScore ?? 0);
-        score.textContent = value;
-        score.className = `score ${value >= 80 ? "high" : value >= 50 ? "medium" : "low"}`;
-        decision.textContent = result.status || "UNASSIGNED";
-        meta.textContent = `Transaction ${result.id}, account ${result.accountId}`;
-        renderSignals(["Loaded saved transaction data. Run scoring to see Dymo signals."]);
-        rawOutput.textContent = JSON.stringify(result, null, 2);
-    }
-
-    function renderSignals(items) {
-        signals.innerHTML = "";
-
-        if (!items.length) {
-            signals.innerHTML = "<li>No signals returned.</li>";
-            return;
-        }
-
-        for (const item of items) {
-            const li = document.createElement("li");
-            li.textContent = item;
-            signals.appendChild(li);
+    async function loadTransaction() {
+        setLoading(true, 'Loading case…');
+        clearError();
+        try {
+            const tx = await request(`/transaction/${transactionId}`);
+            state.transaction = tx;
+            state.caseProfile = syntheticProfile(tx);
+            state.manualDecision = null;
+            els.statusPill.textContent = 'Case loaded';
+            renderCustomerAndDecision();
+        } catch (err) {
+            showError(err.message);
+        } finally {
+            setLoading(false, 'Ready');
         }
     }
 
-    function setLoading(isLoading, label) {
-        scoreButton.disabled = isLoading;
-        loadButton.disabled = isLoading;
-        apiStatus.textContent = label;
+    async function scoreTransaction() {
+        if (!state.transaction) return;
+        setLoading(true, 'Scoring case…');
+        clearError();
+        try {
+            const result = await request(`/transaction/${state.transaction.id}/score`, { method: 'POST' });
+            state.score = result;
+            // Preserve the analyst's chosen decision if already set.
+            if (!state.manualDecision && state.transaction?.status && state.transaction.status !== 'UNASSIGNED') {
+                state.manualDecision = state.transaction.status;
+            }
+            renderCustomerAndDecision();
+            renderSignalGrid(buildSignals(state.transaction, result));
+            els.caseTimestamp.textContent = formatDate(state.transaction.createdAt);
+            els.statusPill.textContent = result.apiAvailable ? 'Scored live' : 'Fallback score';
+        } catch (err) {
+            showError(err.message);
+        } finally {
+            setLoading(false, 'Ready');
+        }
     }
 
-    function showError(message) {
-        error.textContent = message;
-        error.style.display = "block";
+    async function persistDecision(status) {
+        if (!state.transaction) return;
+        setLoading(true, `${status.replaceAll('_', ' ')}…`);
+        clearError();
+        try {
+            state.manualDecision = status;
+            // Keep the backend in the loop, but preserve the analyst choice locally for the UI.
+            const payload = {
+                ...state.transaction,
+                status,
+                investigationNotes: els.investigationNotes.value || ''
+            };
+            const updated = await request(`/transaction/${state.transaction.id}`, {
+                method: 'PUT',
+                body: payload
+            });
+            state.transaction = { ...updated, status };
+            if (state.score) {
+                state.score = { ...state.score };
+            }
+            els.statusPill.textContent = `Decision saved: ${status.replaceAll('_', ' ')}`;
+            renderCustomerAndDecision();
+            renderSignalGrid(buildSignals(state.transaction, state.score));
+        } catch (err) {
+            showError(err.message);
+        } finally {
+            setLoading(false, 'Ready');
+        }
     }
 
-    function clearError() {
-        error.textContent = "";
-        error.style.display = "none";
+    async function triggerRescore() {
+        if (!state.transaction) return;
+        await scoreTransaction();
     }
+
+    els.approveBtn.addEventListener('click', () => persistDecision('APPROVED'));
+    els.reviewBtn.addEventListener('click', () => persistDecision('UNDER_REVIEW'));
+    els.denyBtn.addEventListener('click', () => persistDecision('DENIED'));
+    els.rescoreBtn.addEventListener('click', triggerRescore);
+
+    (async function init() {
+        try {
+            await loadTransaction();
+            await scoreTransaction();
+        } catch {
+            // Errors are already surfaced in the UI.
+        }
+    })();
 </script>
 </body>
 </html>
