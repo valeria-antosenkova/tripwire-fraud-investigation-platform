@@ -237,7 +237,10 @@
             <h1>Tripwire Fraud Review</h1>
             <p class="subtitle">Score seeded transactions against the Dymo/TPE verification API and inspect the decision signals.</p>
         </div>
-        <div id="apiStatus" class="status-pill">Ready</div>
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+            <a href="/dashboard.html" style="min-height:38px;display:inline-flex;align-items:center;padding:0 16px;border:1px solid #d5dde7;border-radius:6px;background:#fff;color:#18202a;font-family:inherit;font-weight:700;font-size:0.88rem;text-decoration:none;">⟵ Dashboard</a>
+            <div id="apiStatus" class="status-pill">Ready</div>
+        </div>
     </header>
 
     <section class="panel">
@@ -281,6 +284,11 @@
     const meta = document.querySelector("#meta");
     const signals = document.querySelector("#signals");
     const rawOutput = document.querySelector("#rawOutput");
+
+    const params = new URLSearchParams(window.location.search);
+    if (params.has("id")) {
+        transactionId.value = params.get("id");
+    }
 
     form.addEventListener("submit", async (event) => {
         event.preventDefault();

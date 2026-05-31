@@ -12,4 +12,6 @@ public interface TransactionService {
         Transaction updateTransaction(Transaction transaction);
         DymoResponse scoreTransaction(int id);
         void deleteTransaction(int id);
+        Transaction assignTransaction(int transactionId, int agentId);
+        List<Transaction> getTransactionsByAgentId(int agentId);
 }

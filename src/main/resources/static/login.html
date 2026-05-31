@@ -120,10 +120,15 @@
         <div id="error" class="error"></div>
     </form>
 
-    <div class="hint">Successful login will take you to the dashboard at <strong>index.html</strong>.</div>
+    <div class="hint">Demo: <strong>sarah.okafor@tripwire.internal</strong> / <strong>tripwire123</strong></div>
 </main>
 
 <script>
+    // Already logged in → skip to dashboard
+    if (localStorage.getItem("agent")) {
+        window.location.href = "/dashboard.html";
+    }
+
     const form = document.querySelector("#loginForm");
     const email = document.querySelector("#email");
     const password = document.querySelector("#password");
@@ -136,11 +141,11 @@
         clearError();
 
         try {
-            const response = await fetch("/auth/login", {
+            const response = await fetch("/agent/login", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    email: email.value.trim(),
+                    email:    email.value.trim(),
                     password: password.value
                 })
             });
@@ -149,10 +154,12 @@
             const data = text ? JSON.parse(text) : {};
 
             if (!response.ok) {
-                throw new Error(data.message || "Login failed");
+                throw new Error(data.error || data.message || "Login failed");
             }
 
-            window.location.href = "/index.html";
+            // Persist agent session in localStorage
+            localStorage.setItem("agent", JSON.stringify(data));
+            window.location.href = "/dashboard.html";
         } catch (err) {
             showError(err.message);
         } finally {

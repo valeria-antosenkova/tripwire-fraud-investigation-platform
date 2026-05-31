@@ -1,0 +1,632 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Tripwire – Case Dashboard</title>
+    <style>
+        :root {
+            font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            color: #18202a;
+            background: #f4f7fb;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background:
+                linear-gradient(135deg, rgba(20, 87, 121, 0.10), transparent 34%),
+                linear-gradient(315deg, rgba(203, 88, 60, 0.12), transparent 32%),
+                #f4f7fb;
+        }
+
+        main {
+            width: min(1100px, calc(100% - 32px));
+            margin: 0 auto;
+            padding: 32px 0;
+        }
+
+        /* ── Header ──────────────────────────────────────────── */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            gap: 24px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            line-height: 0.95;
+        }
+
+        .subtitle {
+            max-width: 520px;
+            margin: 10px 0 0;
+            color: #52606d;
+            line-height: 1.5;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .agent-pill {
+            padding: 6px 14px;
+            border: 1px solid #d5dde7;
+            border-radius: 999px;
+            background: #fff;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #155f7d;
+        }
+
+        /* ── Stats row ───────────────────────────────────────── */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            border: 1px solid #d5dde7;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.86);
+            padding: 16px 20px;
+            box-shadow: 0 4px 14px rgba(42,52,65,0.06);
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: #52606d;
+            margin-bottom: 4px;
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: 900;
+        }
+
+        .stat-value.red   { color: #be3d2a; }
+        .stat-value.amber { color: #bf7f16; }
+        .stat-value.green { color: #23845d; }
+
+        /* ── Tabs ────────────────────────────────────────────── */
+        .tabs {
+            display: flex;
+            gap: 0;
+            margin-bottom: -1px;
+        }
+
+        .tab-btn {
+            padding: 10px 22px;
+            border: 1px solid #d5dde7;
+            border-bottom: none;
+            border-radius: 6px 6px 0 0;
+            background: #edf1f6;
+            color: #52606d;
+            font: inherit;
+            font-weight: 700;
+            font-size: 0.88rem;
+            cursor: pointer;
+        }
+
+        .tab-btn.active {
+            background: #fff;
+            color: #155f7d;
+            border-bottom: 1px solid #fff;
+        }
+
+        /* ── Panel / Table ───────────────────────────────────── */
+        .panel {
+            border: 1px solid #d5dde7;
+            border-radius: 0 8px 8px 8px;
+            background: rgba(255,255,255,0.86);
+            box-shadow: 0 18px 50px rgba(42,52,65,0.10);
+            overflow: hidden;
+        }
+
+        .toolbar {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            padding: 16px 18px;
+            border-bottom: 1px solid #d5dde7;
+            flex-wrap: wrap;
+        }
+
+        .toolbar input {
+            flex: 1;
+            min-width: 180px;
+            min-height: 38px;
+            border: 1px solid #b8c3cf;
+            border-radius: 6px;
+            padding: 7px 11px;
+            font: inherit;
+            background: #fff;
+            color: #18202a;
+        }
+
+        .filter-group {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            min-height: 38px;
+            border: 1px solid #b8c3cf;
+            border-radius: 6px;
+            padding: 0 14px;
+            background: #fff;
+            color: #52606d;
+            font: inherit;
+            font-size: 0.82rem;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .filter-btn.active {
+            background: #155f7d;
+            border-color: #155f7d;
+            color: #fff;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        thead th {
+            padding: 10px 14px;
+            text-align: left;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: #52606d;
+            background: #f4f7fb;
+            border-bottom: 1px solid #d5dde7;
+            white-space: nowrap;
+        }
+
+        tbody tr {
+            border-bottom: 1px solid #edf1f6;
+            cursor: pointer;
+            transition: background 0.1s;
+        }
+
+        tbody tr:hover { background: #f0f5fa; }
+        tbody tr:last-child { border-bottom: none; }
+
+        td {
+            padding: 12px 14px;
+            vertical-align: middle;
+        }
+
+        .risk-badge {
+            display: inline-block;
+            min-width: 46px;
+            padding: 3px 10px;
+            border-radius: 999px;
+            font-weight: 800;
+            font-size: 0.82rem;
+            text-align: center;
+        }
+
+        .risk-badge.high   { background: #fdecea; color: #be3d2a; }
+        .risk-badge.medium { background: #fef3e0; color: #bf7f16; }
+        .risk-badge.low    { background: #e6f7f1; color: #23845d; }
+        .risk-badge.none   { background: #f0f2f5; color: #52606d; }
+
+        .status-badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 4px;
+            font-weight: 700;
+            font-size: 0.78rem;
+            text-transform: uppercase;
+        }
+
+        .status-badge.APPROVED     { background: #e6f7f1; color: #23845d; }
+        .status-badge.DENIED       { background: #fdecea; color: #be3d2a; }
+        .status-badge.UNDER_REVIEW { background: #fef3e0; color: #bf7f16; }
+        .status-badge.UNASSIGNED   { background: #f0f2f5; color: #52606d; }
+
+        .action-btn {
+            min-height: 32px;
+            border: 1px solid #b8c3cf;
+            border-radius: 6px;
+            padding: 0 12px;
+            background: #fff;
+            color: #155f7d;
+            font: inherit;
+            font-size: 0.8rem;
+            font-weight: 700;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .action-btn:hover {
+            background: #155f7d;
+            color: #fff;
+            border-color: #155f7d;
+        }
+
+        .action-btn.assign {
+            background: #e6f7f1;
+            border-color: #23845d;
+            color: #23845d;
+        }
+
+        .action-btn.assign:hover {
+            background: #23845d;
+            color: #fff;
+        }
+
+        .empty-row td {
+            padding: 40px 14px;
+            text-align: center;
+            color: #52606d;
+        }
+
+        button.primary {
+            min-height: 38px;
+            border: 0;
+            border-radius: 6px;
+            padding: 0 16px;
+            background: #155f7d;
+            color: #fff;
+            font: inherit;
+            font-weight: 800;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        button.logout-btn {
+            min-height: 38px;
+            border: 1px solid #d5dde7;
+            border-radius: 6px;
+            padding: 0 14px;
+            background: #fff;
+            color: #52606d;
+            font: inherit;
+            font-weight: 700;
+            font-size: 0.85rem;
+            cursor: pointer;
+        }
+
+        button:disabled { opacity: 0.6; cursor: wait; }
+
+        .nav-link {
+            min-height: 38px;
+            display: inline-flex;
+            align-items: center;
+            padding: 0 16px;
+            border: 1px solid #d5dde7;
+            border-radius: 6px;
+            background: #fff;
+            color: #18202a;
+            font: inherit;
+            font-weight: 700;
+            font-size: 0.88rem;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .nav-link:hover { background: #f0f5fa; }
+
+        .error-banner {
+            display: none;
+            margin: 14px 18px;
+            border: 1px solid #e1ad9f;
+            border-radius: 6px;
+            padding: 10px 14px;
+            background: #fff4f1;
+            color: #8c2c1d;
+            font-weight: 700;
+        }
+
+        @media (max-width: 700px) {
+            thead th:nth-child(4),
+            td:nth-child(4),
+            thead th:nth-child(5),
+            td:nth-child(5) { display: none; }
+        }
+    </style>
+</head>
+<body>
+<main>
+
+    <!-- Header -->
+    <header>
+        <div>
+            <h1>Case Dashboard</h1>
+            <p class="subtitle">All transactions pulled live from the database. Assign cases to yourself and run fraud scoring.</p>
+        </div>
+        <div class="header-actions">
+            <span class="agent-pill" id="agentPill">Loading…</span>
+            <a class="nav-link" href="/index.html">⟵ Scoring Tool</a>
+            <button class="primary" id="refreshBtn">↻ Refresh</button>
+            <button class="logout-btn" id="logoutBtn">Logout</button>
+        </div>
+    </header>
+
+    <!-- Summary stats -->
+    <div class="stats">
+        <div class="stat-card">
+            <div class="stat-label">Total Cases</div>
+            <div class="stat-value" id="statTotal">—</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">High Risk (≥80)</div>
+            <div class="stat-value red" id="statHigh">—</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Under Review</div>
+            <div class="stat-value amber" id="statMedium">—</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Approved / Low</div>
+            <div class="stat-value green" id="statLow">—</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Unassigned</div>
+            <div class="stat-value" id="statUnassigned">—</div>
+        </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs">
+        <button class="tab-btn active" data-tab="all">All Cases</button>
+        <button class="tab-btn" data-tab="mine">My Cases</button>
+    </div>
+
+    <!-- Table panel -->
+    <div class="panel">
+
+        <div class="toolbar">
+            <input id="searchInput" type="text" placeholder="Search by ID, status, currency…">
+            <div class="filter-group">
+                <button class="filter-btn active" data-filter="ALL">All</button>
+                <button class="filter-btn" data-filter="UNASSIGNED">Unassigned</button>
+                <button class="filter-btn" data-filter="UNDER_REVIEW">Under Review</button>
+                <button class="filter-btn" data-filter="APPROVED">Approved</button>
+                <button class="filter-btn" data-filter="DENIED">Denied</button>
+            </div>
+        </div>
+
+        <div id="errorBanner" class="error-banner"></div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Status</th>
+                    <th>Risk Score</th>
+                    <th>Amount</th>
+                    <th>Currency</th>
+                    <th>Account ID</th>
+                    <th>Agent ID</th>
+                    <th>Created</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                <tr class="empty-row">
+                    <td colspan="9">Loading cases…</td>
+                </tr>
+            </tbody>
+        </table>
+
+    </div>
+
+</main>
+
+<script>
+    // ── Auth guard ─────────────────────────────────────────────────────────────
+    const agentJson = localStorage.getItem("agent");
+    if (!agentJson) {
+        window.location.href = "/login.html";
+    }
+    const currentAgent = JSON.parse(agentJson);
+
+    // Show agent name in header pill
+    document.querySelector("#agentPill").textContent = "👤 " + currentAgent.name;
+
+    // Logout
+    document.querySelector("#logoutBtn").addEventListener("click", () => {
+        localStorage.removeItem("agent");
+        window.location.href = "/login.html";
+    });
+
+    // ── State ──────────────────────────────────────────────────────────────────
+    let allCases  = [];
+    let myCases   = [];
+    let activeTab = "all";       // "all" | "mine"
+    let activeFilter = "ALL";
+
+    // ── DOM refs ───────────────────────────────────────────────────────────────
+    const tableBody     = document.querySelector("#tableBody");
+    const searchInput   = document.querySelector("#searchInput");
+    const refreshBtn    = document.querySelector("#refreshBtn");
+    const errorBanner   = document.querySelector("#errorBanner");
+    const filterButtons = document.querySelectorAll(".filter-btn");
+    const tabButtons    = document.querySelectorAll(".tab-btn");
+
+    // ── Init ───────────────────────────────────────────────────────────────────
+    loadAll();
+
+    // ── Events ─────────────────────────────────────────────────────────────────
+    refreshBtn.addEventListener("click", loadAll);
+    searchInput.addEventListener("input", renderTable);
+
+    filterButtons.forEach(btn => {
+        btn.addEventListener("click", () => {
+            filterButtons.forEach(b => b.classList.remove("active"));
+            btn.classList.add("active");
+            activeFilter = btn.dataset.filter;
+            renderTable();
+        });
+    });
+
+    tabButtons.forEach(btn => {
+        btn.addEventListener("click", () => {
+            tabButtons.forEach(b => b.classList.remove("active"));
+            btn.classList.add("active");
+            activeTab = btn.dataset.tab;
+            renderTable();
+        });
+    });
+
+    // ── Data fetching ──────────────────────────────────────────────────────────
+
+    async function loadAll() {
+        refreshBtn.disabled = true;
+        refreshBtn.textContent = "Loading…";
+        clearError();
+
+        try {
+            // Fetch all transactions and agent's own transactions in parallel
+            const [allRes, myRes] = await Promise.all([
+                fetch("/transaction/transactions"),
+                fetch("/transaction/agent/" + currentAgent.id)
+            ]);
+
+            if (!allRes.ok) throw new Error("Server returned " + allRes.status);
+
+            allCases = await allRes.json();
+            myCases  = myRes.ok ? await myRes.json() : [];
+
+            renderStats();
+            renderTable();
+        } catch (err) {
+            showError("Could not load transactions: " + err.message);
+            tableBody.innerHTML = `<tr class="empty-row"><td colspan="9">Failed to load. Check that the server is running.</td></tr>`;
+        } finally {
+            refreshBtn.disabled = false;
+            refreshBtn.textContent = "↻ Refresh";
+        }
+    }
+
+    // ── Assign ─────────────────────────────────────────────────────────────────
+
+    async function assignCase(transactionId) {
+        try {
+            const res = await fetch(`/transaction/${transactionId}/assign/${currentAgent.id}`, {
+                method: "PUT"
+            });
+            if (!res.ok) throw new Error("Assign failed with " + res.status);
+            // Refresh to show the updated row
+            await loadAll();
+        } catch (err) {
+            showError("Could not assign case: " + err.message);
+        }
+    }
+
+    // ── Rendering ──────────────────────────────────────────────────────────────
+
+    function renderStats() {
+        const src = allCases;
+        document.querySelector("#statTotal").textContent      = src.length;
+        document.querySelector("#statHigh").textContent       = src.filter(t => (t.riskScore ?? 0) >= 80).length;
+        document.querySelector("#statMedium").textContent     = src.filter(t => (t.riskScore ?? 0) >= 50 && (t.riskScore ?? 0) < 80).length;
+        document.querySelector("#statLow").textContent        = src.filter(t => (t.riskScore ?? 0) < 50 && t.status !== "UNASSIGNED").length;
+        document.querySelector("#statUnassigned").textContent = src.filter(t => t.status === "UNASSIGNED").length;
+    }
+
+    function renderTable() {
+        // Pick source list by active tab
+        const source = activeTab === "mine" ? myCases : allCases;
+
+        const query = searchInput.value.toLowerCase();
+
+        // Apply status filter
+        let filtered = activeFilter === "ALL"
+            ? source
+            : source.filter(t => t.status === activeFilter);
+
+        // Apply search
+        if (query) {
+            filtered = filtered.filter(t =>
+                String(t.id).includes(query) ||
+                (t.status   && t.status.toLowerCase().includes(query)) ||
+                (t.currency && t.currency.toLowerCase().includes(query)) ||
+                (t.reasonId && t.reasonId.toLowerCase().includes(query))
+            );
+        }
+
+        if (filtered.length === 0) {
+            tableBody.innerHTML = `<tr class="empty-row"><td colspan="9">${
+                activeTab === "mine"
+                    ? "No cases assigned to you yet. Assign one from the All Cases tab."
+                    : "No cases match the current filter."
+            }</td></tr>`;
+            return;
+        }
+
+        tableBody.innerHTML = filtered.map(t => {
+            const score     = t.riskScore ?? 0;
+            const riskClass = score >= 80 ? "high" : score >= 50 ? "medium" : score > 0 ? "low" : "none";
+            const riskLabel = score > 0 ? Math.round(score) : "—";
+            const status    = t.status || "UNASSIGNED";
+            const amount    = t.amount != null ? Number(t.amount).toLocaleString("en-US", { minimumFractionDigits: 2 }) : "—";
+            const created   = t.createdAt ? new Date(t.createdAt).toLocaleString() : "—";
+
+            // Show "Assign to me" only for UNASSIGNED cases and only on the All tab
+            const assignBtn = (status === "UNASSIGNED" && activeTab === "all")
+                ? `<button class="action-btn assign" onclick="event.stopPropagation(); assignCase(${t.id})">Assign to me</button>`
+                : `<button class="action-btn" onclick="event.stopPropagation(); openScoring(${t.id})">Score →</button>`;
+
+            return `
+                <tr onclick="openScoring(${t.id})">
+                    <td><strong>${t.id}</strong></td>
+                    <td><span class="status-badge ${status}">${status.replace("_", " ")}</span></td>
+                    <td><span class="risk-badge ${riskClass}">${riskLabel}</span></td>
+                    <td>${amount}</td>
+                    <td>${t.currency || "—"}</td>
+                    <td>${t.accountId ?? "—"}</td>
+                    <td>${t.agentId ?? "—"}</td>
+                    <td>${created}</td>
+                    <td>${assignBtn}</td>
+                </tr>`;
+        }).join("");
+    }
+
+    // ── Navigation ─────────────────────────────────────────────────────────────
+    function openScoring(id) {
+        window.location.href = `/index.html?id=${id}`;
+    }
+
+    // ── Error handling ─────────────────────────────────────────────────────────
+    function showError(message) {
+        errorBanner.textContent = message;
+        errorBanner.style.display = "block";
+    }
+
+    function clearError() {
+        errorBanner.textContent = "";
+        errorBanner.style.display = "none";
+    }
+</script>
+
+<!-- Pre-fill transaction ID when coming from dashboard via ?id=X -->
+<script>
+    const params = new URLSearchParams(window.location.search);
+    if (params.has("id")) {
+        const input = document.querySelector("#transactionId");
+        if (input) input.value = params.get("id");
+    }
+</script>
+</body>
+</html>

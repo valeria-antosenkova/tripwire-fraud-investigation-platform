@@ -93,9 +93,22 @@ public class TransactionDaoImpl implements TransactionDao{
 
     @Override
     public void deleteTransaction(int id) {
-        //TODO
         final String DELETE_TRANSACTION = "DELETE FROM transactions WHERE transaction_id = ?";
         jdbc.update(DELETE_TRANSACTION, id);
+    }
+
+    @Override
+    @Transactional
+    public void assignTransaction(int transactionId, int agentId) {
+        // Set agent_id and move status to UNDER_REVIEW (status_id = 1)
+        final String SQL = "UPDATE transactions SET agent_id = ?, status_id = 1 WHERE transaction_id = ?";
+        jdbc.update(SQL, agentId, transactionId);
+    }
+
+    @Override
+    public List<Transaction> getTransactionsByAgentId(int agentId) {
+        final String SQL = "SELECT * FROM transactions WHERE agent_id = ?";
+        return jdbc.query(SQL, new TransactionMapper(), agentId);
     }
 
 }
