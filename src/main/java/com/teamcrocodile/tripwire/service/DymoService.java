@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.teamcrocodile.tripwire.client.DymoClient;
 import com.teamcrocodile.tripwire.client.dto.DymoRequest;
 import com.teamcrocodile.tripwire.client.dto.DymoResponse;
+import com.teamcrocodile.tripwire.client.dto.Rules;
 import com.teamcrocodile.tripwire.model.Account;
 import org.springframework.stereotype.Service;
 
@@ -33,12 +34,13 @@ public class DymoService {
     }
 
     public DymoResponse checkAccount(Account account) {
-        DymoResponse response = new DymoResponse();
-        JsonNode rawResponse = dymoClient.verify(DymoRequest.fromAccount(account));
-        response.setRawResponse(rawResponse);
-        response.setApiAvailable(rawResponse != null);
+        DymoResponse response = dymoClient.verify(DymoRequest.fromAccount(account));
+        if (response == null) {
+            response = new DymoResponse();
+            response.getSignals().add("Dymo API unavailable or token not configured; used local scoring only");
+        }
 
-        int apiScore = scoreFromApiResponse(rawResponse, response);
+        int apiScore = scoreFromApiResponse(response);
         int localScore = scoreFromLocalAccountSignals(account, response);
         int finalScore = Math.max(apiScore, localScore);
 
@@ -47,9 +49,9 @@ public class DymoService {
         return response;
     }
 
-    private int scoreFromApiResponse(JsonNode node, DymoResponse response) {
+    private int scoreFromApiResponse(DymoResponse response) {
+        JsonNode node = response.getRawResponse();
         if (node == null || node.isNull()) {
-            response.getSignals().add("Dymo API unavailable or token not configured; used local scoring only");
             return 0;
         }
 
@@ -60,7 +62,23 @@ public class DymoService {
         }
 
         int score = 0;
-        score += scoreBooleanFlags(node, response, "");
+        score += scoreRule(response.getEmail() != null && response.getEmail().isFraud(), 20, "Dymo flagged email.fraud", response);
+        score += scoreRule(response.getEmail() != null && response.getEmail().isProxiedEmail(), 15, "Dymo flagged email.proxiedEmail", response);
+        score += scoreRule(response.getEmail() != null && response.getEmail().isFreeSubdomain(), 10, "Dymo flagged email.freeSubdomain", response);
+        score += scoreRule(response.getEmail() != null && response.getEmail().isRoleAccount(), 5, "Dymo flagged email.roleAccount", response);
+
+        score += scoreRule(response.getDomain() != null && response.getDomain().isFraud(), 15, "Dymo flagged domain.fraud", response);
+
+        score += scoreRule(response.getIp() != null && response.getIp().isFraud(), 25, "Dymo flagged ip.fraud", response);
+        score += scoreRule(response.getIp() != null && response.getIp().isVpn(), 15, "Dymo flagged ip.vpn", response);
+        score += scoreRule(response.getIp() != null && response.getIp().isProxy(), 15, "Dymo flagged ip.proxy", response);
+
+        score += scoreRule(response.getPhone() != null && response.getPhone().isFraud(), 10, "Dymo flagged phone.fraud", response);
+        score += scoreRule(response.getIban() != null && response.getIban().isFraud(), 10, "Dymo flagged iban.fraud", response);
+        score += scoreRule(isFraud(response.getCreditCard()), 15, "Dymo flagged creditCard.fraud", response);
+        score += scoreRule(isFraud(response.getWallet()), 15, "Dymo flagged wallet.fraud", response);
+        score += scoreRule(isFraud(response.getUserAgent()), 10, "Dymo flagged userAgent.fraud", response);
+
         return Math.min(score, 100);
     }
 
@@ -95,72 +113,16 @@ public class DymoService {
         return null;
     }
 
-    private int scoreBooleanFlags(JsonNode node, DymoResponse response, String path) {
-        int score = 0;
-
-        if (node.isObject()) {
-            Iterator<Map.Entry<String, JsonNode>> fields = node.fields();
-            while (fields.hasNext()) {
-                Map.Entry<String, JsonNode> field = fields.next();
-                String key = field.getKey().toLowerCase(Locale.ROOT);
-                String currentPath = path.isBlank() ? field.getKey() : path + "." + field.getKey();
-                JsonNode value = field.getValue();
-
-                if (value.isBoolean() && value.asBoolean()) {
-                    int weight = apiFlagWeight(currentPath, key);
-                    if (weight > 0) {
-                        score += weight;
-                        response.getSignals().add("Dymo flagged " + currentPath);
-                    }
-                }
-
-                score += scoreBooleanFlags(value, response, currentPath);
-            }
-        } else if (node.isArray()) {
-            for (JsonNode item : node) {
-                score += scoreBooleanFlags(item, response, path);
-            }
+    private int scoreRule(boolean triggered, int weight, String signal, DymoResponse response) {
+        if (!triggered) {
+            return 0;
         }
-
-        return Math.min(score, 100);
+        response.getSignals().add(signal);
+        return weight;
     }
 
-    private int apiFlagWeight(String path, String key) {
-        String normalizedPath = path.toLowerCase(Locale.ROOT);
-
-        if (key.contains("fraud")) {
-            if (normalizedPath.startsWith("ip.")) {
-                return 25;
-            }
-            if (normalizedPath.startsWith("email.")) {
-                return 20;
-            }
-            if (normalizedPath.startsWith("domain.")) {
-                return 15;
-            }
-            if (normalizedPath.startsWith("creditcard.") || normalizedPath.startsWith("wallet.")) {
-                return 15;
-            }
-            if (normalizedPath.startsWith("phone.") || normalizedPath.startsWith("iban.")) {
-                return 10;
-            }
-            return 15;
-        }
-
-        if (key.contains("blacklist") || key.contains("tor")) {
-            return 25;
-        }
-        if (key.contains("proxy") || key.contains("vpn")) {
-            return 15;
-        }
-        if (key.contains("disposable") || key.contains("proxiedemail")) {
-            return 15;
-        }
-        if (key.contains("risk") || key.contains("suspicious")) {
-            return 10;
-        }
-
-        return 0;
+    private boolean isFraud(Rules rules) {
+        return rules != null && rules.isFraud();
     }
 
     private int scoreFromLocalAccountSignals(Account account, DymoResponse response) {
