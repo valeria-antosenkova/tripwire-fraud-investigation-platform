@@ -50,9 +50,18 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     public void deleteTransaction(int id) {
-
         transactionDao.deleteTransaction(id);
+    }
 
+    @Override
+    public Transaction assignTransaction(int transactionId, int agentId) {
+        transactionDao.assignTransaction(transactionId, agentId);
+        return transactionDao.getTransactionById(transactionId);
+    }
+
+    @Override
+    public List<Transaction> getTransactionsByAgentId(int agentId) {
+        return transactionDao.getTransactionsByAgentId(agentId);
     }
 
     @Override

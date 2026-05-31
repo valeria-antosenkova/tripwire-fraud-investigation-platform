@@ -2,9 +2,11 @@ package com.teamcrocodile.tripwire.controller;
 
 import com.teamcrocodile.tripwire.model.Agent;
 import com.teamcrocodile.tripwire.service.AgentService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/agent")
@@ -42,5 +44,27 @@ public class AgentController {
         agentService.deleteAgent(id);
     }
 
+    /**
+     * Login endpoint. Accepts { "email": "...", "password": "..." }
+     * Returns the agent (without password hash) on success, or 401 on failure.
+     */
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody Map<String, String> credentials) {
+        String email    = credentials.get("email");
+        String password = credentials.get("password");
+
+        boolean ok = agentService.authenticateAgent(email, password);
+        if (!ok) {
+            return ResponseEntity.status(401).body(Map.of("error", "Invalid email or password"));
+        }
+
+        Agent agent = agentService.getAgentByEmail(email);
+        // Return agent info without the password hash
+        return ResponseEntity.ok(Map.of(
+                "id",    agent.getId(),
+                "name",  agent.getName(),
+                "email", agent.getEmail()
+        ));
+    }
 
 }

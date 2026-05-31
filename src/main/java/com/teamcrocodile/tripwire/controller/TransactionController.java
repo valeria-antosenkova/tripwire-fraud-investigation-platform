@@ -53,4 +53,16 @@ public class TransactionController {
         transactionService.deleteTransaction(id);
     }
 
+    // Assign a transaction to an agent — sets agent_id and moves status to UNDER_REVIEW
+    @PutMapping("/{id}/assign/{agentId}")
+    public Transaction assignTransaction(@PathVariable int id, @PathVariable int agentId) {
+        return transactionService.assignTransaction(id, agentId);
+    }
+
+    // Get all transactions assigned to a specific agent
+    @GetMapping("/agent/{agentId}")
+    public List<Transaction> getTransactionsByAgent(@PathVariable int agentId) {
+        return transactionService.getTransactionsByAgentId(agentId);
+    }
+
 }
