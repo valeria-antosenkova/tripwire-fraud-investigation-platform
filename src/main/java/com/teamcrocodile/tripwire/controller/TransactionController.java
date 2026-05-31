@@ -59,6 +59,12 @@ public class TransactionController {
         return transactionService.assignTransaction(id, agentId);
     }
 
+    // Unassign a transaction from an agent — clears agent_id and sets status to UNASSIGNED
+    @PutMapping("/{id}/unassign/{agentId}")
+    public Transaction unassignTransaction(@PathVariable int id, @PathVariable int agentId) {
+        return transactionService.unassignTransaction(id, agentId);
+    }
+
     // Get all transactions assigned to a specific agent
     @GetMapping("/agent/{agentId}")
     public List<Transaction> getTransactionsByAgent(@PathVariable int agentId) {

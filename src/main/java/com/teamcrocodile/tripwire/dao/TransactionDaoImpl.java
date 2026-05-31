@@ -106,6 +106,15 @@ public class TransactionDaoImpl implements TransactionDao{
     }
 
     @Override
+    @Transactional
+    public void unassignTransaction(int transactionId, int agentId) {
+        // Only unassign if the transaction is currently assigned to the requesting agent
+        // Clear agent_id and set status to UNASSIGNED (status_id = 4)
+        final String SQL = "UPDATE transactions SET agent_id = NULL, status_id = 4 WHERE transaction_id = ? AND agent_id = ?";
+        jdbc.update(SQL, transactionId, agentId);
+    }
+
+    @Override
     public List<Transaction> getTransactionsByAgentId(int agentId) {
         final String SQL = "SELECT * FROM transactions WHERE agent_id = ?";
         return jdbc.query(SQL, new TransactionMapper(), agentId);

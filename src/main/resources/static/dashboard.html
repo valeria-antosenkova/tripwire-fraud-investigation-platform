@@ -542,6 +542,19 @@
         }
     }
 
+    async function unassignCase(transactionId) {
+        try {
+            const res = await fetch(`/transaction/${transactionId}/unassign/${currentAgent.id}`, {
+                method: "PUT"
+            });
+            if (!res.ok) throw new Error("Unassign failed with " + res.status);
+            // Refresh to show the updated row
+            await loadAll();
+        } catch (err) {
+            showError("Could not unassign case: " + err.message);
+        }
+    }
+
     // ── Rendering ──────────────────────────────────────────────────────────────
 
     function renderStats() {
@@ -593,6 +606,7 @@
 
             // Show "Assign to me" only for UNASSIGNED cases and only on the All tab
             // Show "Score" button only if in My Cases tab or in All Cases assigned to current agent
+            // Show "Unassign" button in My Cases tab
             let assignBtn = '';
             if (activeTab === "all") {
                 if (status === "UNASSIGNED") {
@@ -601,7 +615,10 @@
                     assignBtn = `<button class="action-btn" onclick="event.stopPropagation(); openScoring(${t.id})">Score →</button>`;
                 }
             } else {
-                assignBtn = `<button class="action-btn" onclick="event.stopPropagation(); openScoring(${t.id})">Score →</button>`;
+                assignBtn = `<div style="display: flex; gap: 6px;">
+                    <button class="action-btn" onclick="event.stopPropagation(); openScoring(${t.id})">Score →</button>
+                    <button class="action-btn" onclick="event.stopPropagation(); unassignCase(${t.id})" style="color: #be3d2a; border-color: #be3d2a;">Unassign</button>
+                </div>`;
             }
 
             // Only allow clicking on rows in "My Cases" tab
