@@ -62,22 +62,22 @@ public class DymoService {
         }
 
         int score = 0;
-        score += scoreRule(response.getEmail() != null && response.getEmail().isFraud(), 20, "Dymo flagged email.fraud", response);
-        score += scoreRule(response.getEmail() != null && response.getEmail().isProxiedEmail(), 15, "Dymo flagged email.proxiedEmail", response);
+        score += scoreRule(response.getEmail() != null && response.getEmail().isFraud(), 50, "Dymo flagged email.fraud", response);
+        score += scoreRule(response.getEmail() != null && response.getEmail().isProxiedEmail(), 50, "Dymo flagged email.proxiedEmail", response);
         score += scoreRule(response.getEmail() != null && response.getEmail().isFreeSubdomain(), 10, "Dymo flagged email.freeSubdomain", response);
         score += scoreRule(response.getEmail() != null && response.getEmail().isRoleAccount(), 5, "Dymo flagged email.roleAccount", response);
 
-        score += scoreRule(response.getDomain() != null && response.getDomain().isFraud(), 15, "Dymo flagged domain.fraud", response);
+        score += scoreRule(response.getDomain() != null && response.getDomain().isFraud(), 70, "Dymo flagged domain.fraud", response);
 
-        score += scoreRule(response.getIp() != null && response.getIp().isFraud(), 25, "Dymo flagged ip.fraud", response);
-        score += scoreRule(response.getIp() != null && response.getIp().isVpn(), 15, "Dymo flagged ip.vpn", response);
-        score += scoreRule(response.getIp() != null && response.getIp().isProxy(), 15, "Dymo flagged ip.proxy", response);
+        score += scoreRule(response.getIp() != null && response.getIp().isFraud(), 70, "Dymo flagged ip.fraud", response);
+        score += scoreRule(response.getIp() != null && response.getIp().isVpn(), 25, "Dymo flagged ip.vpn", response);
+        score += scoreRule(response.getIp() != null && response.getIp().isProxy(), 25, "Dymo flagged ip.proxy", response);
 
-        score += scoreRule(response.getPhone() != null && response.getPhone().isFraud(), 10, "Dymo flagged phone.fraud", response);
-        score += scoreRule(response.getIban() != null && response.getIban().isFraud(), 10, "Dymo flagged iban.fraud", response);
-        score += scoreRule(isFraud(response.getCreditCard()), 15, "Dymo flagged creditCard.fraud", response);
-        score += scoreRule(isFraud(response.getWallet()), 15, "Dymo flagged wallet.fraud", response);
-        score += scoreRule(isFraud(response.getUserAgent()), 10, "Dymo flagged userAgent.fraud", response);
+        score += scoreRule(response.getPhone() != null && response.getPhone().isFraud(), 70, "Dymo flagged phone.fraud", response);
+        score += scoreRule(response.getIban() != null && response.getIban().isFraud(), 70, "Dymo flagged iban.fraud", response);
+        score += scoreRule(isFraud(response.getCreditCard()), 70, "Dymo flagged creditCard.fraud", response);
+        score += scoreRule(isFraud(response.getWallet()), 70, "Dymo flagged wallet.fraud", response);
+        score += scoreRule(isFraud(response.getUserAgent()), 60, "Dymo flagged userAgent.fraud", response);
 
         return Math.min(score, 100);
     }
