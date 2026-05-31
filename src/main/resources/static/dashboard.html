@@ -280,6 +280,14 @@
             color: #52606d;
         }
 
+        tbody tr.non-clickable {
+            cursor: default;
+        }
+
+        tbody tr.non-clickable:hover {
+            background: inherit;
+        }
+
         button.primary {
             min-height: 38px;
             border: 0;
@@ -584,12 +592,24 @@
             const created   = t.createdAt ? new Date(t.createdAt).toLocaleString() : "—";
 
             // Show "Assign to me" only for UNASSIGNED cases and only on the All tab
-            const assignBtn = (status === "UNASSIGNED" && activeTab === "all")
-                ? `<button class="action-btn assign" onclick="event.stopPropagation(); assignCase(${t.id})">Assign to me</button>`
-                : `<button class="action-btn" onclick="event.stopPropagation(); openScoring(${t.id})">Score →</button>`;
+            // Show "Score" button only if in My Cases tab or in All Cases assigned to current agent
+            let assignBtn = '';
+            if (activeTab === "all") {
+                if (status === "UNASSIGNED") {
+                    assignBtn = `<button class="action-btn assign" onclick="event.stopPropagation(); assignCase(${t.id})">Assign to me</button>`;
+                } else if (t.agentId === currentAgent.id) {
+                    assignBtn = `<button class="action-btn" onclick="event.stopPropagation(); openScoring(${t.id})">Score →</button>`;
+                }
+            } else {
+                assignBtn = `<button class="action-btn" onclick="event.stopPropagation(); openScoring(${t.id})">Score →</button>`;
+            }
+
+            // Only allow clicking on rows in "My Cases" tab
+            const rowClass = activeTab === "all" ? 'class="non-clickable"' : '';
+            const rowClick = activeTab === "all" ? '' : `onclick="openScoring(${t.id})"`;
 
             return `
-                <tr onclick="openScoring(${t.id})">
+                <tr ${rowClass} ${rowClick}>
                     <td><strong>${t.id}</strong></td>
                     <td><span class="status-badge ${status}">${status.replace("_", " ")}</span></td>
                     <td><span class="risk-badge ${riskClass}">${riskLabel}</span></td>
