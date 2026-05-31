@@ -602,10 +602,16 @@
             : source.filter(t => t.status === activeFilter);
 
         // Hide completed cases by default unless the "Show completed" toggle is enabled
+        // When viewing "My Cases", UNDER_REVIEW items should still be shown (they are not completed)
         if (!showCompleted) {
             filtered = filtered.filter(t => {
                 const s = t.status || "UNASSIGNED";
-                return s !== "APPROVED" && s !== "DENIED";
+                if (activeTab === "mine") {
+                    // In My Cases, only hide truly completed statuses
+                    return s !== "APPROVED" && s !== "DENIED";
+                }
+                // In All Cases, also hide items that are UNDER_REVIEW when showCompleted is false
+                return s !== "APPROVED" && s !== "DENIED" && s !== "UNDER_REVIEW";
             });
         }
 
