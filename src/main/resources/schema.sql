@@ -21,10 +21,11 @@ CREATE TABLE Account (
 
 
 CREATE TABLE Agent (
-                       agent_id      INT          PRIMARY KEY AUTO_INCREMENT,
-                        name          VARCHAR(100) NOT NULL,
-                        email         VARCHAR(150) UNIQUE NOT NULL,
-                        password_hash VARCHAR(255) NOT NULL
+                       agent_id        INT          PRIMARY KEY AUTO_INCREMENT,
+                       name            VARCHAR(100) NOT NULL,
+                       email           VARCHAR(150) UNIQUE NOT NULL,
+                       password_hash   VARCHAR(255) NOT NULL,
+                       profile_picture LONGTEXT
 );
 
 

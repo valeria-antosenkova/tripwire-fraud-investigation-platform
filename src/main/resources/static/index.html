@@ -110,6 +110,12 @@
             display: grid; place-items: center;
             font-size: 12px; font-weight: 700; color: #fff;
             flex-shrink: 0;
+            overflow: hidden;
+        }
+        .sb-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
         .sb-agent-info { flex: 1; min-width: 0; }
         .sb-agent-name { font-size: 13px; font-weight: 600; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -763,8 +769,19 @@
         if (!raw) { window.location.href = '/login.html'; return; }
         const agent = JSON.parse(raw);
         document.querySelector('#agentName').textContent = agent.name || '—';
-        document.querySelector('#agentInitials').textContent =
-            (agent.name || '?').split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+
+        // Display profile picture or initials in sidebar
+        const agentAvatarDiv = document.querySelector('#agentInitials');
+        if (agent.profilePicture) {
+            const img = document.createElement("img");
+            img.src = agent.profilePicture;
+            agentAvatarDiv.innerHTML = "";
+            agentAvatarDiv.appendChild(img);
+        } else {
+            agentAvatarDiv.textContent =
+                (agent.name || '?').split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+        }
+
         document.querySelector('#logoutBtn').addEventListener('click', () => {
             localStorage.removeItem('agent');
             window.location.href = '/login.html';

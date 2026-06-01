@@ -110,6 +110,16 @@ public class AgentServiceImpl implements AgentService {
         return rawPassword.equals(storedPassword);
     }
 
-
+    @Override
+    public void uploadProfilePicture(int id, String imageData) {
+        if (imageData == null || imageData.isBlank()) {
+            throw new IllegalArgumentException("Image data is required");
+        }
+        Agent agent = agentDao.getAgentById(id);
+        if (agent == null) {
+            throw new IllegalArgumentException("Agent with id " + id + " not found");
+        }
+        agentDao.updateProfilePicture(id, imageData);
+    }
 
 }

@@ -13,6 +13,7 @@ public interface AgentService {
     Agent getAgentByEmail(String email);
     boolean authenticateAgent(String email, String password);
     void changePassword(int id, String currentPassword, String newPassword);
+    void uploadProfilePicture(int id, String imageData);
     Agent updateAgentData(int id, Agent agent);
     void deleteAgent(int id);
 }

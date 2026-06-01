@@ -54,6 +54,20 @@ public class AgentController {
         }
     }
 
+    @PutMapping("/{id}/profile-picture")
+    public ResponseEntity<?> uploadProfilePicture(@PathVariable int id, @RequestBody Map<String, String> request) {
+        if (request == null) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Request body is required"));
+        }
+        try {
+            String imageData = request.get("imageData");
+            agentService.uploadProfilePicture(id, imageData);
+            return ResponseEntity.ok(Map.of("message", "Profile picture updated successfully"));
+        } catch (IllegalArgumentException ex) {
+            return ResponseEntity.badRequest().body(Map.of("error", ex.getMessage()));
+        }
+    }
+
     @DeleteMapping("/{id}")
     public void deleteAgent(@PathVariable int id) {
         agentService.deleteAgent(id);
@@ -78,7 +92,8 @@ public class AgentController {
         return ResponseEntity.ok(Map.of(
                 "id",    agent.getId(),
                 "name",  agent.getName(),
-                "email", agent.getEmail()
+                "email", agent.getEmail(),
+                "profilePicture", agent.getProfile_picture() != null ? agent.getProfile_picture() : ""
         ));
     }
 

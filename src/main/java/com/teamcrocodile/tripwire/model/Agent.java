@@ -6,7 +6,8 @@ public class Agent {
     private String name;
     private String email;
     private String pass_hash;
-
+    private String profile_picture;
+    
     public int getId() {
         return id;
     }
@@ -33,6 +34,13 @@ public class Agent {
     }
     public void setPass_hash(String pass_hash) {
         this.pass_hash = pass_hash;
+    }
+
+    public String getProfile_picture() {
+        return profile_picture;
+    }
+    public void setProfile_picture(String profile_picture) {
+        this.profile_picture = profile_picture;
     }
 
 }

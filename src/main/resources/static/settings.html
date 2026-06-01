@@ -144,6 +144,13 @@
             font-size: 12px; font-weight: 700;
             color: #fff;
             flex-shrink: 0;
+            overflow: hidden;
+        }
+
+        .sb-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
 
         .sb-agent-info { flex: 1; min-width: 0; }
@@ -302,6 +309,95 @@
 
         .banner.visible { display: block; }
 
+        .profile-section {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 28px;
+            padding-bottom: 24px;
+            border-bottom: 1.5px solid var(--border);
+        }
+
+        .profile-picture-container {
+            position: relative;
+            width: 100px;
+            height: 100px;
+            flex-shrink: 0;
+        }
+
+        .profile-picture {
+            width: 100%;
+            height: 100%;
+            border-radius: 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: grid;
+            place-items: center;
+            overflow: hidden;
+            border: 2px solid var(--border);
+        }
+
+        .profile-picture img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .profile-picture.no-image {
+            font-size: 36px;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .profile-picture-upload {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 36px;
+            height: 36px;
+            background: var(--accent);
+            border-radius: 12px;
+            display: grid;
+            place-items: center;
+            cursor: pointer;
+            border: 2px solid var(--surface);
+            transition: transform 0.15s, box-shadow 0.15s;
+        }
+
+        .profile-picture-upload:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+        }
+
+        .profile-picture-upload svg {
+            width: 18px;
+            height: 18px;
+            stroke: #fff;
+            fill: none;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        #profilePictureInput {
+            display: none;
+        }
+
+        .profile-info {
+            flex: 1;
+        }
+
+        .profile-name {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 4px;
+        }
+
+        .profile-email {
+            font-size: 13px;
+            color: var(--text-2);
+        }
+
         @media (max-width: 1000px) {
             .sidebar { width: 68px; }
             .sb-brand { justify-content: center; padding: 20px 0; }
@@ -369,6 +465,20 @@
             <div id="errorBanner" class="banner error"></div>
             <div id="successBanner" class="banner success"></div>
 
+            <div class="profile-section">
+                <div class="profile-picture-container">
+                    <div class="profile-picture no-image" id="profileDisplay">-</div>
+                    <div class="profile-picture-upload" id="uploadBtn">
+                        <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                    </div>
+                    <input type="file" id="profilePictureInput" accept="image/*">
+                </div>
+                <div class="profile-info">
+                    <div class="profile-name" id="profileName">Loading...</div>
+                    <div class="profile-email" id="profileEmail">Loading...</div>
+                </div>
+            </div>
+
             <div class="field">
                 <label for="currentPassword">Current password</label>
                 <input id="currentPassword" type="password" autocomplete="current-password" required>
@@ -399,13 +509,23 @@
     const currentAgent = JSON.parse(raw || "{}");
 
     document.querySelector("#agentName").textContent = currentAgent.name || "Unknown agent";
-    document.querySelector("#agentInitials").textContent =
-        (currentAgent.name || "?")
-            .split(" ")
-            .map((w) => w[0])
-            .join("")
-            .slice(0, 2)
-            .toUpperCase();
+
+    // Display profile picture or initials in sidebar
+    const agentAvatarDiv = document.querySelector("#agentInitials");
+    if (currentAgent.profilePicture) {
+        const img = document.createElement("img");
+        img.src = currentAgent.profilePicture;
+        agentAvatarDiv.innerHTML = "";
+        agentAvatarDiv.appendChild(img);
+    } else {
+        agentAvatarDiv.textContent =
+            (currentAgent.name || "?")
+                .split(" ")
+                .map((w) => w[0])
+                .join("")
+                .slice(0, 2)
+                .toUpperCase();
+    }
 
     document.querySelector("#logoutBtn").addEventListener("click", () => {
         localStorage.removeItem("agent");
@@ -419,6 +539,105 @@
     const saveBtn = document.querySelector("#saveBtn");
     const errorBanner = document.querySelector("#errorBanner");
     const successBanner = document.querySelector("#successBanner");
+    const uploadBtn = document.querySelector("#uploadBtn");
+    const profilePictureInput = document.querySelector("#profilePictureInput");
+    const profileDisplay = document.querySelector("#profileDisplay");
+    const profileName = document.querySelector("#profileName");
+    const profileEmail = document.querySelector("#profileEmail");
+
+    // Display agent info
+    profileName.textContent = currentAgent.name || "Unknown agent";
+    profileEmail.textContent = currentAgent.email || "No email";
+
+    // Display profile picture if exists
+    if (currentAgent.profilePicture) {
+        const img = document.createElement("img");
+        img.src = currentAgent.profilePicture;
+        profileDisplay.innerHTML = "";
+        profileDisplay.classList.remove("no-image");
+        profileDisplay.appendChild(img);
+    } else {
+        const initials = (currentAgent.name || "?")
+            .split(" ")
+            .map((w) => w[0])
+            .join("")
+            .slice(0, 2)
+            .toUpperCase();
+        profileDisplay.textContent = initials;
+    }
+
+    // Profile picture upload handlers
+    uploadBtn.addEventListener("click", () => {
+        profilePictureInput.click();
+    });
+
+    profilePictureInput.addEventListener("change", async (event) => {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        // Validate file is an image
+        if (!file.type.startsWith("image/")) {
+            showError("Please select a valid image file.");
+            return;
+        }
+
+        // Validate file size (max 5MB)
+        const maxSize = 5 * 1024 * 1024;
+        if (file.size > maxSize) {
+            showError("Image file must be smaller than 5MB.");
+            return;
+        }
+
+        setLoading(true);
+        try {
+            const reader = new FileReader();
+            reader.onload = async (e) => {
+                const imageData = e.target.result; // Base64 encoded image
+
+                const res = await fetch(`/agent/${currentAgent.id}/profile-picture`, {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ imageData })
+                });
+
+                const text = await res.text();
+                let data = {};
+                if (text) {
+                    try { data = JSON.parse(text); }
+                    catch { data = { error: text }; }
+                }
+
+                if (!res.ok) {
+                    throw new Error(data.error || data.message || "Could not upload profile picture.");
+                }
+
+                // Update local storage and display
+                currentAgent.profilePicture = imageData;
+                localStorage.setItem("agent", JSON.stringify(currentAgent));
+
+                // Update display
+                const img = document.createElement("img");
+                img.src = imageData;
+                profileDisplay.innerHTML = "";
+                profileDisplay.classList.remove("no-image");
+                profileDisplay.appendChild(img);
+
+                // Update sidebar avatar
+                const sidebarImg = document.createElement("img");
+                sidebarImg.src = imageData;
+                agentAvatarDiv.innerHTML = "";
+                agentAvatarDiv.appendChild(sidebarImg);
+
+                showSuccess(data.message || "Profile picture updated successfully.");
+            };
+            reader.readAsDataURL(file);
+        } catch (err) {
+            showError(err.message || "Could not upload profile picture.");
+        } finally {
+            setLoading(false);
+            profilePictureInput.value = ""; // Reset input
+        }
+    });
 
     form.addEventListener("submit", async (event) => {
         event.preventDefault();
