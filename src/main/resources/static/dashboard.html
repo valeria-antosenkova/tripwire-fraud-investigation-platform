@@ -423,6 +423,11 @@
             user-select: none;
         }
 
+        /* visually indicate disabled state for the show completed control */
+        .toggle-wrap.disabled { opacity: 0.6; cursor: default; }
+
+        #showCompleted:disabled { cursor: not-allowed; }
+
         #showCompleted {
             accent-color: var(--accent);
             width: 14px; height: 14px;
@@ -734,6 +739,8 @@
     const viewParam = new URLSearchParams(window.location.search).get("view");
     let activeTab = viewParam === "mine" ? "mine" : "all";
     let activeFilter = "ALL", showCompleted = false;
+    // Tracks whether the user explicitly toggled the checkbox. Null = user hasn't set it yet.
+    let userSetShowCompleted = null;
 
     const tableBody   = document.querySelector("#tableBody");
     const searchInput = document.querySelector("#searchInput");
@@ -744,6 +751,7 @@
     const showCompletedCb = document.querySelector("#showCompleted");
 
     syncCaseNav();
+    updateShowCompletedControl();
     loadAll();
 
     refreshBtn.addEventListener("click", loadAll);
@@ -753,6 +761,7 @@
         filterBtns.forEach(b => b.classList.remove("active"));
         btn.classList.add("active");
         activeFilter = btn.dataset.filter;
+        updateShowCompletedControl();
         renderTable();
     }));
 
@@ -768,11 +777,16 @@
         url.searchParams.set("view", activeTab);
         history.replaceState({}, "", url);
 
+        updateShowCompletedControl();
         renderTable();
     }));
 
     showCompletedCb?.addEventListener("change", () => {
+        // Ignore changes while control is disabled (we programmatically set it)
+        if (showCompletedCb.disabled) return;
         showCompleted = showCompletedCb.checked;
+        // record that the user explicitly set the checkbox so we can restore their choice
+        userSetShowCompleted = showCompletedCb.checked;
         renderTable();
     });
 
@@ -787,6 +801,8 @@
             if (!allRes.ok) throw new Error("Server returned " + allRes.status);
             allCases = await allRes.json();
             myCases  = myRes.ok ? await myRes.json() : [];
+            // Update the show-completed control state based on current tab/filter
+            updateShowCompletedControl();
             renderStats();
             renderTable();
         } catch (err) {
@@ -888,6 +904,34 @@
                 <td>${action}</td>
             </tr>`;
         }).join("");
+    }
+
+    // Enable/disable the "Show completed" checkbox depending on view and filter.
+    // Rules:
+    // - The control is only interactive when viewing the full "all" queue with the "ALL" filter.
+    // - Otherwise it is disabled and forced to true (checked).
+    function updateShowCompletedControl() {
+        if (!showCompletedCb) return;
+        // Allow the control to be interactive for both the global "All" queue and the "My Cases" queue
+        const interactive = ( (activeTab === "all" || activeTab === "mine") && activeFilter === "ALL");
+        const wrap = showCompletedCb.closest && showCompletedCb.closest('.toggle-wrap');
+        if (interactive) {
+            showCompletedCb.disabled = false;
+            if (wrap) wrap.classList.remove('disabled');
+            // If the user previously set a preference, restore it; otherwise default to false
+            if (userSetShowCompleted === null) {
+                showCompletedCb.checked = false;
+            } else {
+                showCompletedCb.checked = !!userSetShowCompleted;
+            }
+            showCompleted = showCompletedCb.checked;
+        } else {
+            // force ON and disable; don't overwrite the user's saved preference
+            showCompletedCb.checked = true;
+            showCompletedCb.disabled = true;
+            if (wrap) wrap.classList.add('disabled');
+            showCompleted = true;
+        }
     }
 
     function openScoring(id) { window.location.href = `/index.html?id=${id}`; }
