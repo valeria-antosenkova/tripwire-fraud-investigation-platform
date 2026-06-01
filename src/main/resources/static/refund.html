@@ -1,0 +1,540 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Submit a Refund Request</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --bg: #F1F5F9;
+            --surface: #FFFFFF;
+            --accent: #4F46E5;
+            --accent-dim: #EEF2FF;
+            --text: #0F172A;
+            --text-2: #475569;
+            --text-3: #94A3B8;
+            --border: #E2E8F0;
+            --green: #10B981;
+            --green-dim: #D1FAE5;
+            --red: #EF4444;
+            --red-dim: #FEE2E2;
+        }
+
+        body {
+            font-family: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
+            font-size: 14px;
+            color: var(--text);
+            background: var(--bg);
+            min-height: 100vh;
+            padding: 40px 16px 80px;
+        }
+
+        .page-wrap {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        /* ── Brand header ── */
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 36px;
+            text-decoration: none;
+        }
+        .brand-logo {
+            width: 36px; height: 36px;
+            background: var(--accent);
+            border-radius: 10px;
+            display: grid; place-items: center;
+        }
+        .brand-logo svg { width: 18px; height: 18px; fill: none; stroke: #fff; stroke-width: 2.25; stroke-linecap: round; stroke-linejoin: round; }
+        .brand-name { font-size: 16px; font-weight: 800; color: var(--text); letter-spacing: -0.3px; }
+        .brand-sub  { font-size: 12px; color: var(--text-3); margin-top: 1px; }
+
+        /* ── Card ── */
+        .card {
+            background: var(--surface);
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            padding: 28px 28px 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+
+        .card-title {
+            font-size: 15px; font-weight: 700;
+            color: var(--text);
+            margin-bottom: 20px;
+            display: flex; align-items: center; gap: 10px;
+        }
+        .card-title svg { width: 16px; height: 16px; fill: none; stroke: var(--accent); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
+
+        /* ── Form fields ── */
+        .field-group { margin-bottom: 16px; }
+        .field-group:last-child { margin-bottom: 0; }
+
+        .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+        .field-row .field-group { margin-bottom: 0; }
+
+        label {
+            display: block;
+            font-size: 12px; font-weight: 600;
+            color: var(--text-2);
+            text-transform: uppercase; letter-spacing: 0.05em;
+            margin-bottom: 6px;
+        }
+
+        .req { color: var(--accent); margin-left: 2px; }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="tel"],
+        input[type="date"],
+        input[type="number"],
+        select,
+        textarea {
+            width: 100%;
+            height: 42px;
+            border: 1.5px solid var(--border);
+            border-radius: 10px;
+            padding: 0 14px;
+            font: inherit;
+            font-size: 14px;
+            color: var(--text);
+            background: #fff;
+            outline: none;
+            transition: border-color 0.15s, box-shadow 0.15s;
+        }
+        input:focus, select:focus, textarea:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(79,70,229,0.1);
+        }
+        input::placeholder, textarea::placeholder { color: var(--text-3); }
+        input.invalid, select.invalid, textarea.invalid { border-color: var(--red); }
+
+        textarea {
+            height: 110px;
+            padding: 12px 14px;
+            resize: vertical;
+            line-height: 1.6;
+        }
+
+        select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2394A3B8' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px; }
+
+        /* ── Items list ── */
+        .items-wrap { display: flex; flex-direction: column; gap: 8px; }
+        .item-row { display: flex; gap: 8px; align-items: center; }
+        .item-row input { flex: 1; }
+        .item-remove {
+            width: 32px; height: 32px; flex-shrink: 0;
+            border: 1.5px solid var(--border); border-radius: 8px;
+            background: none; cursor: pointer; color: var(--text-3);
+            display: grid; place-items: center;
+            transition: all 0.12s;
+        }
+        .item-remove:hover { border-color: var(--red); color: var(--red); background: var(--red-dim); }
+        .item-remove svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
+        .add-item-btn {
+            margin-top: 8px; padding: 0 14px; height: 36px;
+            border: 1.5px dashed var(--border); border-radius: 10px;
+            background: none; cursor: pointer;
+            color: var(--text-3); font: inherit; font-size: 13px; font-weight: 600;
+            display: flex; align-items: center; gap: 6px;
+            transition: all 0.12s;
+        }
+        .add-item-btn:hover { border-color: var(--accent); color: var(--accent); }
+        .add-item-btn svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; }
+
+        /* ── Submit button ── */
+        .submit-btn {
+            width: 100%; height: 50px;
+            background: var(--accent); border: none; border-radius: 12px;
+            color: #fff; font: inherit; font-size: 15px; font-weight: 700;
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            box-shadow: 0 2px 12px rgba(79,70,229,0.3);
+            transition: opacity 0.15s, transform 0.1s;
+        }
+        .submit-btn:hover  { opacity: 0.93; }
+        .submit-btn:active { transform: scale(0.99); }
+        .submit-btn:disabled { opacity: 0.55; cursor: not-allowed; }
+        .submit-btn svg { width: 18px; height: 18px; fill: none; stroke: #fff; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+        /* ── Error / Success states ── */
+        .alert {
+            padding: 14px 16px; border-radius: 12px;
+            font-size: 13.5px; font-weight: 500;
+            margin-bottom: 20px; display: none;
+        }
+        .alert.error   { background: var(--red-dim);   color: #B91C1C; display: flex; gap: 10px; align-items: flex-start; }
+        .alert.success { background: var(--green-dim); color: #065F46; display: flex; gap: 10px; align-items: flex-start; }
+        .alert svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; margin-top: 1px; }
+
+        /* ── Success screen ── */
+        .success-screen {
+            display: none;
+            text-align: center;
+            padding: 48px 24px;
+        }
+        .success-screen.visible { display: block; }
+        .success-icon {
+            width: 72px; height: 72px;
+            background: var(--green-dim); border-radius: 50%;
+            display: grid; place-items: center; margin: 0 auto 24px;
+        }
+        .success-icon svg { width: 34px; height: 34px; fill: none; stroke: var(--green); stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+        .success-title { font-size: 22px; font-weight: 800; color: var(--text); margin-bottom: 10px; }
+        .success-sub   { font-size: 14px; color: var(--text-2); line-height: 1.6; max-width: 420px; margin: 0 auto 28px; }
+        .case-ref {
+            display: inline-block;
+            background: var(--accent-dim); color: var(--accent);
+            font-size: 15px; font-weight: 700; letter-spacing: 0.5px;
+            padding: 10px 24px; border-radius: 10px;
+            margin-bottom: 28px;
+        }
+        .new-request-btn {
+            padding: 0 24px; height: 44px;
+            border: 1.5px solid var(--border); border-radius: 10px;
+            background: var(--surface); cursor: pointer;
+            font: inherit; font-size: 14px; font-weight: 600; color: var(--text-2);
+            transition: all 0.12s;
+        }
+        .new-request-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+        @media (max-width: 560px) {
+            .field-row { grid-template-columns: 1fr; }
+            body { padding: 24px 12px 60px; }
+            .card { padding: 20px 18px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="page-wrap">
+
+    <a class="brand" href="#">
+        <div class="brand-logo">
+            <svg viewBox="0 0 24 24"><path d="M12 2L4 6v6c0 5.25 3.5 10.15 8 11.35C16.5 22.15 20 17.25 20 12V6L12 2z"/></svg>
+        </div>
+        <div>
+            <div class="brand-name">Tripwire</div>
+            <div class="brand-sub">Refund Request Portal</div>
+        </div>
+    </a>
+
+    <div id="errorAlert" class="alert error" style="display:none;">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <span id="errorMsg">Something went wrong.</span>
+    </div>
+
+    <!-- Form -->
+    <form id="refundForm">
+
+        <!-- Your Information -->
+        <div class="card">
+            <div class="card-title">
+                <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                Your Information
+            </div>
+
+            <div class="field-row">
+                <div class="field-group">
+                    <label for="customerName">Full Name <span class="req">*</span></label>
+                    <input type="text" id="customerName" placeholder="Jane Smith" required>
+                </div>
+                <div class="field-group">
+                    <label for="email">Email Address <span class="req">*</span></label>
+                    <input type="email" id="email" placeholder="jane@example.com" required>
+                </div>
+            </div>
+
+            <div class="field-row">
+                <div class="field-group">
+                    <label for="phone">Phone Number</label>
+                    <input type="tel" id="phone" placeholder="+1 555 000 1234">
+                </div>
+                <div class="field-group">
+                    <label for="iban">Bank Account / IBAN <span style="font-weight:400;text-transform:none;letter-spacing:0;">(for refund payout)</span></label>
+                    <input type="text" id="iban" placeholder="GB29 NWBK 6016 1331 9268 19">
+                </div>
+            </div>
+        </div>
+
+        <!-- Order Details -->
+        <div class="card">
+            <div class="card-title">
+                <svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+                Order Details
+            </div>
+
+            <div class="field-row">
+                <div class="field-group">
+                    <label for="orderId">Order ID <span class="req">*</span></label>
+                    <input type="text" id="orderId" placeholder="ORD-12345" required>
+                </div>
+                <div class="field-group">
+                    <label for="orderDate">Order Date <span class="req">*</span></label>
+                    <input type="date" id="orderDate" required>
+                </div>
+            </div>
+
+            <div class="field-group">
+                <label>Items Ordered <span class="req">*</span></label>
+                <div class="items-wrap" id="itemsWrap">
+                    <div class="item-row">
+                        <input type="text" placeholder="e.g. MacBook Pro 16-inch" class="item-input">
+                        <button type="button" class="item-remove" tabindex="-1" title="Remove">
+                            <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                        </button>
+                    </div>
+                </div>
+                <button type="button" class="add-item-btn" id="addItemBtn">
+                    <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    Add another item
+                </button>
+            </div>
+
+            <div class="field-row">
+                <div class="field-group">
+                    <label for="paymentMethod">Payment Method Used</label>
+                    <input type="text" id="paymentMethod" placeholder="Credit Card (**** 4532)">
+                </div>
+                <div class="field-group">
+                    <label for="currency">Currency <span class="req">*</span></label>
+                    <select id="currency" required>
+                        <option value="USD">USD — US Dollar</option>
+                        <option value="EUR">EUR — Euro</option>
+                        <option value="GBP">GBP — British Pound</option>
+                        <option value="CAD">CAD — Canadian Dollar</option>
+                        <option value="AUD">AUD — Australian Dollar</option>
+                        <option value="JPY">JPY — Japanese Yen</option>
+                        <option value="SGD">SGD — Singapore Dollar</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="field-row">
+                <div class="field-group">
+                    <label for="refundAmount">Refund Amount <span class="req">*</span></label>
+                    <input type="number" id="refundAmount" placeholder="0.00" min="0.01" step="0.01" required>
+                </div>
+            </div>
+        </div>
+
+        <!-- Addresses -->
+        <div class="card">
+            <div class="card-title">
+                <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                Addresses
+            </div>
+
+            <div class="field-group">
+                <label for="shippingAddress">Shipping Address</label>
+                <input type="text" id="shippingAddress" placeholder="123 Main St, City, State 00000">
+            </div>
+
+            <div class="field-group">
+                <label for="billingAddress">Billing Address</label>
+                <input type="text" id="billingAddress" placeholder="Same as shipping, or enter billing address">
+            </div>
+        </div>
+
+        <!-- Refund Reason -->
+        <div class="card">
+            <div class="card-title">
+                <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+                Refund Reason
+            </div>
+
+            <div class="field-group">
+                <label for="reasonType">Reason Category <span class="req">*</span></label>
+                <select id="reasonType" required>
+                    <option value="" disabled selected>Select a reason…</option>
+                    <option value="not_received">Item not received</option>
+                    <option value="damaged">Item arrived damaged</option>
+                    <option value="wrong_item">Wrong item received</option>
+                    <option value="not_as_described">Not as described</option>
+                    <option value="changed_mind">Changed my mind</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+
+            <div class="field-group">
+                <label for="reasonText">Please describe your issue <span class="req">*</span></label>
+                <textarea id="reasonText" placeholder="Provide as much detail as possible about your refund request…" required></textarea>
+            </div>
+        </div>
+
+        <button type="submit" class="submit-btn" id="submitBtn">
+            <svg viewBox="0 0 24 24"><polyline points="22 2 15 22 11 13 2 9 22 2"/></svg>
+            Submit Refund Request
+        </button>
+
+    </form>
+
+    <!-- Success screen (shown after submission) -->
+    <div id="successScreen" class="success-screen">
+        <div class="card">
+            <div class="success-icon">
+                <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <div class="success-title">Request Submitted</div>
+            <div class="success-sub">
+                Your refund request has been received and is now in our review queue.
+                A fraud analyst will be assigned to your case shortly.
+                Please keep your case reference number for your records.
+            </div>
+            <div class="case-ref" id="caseRef">RF-0000</div>
+            <br>
+            <button class="new-request-btn" id="newRequestBtn">Submit another request</button>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    /* ── Item list management ──────────────────────────────────────────────── */
+    const itemsWrap  = document.getElementById('itemsWrap');
+    const addItemBtn = document.getElementById('addItemBtn');
+
+    function addItemRow(value = '') {
+        const row = document.createElement('div');
+        row.className = 'item-row';
+        row.innerHTML = `
+            <input type="text" placeholder="e.g. AirPods Pro" class="item-input" value="${value}">
+            <button type="button" class="item-remove" tabindex="-1" title="Remove">
+                <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>`;
+        row.querySelector('.item-remove').addEventListener('click', () => {
+            if (itemsWrap.children.length > 1) row.remove();
+        });
+        itemsWrap.appendChild(row);
+        row.querySelector('input').focus();
+    }
+
+    // Wire up the initial row's remove button
+    itemsWrap.querySelector('.item-remove').addEventListener('click', () => {
+        if (itemsWrap.children.length > 1) itemsWrap.querySelector('.item-row').remove();
+    });
+    addItemBtn.addEventListener('click', () => addItemRow());
+
+    /* ── Prefill with sample data ──────────────────────────────────────────── */
+    document.getElementById('customerName').value    = 'Jordan Lee';
+    document.getElementById('email').value           = 'jordan.lee@outlook.com';
+    document.getElementById('phone').value           = '+1 (617) 555-0192';
+    document.getElementById('iban').value            = 'GB29 NWBK 6016 1331 9268 19';
+    document.getElementById('orderId').value         = 'ORD-78423';
+    document.getElementById('orderDate').value       = '2026-05-19';
+    document.getElementById('refundAmount').value    = '249.99';
+    document.getElementById('currency').value        = 'USD';
+    document.getElementById('paymentMethod').value   = 'Credit Card (**** 4532)';
+    document.getElementById('shippingAddress').value = '22 Pine Rd, Chicago, IL 60601';
+    document.getElementById('billingAddress').value  = '22 Pine Rd, Chicago, IL 60601';
+    document.getElementById('reasonType').value      = 'not_received';
+    document.getElementById('reasonText').value      =
+        'I placed this order on May 19th and it still has not arrived. ' +
+        'The tracking page has shown no movement since the shipping label was created. ' +
+        'I have waited over 10 days and need this refunded as soon as possible.';
+
+    // Prefill item
+    itemsWrap.querySelector('.item-input').value = 'Sony WH-1000XM5 Wireless Headphones';
+
+    /* ── Form submission ───────────────────────────────────────────────────── */
+    const form          = document.getElementById('refundForm');
+    const submitBtn     = document.getElementById('submitBtn');
+    const errorAlert    = document.getElementById('errorAlert');
+    const errorMsg      = document.getElementById('errorMsg');
+    const successScreen = document.getElementById('successScreen');
+    const caseRef       = document.getElementById('caseRef');
+
+    function showError(msg) {
+        errorMsg.textContent = msg;
+        errorAlert.style.display = 'flex';
+        errorAlert.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+    function clearError() { errorAlert.style.display = 'none'; }
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        clearError();
+
+        // Collect items
+        const itemInputs = Array.from(itemsWrap.querySelectorAll('.item-input'))
+            .map(i => i.value.trim())
+            .filter(Boolean);
+        if (itemInputs.length === 0) {
+            showError('Please enter at least one item.');
+            return;
+        }
+
+        const payload = {
+            customerName:    document.getElementById('customerName').value.trim(),
+            email:           document.getElementById('email').value.trim(),
+            phone:           document.getElementById('phone').value.trim() || null,
+            iban:            document.getElementById('iban').value.trim()  || null,
+            amount:          parseFloat(document.getElementById('refundAmount').value),
+            currency:        document.getElementById('currency').value,
+            orderId:         document.getElementById('orderId').value.trim(),
+            orderDate:       document.getElementById('orderDate').value,
+            items:           JSON.stringify(itemInputs),
+            paymentMethod:   document.getElementById('paymentMethod').value.trim() || null,
+            shippingAddress: document.getElementById('shippingAddress').value.trim() || null,
+            billingAddress:  document.getElementById('billingAddress').value.trim()  || null,
+            reasonText:      document.getElementById('reasonText').value.trim(),
+        };
+
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<svg viewBox="0 0 24 24" style="animation:spin 1s linear infinite"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg> Submitting…';
+
+        try {
+            const res = await fetch('/refund/submit', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload),
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.message || `Error ${res.status}`);
+
+            // Show success
+            caseRef.textContent = `RF-${String(data.id).padStart(4, '0')}`;
+            form.style.display = 'none';
+            successScreen.classList.add('visible');
+        } catch (err) {
+            showError(err.message || 'Submission failed. Please try again.');
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<svg viewBox="0 0 24 24"><polyline points="22 2 15 22 11 13 2 9 22 2"/></svg> Submit Refund Request';
+        }
+    });
+
+    document.getElementById('newRequestBtn').addEventListener('click', () => {
+        successScreen.classList.remove('visible');
+        form.reset();
+        form.style.display = '';
+        // Reset items list to one empty row
+        itemsWrap.innerHTML = `<div class="item-row">
+            <input type="text" placeholder="e.g. MacBook Pro 16-inch" class="item-input">
+            <button type="button" class="item-remove" tabindex="-1" title="Remove">
+                <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+        </div>`;
+        itemsWrap.querySelector('.item-remove').addEventListener('click', () => {
+            if (itemsWrap.children.length > 1) itemsWrap.querySelector('.item-row').remove();
+        });
+        clearError();
+    });
+</script>
+
+<style>
+    @keyframes spin { to { transform: rotate(360deg); } }
+</style>
+
+</body>
+</html>
+
+

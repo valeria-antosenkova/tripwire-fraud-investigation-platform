@@ -15,67 +15,57 @@ public class Transaction {
     private String reasonText;
     private Date createdAt;
 
-    public int getId() {
-        return id;
-    }
-    public void setId(int id) {
-        this.id = id;
-    }
+    // Order details submitted by the customer
+    private String orderId;
+    private String orderDate;
+    private String items;          // JSON array of item names
+    private String paymentMethod;
+    private String shippingAddress;
+    private String billingAddress;
 
-    public Integer getAgentId() {
-        return agentId;
-    }
-    public void setAgentId(Integer agentId) {
-        this.agentId = agentId;
-    }
+    public int getId() { return id; }
+    public void setId(int id) { this.id = id; }
 
-    public int getAccountId() {
-        return accountId;
-    }
-    public void setAccountId(int accountId) {
-        this.accountId = accountId;
-    }
+    public Integer getAgentId() { return agentId; }
+    public void setAgentId(Integer agentId) { this.agentId = agentId; }
 
-    public BigDecimal getAmount() {
-        return amount;
-    }
-    public void setAmount(BigDecimal amount) {
-        this.amount = amount;
-    }
+    public int getAccountId() { return accountId; }
+    public void setAccountId(int accountId) { this.accountId = accountId; }
 
-    public String getCurrency() {
-        return currency;
-    }
-    public void setCurrency(String currency) {
-        this.currency = currency;
-    }
+    public BigDecimal getAmount() { return amount; }
+    public void setAmount(BigDecimal amount) { this.amount = amount; }
 
-    public Double getRiskScore() {
-        return riskScore;
-    }
-    public void setRiskScore(Double riskScore) {
-        this.riskScore = riskScore;
-    }
+    public String getCurrency() { return currency; }
+    public void setCurrency(String currency) { this.currency = currency; }
 
-    public Status getStatus() {
-        return status;
-    }
-    public void setStatus(Status status) {
-        this.status = status;
-    }
+    public Double getRiskScore() { return riskScore; }
+    public void setRiskScore(Double riskScore) { this.riskScore = riskScore; }
 
-    public String getReasonText() {
-        return reasonText;
-    }
-    public void setReasonText(String reasonText) {
-        this.reasonText = reasonText;
-    }
+    public Status getStatus() { return status; }
+    public void setStatus(Status status) { this.status = status; }
 
-    public Date getCreatedAt() {
-        return createdAt;
-    }
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
-    }
+    public String getReasonText() { return reasonText; }
+    public void setReasonText(String reasonText) { this.reasonText = reasonText; }
+
+    public Date getCreatedAt() { return createdAt; }
+    public void setCreatedAt(Date createdAt) { this.createdAt = createdAt; }
+
+    public String getOrderId() { return orderId; }
+    public void setOrderId(String orderId) { this.orderId = orderId; }
+
+    public String getOrderDate() { return orderDate; }
+    public void setOrderDate(String orderDate) { this.orderDate = orderDate; }
+
+    public String getItems() { return items; }
+    public void setItems(String items) { this.items = items; }
+
+    public String getPaymentMethod() { return paymentMethod; }
+    public void setPaymentMethod(String paymentMethod) { this.paymentMethod = paymentMethod; }
+
+    public String getShippingAddress() { return shippingAddress; }
+    public void setShippingAddress(String shippingAddress) { this.shippingAddress = shippingAddress; }
+
+    public String getBillingAddress() { return billingAddress; }
+    public void setBillingAddress(String billingAddress) { this.billingAddress = billingAddress; }
 
 }

@@ -15,4 +15,5 @@ public interface TransactionService {
         Transaction assignTransaction(int transactionId, int agentId);
         Transaction unassignTransaction(int transactionId, int agentId);
         List<Transaction> getTransactionsByAgentId(int agentId);
+        List<Transaction> getTransactionsByAccountId(int accountId);
 }

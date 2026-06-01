@@ -8,6 +8,8 @@ import com.teamcrocodile.tripwire.model.Transaction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,16 +32,32 @@ public class TransactionDaoImpl implements TransactionDao{
     @Transactional
     public Transaction createTransaction(Transaction transaction) {
 
-        final String INSERT_TRANSACTION = "INSERT INTO transactions (agent_id, account_id, amount, currency," +
-                " risk_score, status_id) VALUES (?, ?, ?, ?, ?, ?) ";
+        final String SQL =
+                "INSERT INTO transactions (agent_id, account_id, amount, currency, risk_score, status_id," +
+                " order_id, order_date, items, payment_method, shipping_address, billing_address)" +
+                " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-        jdbc.update(INSERT_TRANSACTION,
-                transaction.getAgentId(),
-                transaction.getAccountId(),
-                transaction.getAmount(),
-                transaction.getCurrency(),
-                transaction.getRiskScore(),
-                getStatusId(transaction.getStatus()));
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+        jdbc.update(con -> {
+            java.sql.PreparedStatement ps = con.prepareStatement(SQL, new String[]{"TRANSACTION_ID"});
+            ps.setObject(1,  transaction.getAgentId());
+            ps.setInt   (2,  transaction.getAccountId());
+            ps.setBigDecimal(3, transaction.getAmount());
+            ps.setString(4,  transaction.getCurrency());
+            ps.setDouble(5,  transaction.getRiskScore() != null ? transaction.getRiskScore() : 0.0);
+            ps.setInt   (6,  getStatusId(transaction.getStatus()));
+            ps.setString(7,  transaction.getOrderId());
+            ps.setString(8,  transaction.getOrderDate());
+            ps.setString(9,  transaction.getItems());
+            ps.setString(10, transaction.getPaymentMethod());
+            ps.setString(11, transaction.getShippingAddress());
+            ps.setString(12, transaction.getBillingAddress());
+            return ps;
+        }, keyHolder);
+
+        if (keyHolder.getKey() != null) {
+            transaction.setId(keyHolder.getKey().intValue());
+        }
         return transaction;
     }
 
@@ -118,6 +136,12 @@ public class TransactionDaoImpl implements TransactionDao{
     public List<Transaction> getTransactionsByAgentId(int agentId) {
         final String SQL = "SELECT * FROM transactions WHERE agent_id = ?";
         return jdbc.query(SQL, new TransactionMapper(), agentId);
+    }
+
+    @Override
+    public List<Transaction> getTransactionsByAccountId(int accountId) {
+        final String SQL = "SELECT * FROM transactions WHERE account_id = ? ORDER BY created_at ASC";
+        return jdbc.query(SQL, new TransactionMapper(), accountId);
     }
 
 }

@@ -81,6 +81,11 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
+    public List<Transaction> getTransactionsByAccountId(int accountId) {
+        return transactionDao.getTransactionsByAccountId(accountId);
+    }
+
+    @Override
     public DymoResponse scoreTransaction(int id) {
         Transaction transaction = transactionDao.getTransactionById(id);
         DymoResponse response = scoreTransaction(transaction);

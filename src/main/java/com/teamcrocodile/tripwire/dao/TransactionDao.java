@@ -16,5 +16,6 @@ public interface TransactionDao {
         void assignTransaction(int transactionId, int agentId);
         void unassignTransaction(int transactionId, int agentId);
         List<Transaction> getTransactionsByAgentId(int agentId);
+        List<Transaction> getTransactionsByAccountId(int accountId);
 
 }
