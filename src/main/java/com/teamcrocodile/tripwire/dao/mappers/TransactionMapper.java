@@ -21,7 +21,7 @@ public class TransactionMapper implements RowMapper<Transaction> {
         transaction.setStatus(Status.fromId(rs.getInt("status_id")));        transaction.setAmount(rs.getBigDecimal("amount"));
         transaction.setCurrency(rs.getString("currency"));
         transaction.setRiskScore(rs.getDouble("risk_score"));
-        transaction.setReasonId(rs.getString("reason_text"));
+        transaction.setReasonText(rs.getString("reason_text"));
         transaction.setCreatedAt(rs.getTimestamp("created_at"));
         return transaction;
     }

@@ -3,583 +3,829 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Tripwire – Case Dashboard</title>
+    <title>Tripwire — Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        :root {
-            font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-            color: #18202a;
-            background: #f4f7fb;
-        }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-        * { box-sizing: border-box; }
+        :root {
+            --bg: #F1F5F9;
+            --surface: #FFFFFF;
+            --surface-2: #F8FAFC;
+            --accent: #4F46E5;
+            --accent-dim: #EEF2FF;
+            --sidebar: #0F172A;
+            --sidebar-border: rgba(255,255,255,0.06);
+            --text: #0F172A;
+            --text-2: #475569;
+            --text-3: #94A3B8;
+            --border: #E2E8F0;
+            --green: #10B981;
+            --green-dim: #D1FAE5;
+            --red: #EF4444;
+            --red-dim: #FEE2E2;
+            --amber: #F59E0B;
+            --amber-dim: #FEF3C7;
+            --blue: #3B82F6;
+            --blue-dim: #DBEAFE;
+        }
 
         body {
-            margin: 0;
+            font-family: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
+            font-size: 14px;
+            color: var(--text);
+            background: var(--bg);
             min-height: 100vh;
-            background:
-                linear-gradient(135deg, rgba(20, 87, 121, 0.10), transparent 34%),
-                linear-gradient(315deg, rgba(203, 88, 60, 0.12), transparent 32%),
-                #f4f7fb;
-        }
-
-        main {
-            width: min(1100px, calc(100% - 32px));
-            margin: 0 auto;
-            padding: 32px 0;
-        }
-
-        /* ── Header ──────────────────────────────────────────── */
-        header {
             display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-            gap: 24px;
-            margin-bottom: 24px;
-            flex-wrap: wrap;
         }
 
-        h1 {
-            margin: 0;
-            font-size: clamp(2rem, 5vw, 3.5rem);
-            line-height: 0.95;
-        }
-
-        .subtitle {
-            max-width: 520px;
-            margin: 10px 0 0;
-            color: #52606d;
-            line-height: 1.5;
-        }
-
-        .header-actions {
+        /* ── Sidebar ───────────────────────────────────── */
+        .sidebar {
+            width: 220px;
+            background: var(--sidebar);
             display: flex;
-            gap: 10px;
+            flex-direction: column;
+            flex-shrink: 0;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .sb-brand {
+            display: flex;
             align-items: center;
-            flex-wrap: wrap;
+            gap: 10px;
+            padding: 24px 20px 20px;
+            border-bottom: 1px solid var(--sidebar-border);
+            flex-shrink: 0;
         }
 
-        .agent-pill {
-            padding: 6px 14px;
-            border: 1px solid #d5dde7;
-            border-radius: 999px;
-            background: #fff;
-            font-size: 0.85rem;
-            font-weight: 700;
-            color: #155f7d;
-        }
-
-        /* ── Stats row ───────────────────────────────────────── */
-        .stats {
+        .sb-logo {
+            width: 34px; height: 34px;
+            background: var(--accent);
+            border-radius: 9px;
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-            gap: 12px;
-            margin-bottom: 24px;
+            place-items: center;
+            flex-shrink: 0;
         }
 
-        .stat-card {
-            border: 1px solid #d5dde7;
-            border-radius: 8px;
-            background: rgba(255,255,255,0.86);
-            padding: 16px 20px;
-            box-shadow: 0 4px 14px rgba(42,52,65,0.06);
+        .sb-logo svg {
+            width: 16px; height: 16px;
+            fill: none; stroke: #fff;
+            stroke-width: 2.25; stroke-linecap: round; stroke-linejoin: round;
         }
 
-        .stat-label {
-            font-size: 0.75rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            color: #52606d;
+        .sb-wordmark {
+            font-size: 15px; font-weight: 800;
+            color: #fff; letter-spacing: -0.3px;
+        }
+
+        .sb-nav {
+            flex: 1;
+            padding: 16px 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .sb-section {
+            font-size: 10.5px; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 0.1em;
+            color: rgba(255,255,255,0.25);
+            padding: 4px 10px;
+            margin-top: 12px;
             margin-bottom: 4px;
         }
 
-        .stat-value {
-            font-size: 1.8rem;
-            font-weight: 900;
-        }
+        .sb-section:first-child { margin-top: 0; }
 
-        .stat-value.red   { color: #be3d2a; }
-        .stat-value.amber { color: #bf7f16; }
-        .stat-value.green { color: #23845d; }
-
-        /* ── Tabs ────────────────────────────────────────────── */
-        .tabs {
+        .sb-item {
             display: flex;
-            gap: 0;
-            margin-bottom: -1px;
-        }
-
-        .tab-btn {
-            padding: 10px 22px;
-            border: 1px solid #d5dde7;
-            border-bottom: none;
-            border-radius: 6px 6px 0 0;
-            background: #edf1f6;
-            color: #52606d;
-            font: inherit;
-            font-weight: 700;
-            font-size: 0.88rem;
+            align-items: center;
+            gap: 10px;
+            padding: 9px 10px;
+            border-radius: 9px;
+            color: rgba(255,255,255,0.5);
+            font-size: 13.5px;
+            font-weight: 500;
             cursor: pointer;
+            transition: background 0.12s, color 0.12s;
+            text-decoration: none;
         }
 
-        .tab-btn.active {
+        .sb-item:hover { background: rgba(255,255,255,0.07); color: rgba(255,255,255,0.85); }
+        .sb-item.active { background: rgba(79,70,229,0.25); color: #fff; }
+
+        .sb-item svg {
+            width: 16px; height: 16px;
+            fill: none; stroke: currentColor;
+            stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round;
+            flex-shrink: 0;
+        }
+
+        .sb-footer {
+            padding: 16px 12px;
+            border-top: 1px solid var(--sidebar-border);
+        }
+
+        /* Agent card in sidebar */
+        .sb-agent {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 8px;
+            background: rgba(255,255,255,0.05);
+        }
+
+        .sb-avatar {
+            width: 34px; height: 34px;
+            border-radius: 50%;
+            background: var(--accent);
+            display: grid;
+            place-items: center;
+            font-size: 12px; font-weight: 700;
+            color: #fff;
+            flex-shrink: 0;
+        }
+
+        .sb-agent-info { flex: 1; min-width: 0; }
+
+        .sb-agent-name {
+            font-size: 13px; font-weight: 600;
+            color: #fff;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+
+        .sb-agent-role {
+            font-size: 11px; color: rgba(255,255,255,0.35);
+        }
+
+        .sb-logout {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            padding: 8px 10px;
+            border-radius: 8px;
+            border: none;
+            background: none;
+            color: rgba(255,255,255,0.35);
+            font: inherit;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            width: 100%;
+            text-align: left;
+            transition: background 0.1s, color 0.1s;
+        }
+
+        .sb-logout:hover { background: rgba(239,68,68,0.12); color: #FCA5A5; }
+
+        .sb-logout svg {
+            width: 15px; height: 15px;
+            fill: none; stroke: currentColor;
+            stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round;
+        }
+
+        /* ── Main area ─────────────────────────────────── */
+        .main {
+            flex: 1; min-width: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Top bar */
+        .topbar {
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            padding: 0 24px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .tb-title {
+            font-size: 15px; font-weight: 700;
+            color: var(--text);
+        }
+
+        .search-wrap {
+            flex: 1;
+            max-width: 320px;
+            position: relative;
+            margin-left: 16px;
+        }
+
+        .search-wrap svg {
+            position: absolute;
+            left: 12px; top: 50%;
+            transform: translateY(-50%);
+            width: 15px; height: 15px;
+            fill: none; stroke: var(--text-3);
+            stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
+            pointer-events: none;
+        }
+
+        .search-wrap input {
+            width: 100%;
+            height: 38px;
+            border: 1.5px solid var(--border);
+            border-radius: 10px;
+            padding: 0 12px 0 36px;
+            font: inherit;
+            font-size: 13.5px;
+            color: var(--text);
+            background: var(--bg);
+            outline: none;
+            transition: border-color 0.15s, box-shadow 0.15s;
+        }
+
+        .search-wrap input:focus {
+            border-color: var(--accent);
             background: #fff;
-            color: #155f7d;
-            border-bottom: 1px solid #fff;
+            box-shadow: 0 0 0 3px rgba(79,70,229,0.1);
         }
 
-        /* ── Panel / Table ───────────────────────────────────── */
-        .panel {
-            border: 1px solid #d5dde7;
-            border-radius: 0 8px 8px 8px;
-            background: rgba(255,255,255,0.86);
-            box-shadow: 0 18px 50px rgba(42,52,65,0.10);
+        .search-wrap input::placeholder { color: var(--text-3); }
+
+        .tb-right {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tb-btn {
+            height: 36px;
+            border: 1.5px solid var(--border);
+            border-radius: 9px;
+            padding: 0 14px;
+            background: var(--surface);
+            color: var(--text-2);
+            font: inherit;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.12s;
+        }
+
+        .tb-btn svg {
+            width: 14px; height: 14px;
+            fill: none; stroke: currentColor;
+            stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
+        }
+
+        .tb-btn:hover { border-color: var(--accent); color: var(--accent); }
+        .tb-btn:disabled { opacity: 0.5; cursor: wait; }
+
+        .tb-btn.primary {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: #fff;
+            box-shadow: 0 2px 8px rgba(79,70,229,0.3);
+        }
+
+        .tb-btn.primary:hover { opacity: 0.9; color: #fff; }
+
+        /* Content */
+        .content { padding: 28px 28px; flex: 1; }
+
+        .page-header {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            margin-bottom: 24px;
+        }
+
+        .page-title {
+            font-size: 22px; font-weight: 800;
+            color: var(--text); letter-spacing: -0.4px;
+            margin-bottom: 3px;
+        }
+
+        .page-sub { font-size: 13.5px; color: var(--text-3); }
+
+        /* Stats row */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 14px;
+            margin-bottom: 28px;
+        }
+
+        .stat-card {
+            background: var(--surface);
+            border-radius: 14px;
+            padding: 20px 20px 16px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            border: 1px solid var(--border);
+            position: relative;
             overflow: hidden;
         }
 
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 3px;
+            border-radius: 14px 14px 0 0;
+            background: var(--border);
+        }
+
+        .stat-card.c-red::before   { background: var(--red); }
+        .stat-card.c-amber::before { background: var(--amber); }
+        .stat-card.c-green::before { background: var(--green); }
+        .stat-card.c-blue::before  { background: var(--accent); }
+        .stat-card.c-gray::before  { background: var(--text-3); }
+
+        .sc-label {
+            font-size: 11.5px; font-weight: 600;
+            text-transform: uppercase; letter-spacing: 0.06em;
+            color: var(--text-3);
+            margin-bottom: 10px;
+        }
+
+        .sc-value {
+            font-size: 30px; font-weight: 800;
+            line-height: 1; color: var(--text);
+            font-variant-numeric: tabular-nums;
+        }
+
+        .sc-value.red   { color: var(--red); }
+        .sc-value.amber { color: var(--amber); }
+        .sc-value.green { color: var(--green); }
+        .sc-value.blue  { color: var(--accent); }
+
+        /* Panel */
+        .panel {
+            background: var(--surface);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            border: 1px solid var(--border);
+        }
+
+        .panel-header {
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            padding: 0 8px;
+            flex: 1;
+        }
+
+        .tab {
+            height: 50px;
+            padding: 0 18px;
+            border: none;
+            border-bottom: 2.5px solid transparent;
+            background: none;
+            color: var(--text-3);
+            font: inherit;
+            font-size: 13.5px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-bottom: -1px;
+            transition: color 0.12s, border-color 0.12s;
+        }
+
+        .tab:hover { color: var(--text-2); }
+        .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+        /* Toolbar */
         .toolbar {
             display: flex;
-            gap: 10px;
             align-items: center;
-            padding: 16px 18px;
-            border-bottom: 1px solid #d5dde7;
-            flex-wrap: wrap;
-        }
-
-        .toolbar input {
-            flex: 1;
-            min-width: 180px;
-            min-height: 38px;
-            border: 1px solid #b8c3cf;
-            border-radius: 6px;
-            padding: 7px 11px;
-            font: inherit;
-            background: #fff;
-            color: #18202a;
-        }
-
-        /* smaller checkbox for the "Show completed" toggle */
-        #showCompleted {
-            width: 14px;
-            height: 14px;
-            margin: 0;
-            transform: scale(0.95);
-            -webkit-transform: scale(0.95);
-            vertical-align: middle;
-        }
-
-        .filter-group {
-            display: flex;
             gap: 6px;
+            padding: 12px 18px;
+            border-bottom: 1px solid var(--border);
             flex-wrap: wrap;
+            background: var(--surface-2);
         }
 
         .filter-btn {
-            min-height: 38px;
-            border: 1px solid #b8c3cf;
-            border-radius: 6px;
-            padding: 0 14px;
-            background: #fff;
-            color: #52606d;
+            height: 30px;
+            border: 1.5px solid var(--border);
+            border-radius: 8px;
+            padding: 0 12px;
+            background: var(--surface);
+            color: var(--text-2);
             font: inherit;
-            font-size: 0.82rem;
-            font-weight: 700;
+            font-size: 12.5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.12s;
+        }
+
+        .filter-btn:hover { border-color: var(--accent); color: var(--accent); }
+        .filter-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+        .toggle-wrap {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            font-size: 12.5px;
+            font-weight: 500;
+            color: var(--text-2);
+            cursor: pointer;
+            user-select: none;
+        }
+
+        #showCompleted {
+            accent-color: var(--accent);
+            width: 14px; height: 14px;
             cursor: pointer;
         }
 
-        .filter-btn.active {
-            background: #155f7d;
-            border-color: #155f7d;
-            color: #fff;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.9rem;
-        }
+        /* Table */
+        table { width: 100%; border-collapse: collapse; }
 
         thead th {
-            padding: 10px 14px;
+            padding: 11px 18px;
             text-align: left;
-            font-size: 0.75rem;
+            font-size: 11px;
             font-weight: 700;
             text-transform: uppercase;
-            color: #52606d;
-            background: #f4f7fb;
-            border-bottom: 1px solid #d5dde7;
+            letter-spacing: 0.06em;
+            color: var(--text-3);
+            background: var(--surface-2);
+            border-bottom: 1px solid var(--border);
             white-space: nowrap;
         }
 
         tbody tr {
-            border-bottom: 1px solid #edf1f6;
-            cursor: pointer;
+            border-bottom: 1px solid var(--border);
             transition: background 0.1s;
+            cursor: pointer;
         }
 
-        tbody tr:hover { background: #f0f5fa; }
+        tbody tr.non-clickable { cursor: default; }
         tbody tr:last-child { border-bottom: none; }
+        tbody tr:not(.non-clickable):hover { background: #F8FAFD; }
 
         td {
-            padding: 12px 14px;
+            padding: 14px 18px;
             vertical-align: middle;
+            font-size: 13.5px;
         }
 
-        .risk-badge {
-            display: inline-block;
-            min-width: 46px;
-            padding: 3px 10px;
-            border-radius: 999px;
-            font-weight: 800;
-            font-size: 0.82rem;
-            text-align: center;
-        }
+        td.dim { color: var(--text-2); font-size: 13px; }
 
-        .risk-badge.high   { background: #fdecea; color: #be3d2a; }
-        .risk-badge.medium { background: #fef3e0; color: #bf7f16; }
-        .risk-badge.low    { background: #e6f7f1; color: #23845d; }
-        .risk-badge.none   { background: #f0f2f5; color: #52606d; }
-
-        .status-badge {
-            display: inline-block;
-            padding: 3px 10px;
-            border-radius: 4px;
+        .case-id {
             font-weight: 700;
-            font-size: 0.78rem;
-            text-transform: uppercase;
+            color: var(--text);
+            font-variant-numeric: tabular-nums;
+            font-size: 13.5px;
         }
 
-        .status-badge.APPROVED     { background: #e6f7f1; color: #23845d; }
-        .status-badge.DENIED       { background: #fdecea; color: #be3d2a; }
-        .status-badge.UNDER_REVIEW { background: #fef3e0; color: #bf7f16; }
-        .status-badge.UNASSIGNED   { background: #f0f2f5; color: #52606d; }
-
-        .action-btn {
-            min-height: 32px;
-            border: 1px solid #b8c3cf;
-            border-radius: 6px;
-            padding: 0 12px;
-            background: #fff;
-            color: #155f7d;
-            font: inherit;
-            font-size: 0.8rem;
-            font-weight: 700;
-            cursor: pointer;
-            white-space: nowrap;
-        }
-
-        .action-btn:hover {
-            background: #155f7d;
-            color: #fff;
-            border-color: #155f7d;
-        }
-
-        .action-btn.assign {
-            background: #e6f7f1;
-            border-color: #23845d;
-            color: #23845d;
-        }
-
-        .action-btn.assign:hover {
-            background: #23845d;
-            color: #fff;
-        }
-
-        .empty-row td {
-            padding: 40px 14px;
-            text-align: center;
-            color: #52606d;
-        }
-
-        tbody tr.non-clickable {
-            cursor: default;
-        }
-
-        tbody tr.non-clickable:hover {
-            background: inherit;
-        }
-
-        button.primary {
-            min-height: 38px;
-            border: 0;
-            border-radius: 6px;
-            padding: 0 16px;
-            background: #155f7d;
-            color: #fff;
-            font: inherit;
-            font-weight: 800;
-            cursor: pointer;
-            white-space: nowrap;
-        }
-
-        button.logout-btn {
-            min-height: 38px;
-            border: 1px solid #d5dde7;
-            border-radius: 6px;
-            padding: 0 14px;
-            background: #fff;
-            color: #52606d;
-            font: inherit;
-            font-weight: 700;
-            font-size: 0.85rem;
-            cursor: pointer;
-        }
-
-        button:disabled { opacity: 0.6; cursor: wait; }
-
-        .nav-link {
-            min-height: 38px;
+        /* Status & risk badges */
+        .badge {
             display: inline-flex;
             align-items: center;
-            padding: 0 16px;
-            border: 1px solid #d5dde7;
-            border-radius: 6px;
-            background: #fff;
-            color: #18202a;
-            font: inherit;
-            font-weight: 700;
-            font-size: 0.88rem;
-            text-decoration: none;
-            cursor: pointer;
+            gap: 5px;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11.5px;
+            font-weight: 600;
+            white-space: nowrap;
         }
 
-        .nav-link:hover { background: #f0f5fa; }
+        .badge::before {
+            content: '';
+            width: 5.5px; height: 5.5px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
 
+        .badge.APPROVED     { background: var(--green-dim); color: #059669; }
+        .badge.APPROVED::before { background: #059669; }
+        .badge.DENIED       { background: var(--red-dim);   color: #DC2626; }
+        .badge.DENIED::before { background: #DC2626; }
+        .badge.UNDER_REVIEW { background: var(--amber-dim); color: #D97706; }
+        .badge.UNDER_REVIEW::before { background: #D97706; }
+        .badge.UNASSIGNED   { background: #F1F5F9; color: var(--text-3); border: 1px solid var(--border); }
+        .badge.UNASSIGNED::before { background: var(--text-3); }
+
+        .risk-pill {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 40px;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .risk-pill.high   { background: var(--red-dim);   color: #DC2626; }
+        .risk-pill.medium { background: var(--amber-dim); color: #D97706; }
+        .risk-pill.low    { background: var(--green-dim); color: #059669; }
+        .risk-pill.none   { background: #F1F5F9;           color: var(--text-3); }
+
+        /* Row action buttons */
+        .row-btn {
+            height: 28px;
+            border: 1.5px solid var(--border);
+            border-radius: 7px;
+            padding: 0 11px;
+            background: var(--surface);
+            color: var(--text-2);
+            font: inherit;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.12s;
+        }
+
+        .row-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
+        .row-btn.assign { background: var(--green-dim); border-color: transparent; color: #059669; }
+        .row-btn.assign:hover { background: var(--green); border-color: transparent; color: #fff; }
+        .row-btn.danger:hover { background: var(--red-dim); border-color: transparent; color: var(--red); }
+
+        .row-btn-group { display: flex; gap: 5px; }
+
+        .empty-row td {
+            padding: 56px 20px;
+            text-align: center;
+            color: var(--text-3);
+            font-size: 14px;
+        }
+
+        /* Error banner */
         .error-banner {
             display: none;
             margin: 14px 18px;
-            border: 1px solid #e1ad9f;
-            border-radius: 6px;
-            padding: 10px 14px;
-            background: #fff4f1;
-            color: #8c2c1d;
-            font-weight: 700;
+            padding: 12px 14px;
+            background: var(--red-dim);
+            border-radius: 10px;
+            color: #B91C1C;
+            font-size: 13px;
+            font-weight: 500;
         }
 
-        @media (max-width: 700px) {
-            thead th:nth-child(4),
-            td:nth-child(4),
-            thead th:nth-child(5),
-            td:nth-child(5) { display: none; }
+        @media (max-width: 1000px) {
+            .sidebar { width: 68px; }
+            .sb-brand { justify-content: center; padding: 20px 0; }
+            .sb-wordmark { display: none; }
+            .sb-section { display: none; }
+            .sb-item span { display: none; }
+            .sb-item { justify-content: center; padding: 10px; }
+            .sb-agent-info { display: none; }
+            .sb-agent { justify-content: center; }
+            .sb-logout span { display: none; }
+            .sb-logout { justify-content: center; }
+            .stats-row { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        @media (max-width: 640px) {
+            thead th:nth-child(4), td:nth-child(4),
+            thead th:nth-child(5), td:nth-child(5),
+            thead th:nth-child(7), td:nth-child(7) { display: none; }
         }
     </style>
 </head>
 <body>
-<main>
 
-    <!-- Header -->
-    <header>
-        <div>
-            <h1>Case Dashboard</h1>
-            <p class="subtitle">All transactions pulled live from the database. Assign cases to yourself and run fraud scoring.</p>
+<!-- Sidebar -->
+<nav class="sidebar">
+    <div class="sb-brand">
+        <div class="sb-logo">
+            <svg viewBox="0 0 24 24"><path d="M12 2L4 6v6c0 5.25 3.5 10.15 8 11.35C16.5 22.15 20 17.25 20 12V6L12 2z"/></svg>
         </div>
-        <div class="header-actions">
-            <span class="agent-pill" id="agentPill">Loading…</span>
-            <button class="primary" id="refreshBtn">↻ Refresh</button>
-            <button class="logout-btn" id="logoutBtn">Logout</button>
-        </div>
-    </header>
-
-    <!-- Summary stats -->
-    <div class="stats">
-        <div class="stat-card">
-            <div class="stat-label">Total Cases</div>
-            <div class="stat-value" id="statTotal">—</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-label">High Risk (≥80)</div>
-            <div class="stat-value red" id="statHigh">—</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-label">Under Review</div>
-            <div class="stat-value amber" id="statMedium">—</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-label">Approved / Low</div>
-            <div class="stat-value green" id="statLow">—</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-label">Unassigned</div>
-            <div class="stat-value" id="statUnassigned">—</div>
-        </div>
+        <span class="sb-wordmark">Tripwire</span>
     </div>
 
-    <!-- Tabs -->
-    <div class="tabs">
-        <button class="tab-btn active" data-tab="all">All Cases</button>
-        <button class="tab-btn" data-tab="mine">My Cases</button>
+    <div class="sb-nav">
+        <div class="sb-section">Workspace</div>
+        <a class="sb-item active" href="/dashboard.html">
+            <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+            <span>Dashboard</span>
+        </a>
+        <a class="sb-item" href="/dashboard.html">
+            <svg viewBox="0 0 24 24"><path d="M20 7H4a2 2 0 00-2 2v10a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2z"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg>
+            <span>Case Queue</span>
+        </a>
+        <a class="sb-item" href="#">
+            <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+            <span>Analytics</span>
+        </a>
+
+        <div class="sb-section">System</div>
+        <a class="sb-item" href="#">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+            <span>Settings</span>
+        </a>
     </div>
 
-    <!-- Table panel -->
-    <div class="panel">
+    <div class="sb-footer">
+        <div class="sb-agent">
+            <div class="sb-avatar" id="agentInitials">—</div>
+            <div class="sb-agent-info">
+                <div class="sb-agent-name" id="agentName">Loading…</div>
+                <div class="sb-agent-role">Fraud Analyst</div>
+            </div>
+        </div>
+        <button class="sb-logout" id="logoutBtn">
+            <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+            <span>Sign out</span>
+        </button>
+    </div>
+</nav>
 
-        <div class="toolbar">
+<!-- Main -->
+<div class="main">
+    <div class="topbar">
+        <span class="tb-title">Case Queue</span>
+        <div class="search-wrap">
+            <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
             <input id="searchInput" type="text" placeholder="Search by ID, status, currency…">
-            <div class="filter-group">
+        </div>
+        <div class="tb-right">
+            <button class="tb-btn primary" id="refreshBtn">
+                <svg viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
+                Refresh
+            </button>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="page-header">
+            <div>
+                <div class="page-title">Case Queue</div>
+                <div class="page-sub">All transactions pulled live from the database.</div>
+            </div>
+        </div>
+
+        <!-- Stats row -->
+        <div class="stats-row">
+            <div class="stat-card c-blue">
+                <div class="sc-label">Total Cases</div>
+                <div class="sc-value blue" id="statTotal">—</div>
+            </div>
+            <div class="stat-card c-red">
+                <div class="sc-label">High Risk</div>
+                <div class="sc-value red" id="statHigh">—</div>
+            </div>
+            <div class="stat-card c-amber">
+                <div class="sc-label">Under Review</div>
+                <div class="sc-value amber" id="statMedium">—</div>
+            </div>
+            <div class="stat-card c-green">
+                <div class="sc-label">Approved</div>
+                <div class="sc-value green" id="statLow">—</div>
+            </div>
+            <div class="stat-card c-gray">
+                <div class="sc-label">Unassigned</div>
+                <div class="sc-value" id="statUnassigned">—</div>
+            </div>
+        </div>
+
+        <div class="panel">
+            <div class="panel-header">
+                <div class="tabs">
+                    <button class="tab active" data-tab="all">All Cases</button>
+                    <button class="tab" data-tab="mine">My Cases</button>
+                </div>
+            </div>
+
+            <div class="toolbar">
                 <button class="filter-btn active" data-filter="ALL">All</button>
                 <button class="filter-btn" data-filter="UNASSIGNED">Unassigned</button>
                 <button class="filter-btn" data-filter="UNDER_REVIEW">Under Review</button>
                 <button class="filter-btn" data-filter="APPROVED">Approved</button>
                 <button class="filter-btn" data-filter="DENIED">Denied</button>
-            </div>
-            <div style="display:flex; align-items:center; gap:6px; margin-left:8px;">
-                <label style="font-weight:700; color:#52606d; display:inline-flex; align-items:center; gap:4px;">
+                <label class="toggle-wrap">
                     <input id="showCompleted" type="checkbox"> Show completed
                 </label>
             </div>
+
+            <div id="errorBanner" class="error-banner"></div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Case</th>
+                        <th>Status</th>
+                        <th>Risk</th>
+                        <th>Amount</th>
+                        <th>Currency</th>
+                        <th>Account</th>
+                        <th>Agent</th>
+                        <th>Created</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                    <tr class="empty-row"><td colspan="9">Loading cases…</td></tr>
+                </tbody>
+            </table>
         </div>
-
-        <div id="errorBanner" class="error-banner"></div>
-
-        <table>
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Status</th>
-                    <th>Risk Score</th>
-                    <th>Amount</th>
-                    <th>Currency</th>
-                    <th>Account ID</th>
-                    <th>Agent ID</th>
-                    <th>Created</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody id="tableBody">
-                <tr class="empty-row">
-                    <td colspan="9">Loading cases…</td>
-                </tr>
-            </tbody>
-        </table>
-
     </div>
-
-</main>
+</div>
 
 <script>
-    // ── Auth guard ─────────────────────────────────────────────────────────────
     const agentJson = localStorage.getItem("agent");
-    if (!agentJson) {
-        window.location.href = "/login.html";
-    }
+    if (!agentJson) window.location.href = "/login.html";
     const currentAgent = JSON.parse(agentJson);
 
-    // Show agent name in header pill
-    document.querySelector("#agentPill").textContent = "👤 " + currentAgent.name;
+    document.querySelector("#agentName").textContent = currentAgent.name;
+    document.querySelector("#agentInitials").textContent =
+        (currentAgent.name || "?").split(" ").map(w => w[0]).join("").slice(0, 2).toUpperCase();
 
-    // Logout
     document.querySelector("#logoutBtn").addEventListener("click", () => {
         localStorage.removeItem("agent");
         window.location.href = "/login.html";
     });
 
-    // ── State ──────────────────────────────────────────────────────────────────
-    let allCases  = [];
-    let myCases   = [];
-    let activeTab = "all";       // "all" | "mine"
-    let activeFilter = "ALL";
-    // When false (default) completed cases (APPROVED / DENIED) are hidden from the table
-    let showCompleted = false;
+    let allCases = [], myCases = [];
+    let activeTab = "all", activeFilter = "ALL", showCompleted = false;
 
-    // ── DOM refs ───────────────────────────────────────────────────────────────
-    const tableBody     = document.querySelector("#tableBody");
-    const searchInput   = document.querySelector("#searchInput");
-    const refreshBtn    = document.querySelector("#refreshBtn");
-    const errorBanner   = document.querySelector("#errorBanner");
-    const filterButtons = document.querySelectorAll(".filter-btn");
-    const tabButtons    = document.querySelectorAll(".tab-btn");
-    const showCompletedCheckbox = document.querySelector('#showCompleted');
+    const tableBody   = document.querySelector("#tableBody");
+    const searchInput = document.querySelector("#searchInput");
+    const refreshBtn  = document.querySelector("#refreshBtn");
+    const errorBanner = document.querySelector("#errorBanner");
+    const filterBtns  = document.querySelectorAll(".filter-btn");
+    const tabBtns     = document.querySelectorAll(".tab");
+    const showCompletedCb = document.querySelector("#showCompleted");
 
-    // ── Init ───────────────────────────────────────────────────────────────────
     loadAll();
 
-    // ── Events ─────────────────────────────────────────────────────────────────
     refreshBtn.addEventListener("click", loadAll);
     searchInput.addEventListener("input", renderTable);
 
-    filterButtons.forEach(btn => {
-        btn.addEventListener("click", () => {
-            filterButtons.forEach(b => b.classList.remove("active"));
-            btn.classList.add("active");
-            activeFilter = btn.dataset.filter;
-            renderTable();
-        });
+    filterBtns.forEach(btn => btn.addEventListener("click", () => {
+        filterBtns.forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        activeFilter = btn.dataset.filter;
+        renderTable();
+    }));
+
+    tabBtns.forEach(btn => btn.addEventListener("click", () => {
+        tabBtns.forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        activeTab = btn.dataset.tab;
+        renderTable();
+    }));
+
+    showCompletedCb?.addEventListener("change", () => {
+        showCompleted = showCompletedCb.checked;
+        renderTable();
     });
-
-    if (showCompletedCheckbox) {
-        showCompletedCheckbox.addEventListener('change', () => {
-            showCompleted = showCompletedCheckbox.checked;
-            renderTable();
-        });
-    }
-
-    tabButtons.forEach(btn => {
-        btn.addEventListener("click", () => {
-            tabButtons.forEach(b => b.classList.remove("active"));
-            btn.classList.add("active");
-            activeTab = btn.dataset.tab;
-            renderTable();
-        });
-    });
-
-    // ── Data fetching ──────────────────────────────────────────────────────────
 
     async function loadAll() {
         refreshBtn.disabled = true;
-        refreshBtn.textContent = "Loading…";
         clearError();
-
         try {
-            // Fetch all transactions and agent's own transactions in parallel
             const [allRes, myRes] = await Promise.all([
                 fetch("/transaction/transactions"),
                 fetch("/transaction/agent/" + currentAgent.id)
             ]);
-
             if (!allRes.ok) throw new Error("Server returned " + allRes.status);
-
             allCases = await allRes.json();
             myCases  = myRes.ok ? await myRes.json() : [];
-
             renderStats();
             renderTable();
         } catch (err) {
             showError("Could not load transactions: " + err.message);
-            tableBody.innerHTML = `<tr class="empty-row"><td colspan="9">Failed to load. Check that the server is running.</td></tr>`;
+            tableBody.innerHTML = `<tr class="empty-row"><td colspan="9">Failed to load.</td></tr>`;
         } finally {
             refreshBtn.disabled = false;
-            refreshBtn.textContent = "↻ Refresh";
         }
     }
 
-    // ── Assign ─────────────────────────────────────────────────────────────────
-
-    async function assignCase(transactionId) {
+    async function assignCase(id) {
         try {
-            const res = await fetch(`/transaction/${transactionId}/assign/${currentAgent.id}`, {
-                method: "PUT"
-            });
-            if (!res.ok) throw new Error("Assign failed with " + res.status);
-            // Refresh to show the updated row
+            const res = await fetch(`/transaction/${id}/assign/${currentAgent.id}`, { method: "PUT" });
+            if (!res.ok) throw new Error("Assign failed");
             await loadAll();
-        } catch (err) {
-            showError("Could not assign case: " + err.message);
-        }
+        } catch (err) { showError("Could not assign: " + err.message); }
     }
 
-    async function unassignCase(transactionId) {
+    async function unassignCase(id) {
         try {
-            const res = await fetch(`/transaction/${transactionId}/unassign/${currentAgent.id}`, {
-                method: "PUT"
-            });
-            if (!res.ok) throw new Error("Unassign failed with " + res.status);
-            // Refresh to show the updated row
+            const res = await fetch(`/transaction/${id}/unassign/${currentAgent.id}`, { method: "PUT" });
+            if (!res.ok) throw new Error("Unassign failed");
             await loadAll();
-        } catch (err) {
-            showError("Could not unassign case: " + err.message);
-        }
+        } catch (err) { showError("Could not unassign: " + err.message); }
     }
-
-    // ── Rendering ──────────────────────────────────────────────────────────────
 
     function renderStats() {
         const src = allCases;
@@ -591,45 +837,30 @@
     }
 
     function renderTable() {
-        // Pick source list by active tab
         const source = activeTab === "mine" ? myCases : allCases;
+        const query  = searchInput.value.toLowerCase();
+        let filtered = activeFilter === "ALL" ? source : source.filter(t => t.status === activeFilter);
 
-        const query = searchInput.value.toLowerCase();
-
-        // Apply status filter
-        let filtered = activeFilter === "ALL"
-            ? source
-            : source.filter(t => t.status === activeFilter);
-
-        // Hide completed cases by default unless the "Show completed" toggle is enabled
-        // When viewing "My Cases", UNDER_REVIEW items should still be shown (they are not completed)
         if (!showCompleted) {
             filtered = filtered.filter(t => {
                 const s = t.status || "UNASSIGNED";
-                if (activeTab === "mine") {
-                    // In My Cases, only hide truly completed statuses
-                    return s !== "APPROVED" && s !== "DENIED";
-                }
-                // In All Cases, also hide items that are UNDER_REVIEW when showCompleted is false
-                return s !== "APPROVED" && s !== "DENIED" && s !== "UNDER_REVIEW";
+                return activeTab === "mine"
+                    ? s !== "APPROVED" && s !== "DENIED"
+                    : s !== "APPROVED" && s !== "DENIED" && s !== "UNDER_REVIEW";
             });
         }
 
-        // Apply search
         if (query) {
             filtered = filtered.filter(t =>
                 String(t.id).includes(query) ||
                 (t.status   && t.status.toLowerCase().includes(query)) ||
-                (t.currency && t.currency.toLowerCase().includes(query)) ||
-                (t.reasonId && t.reasonId.toLowerCase().includes(query))
+                (t.currency && t.currency.toLowerCase().includes(query))
             );
         }
 
-        if (filtered.length === 0) {
+        if (!filtered.length) {
             tableBody.innerHTML = `<tr class="empty-row"><td colspan="9">${
-                activeTab === "mine"
-                    ? "No cases assigned to you yet. Assign one from the All Cases tab."
-                    : "No cases match the current filter."
+                activeTab === "mine" ? "No cases assigned to you yet." : "No cases match the current filter."
             }</td></tr>`;
             return;
         }
@@ -640,67 +871,49 @@
             const riskLabel = score > 0 ? Math.round(score) : "—";
             const status    = t.status || "UNASSIGNED";
             const amount    = t.amount != null ? Number(t.amount).toLocaleString("en-US", { minimumFractionDigits: 2 }) : "—";
-            const created   = t.createdAt ? new Date(t.createdAt).toLocaleString() : "—";
+            const created   = t.createdAt ? new Date(t.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "—";
+            const statusLabel = status.replace(/_/g, " ");
 
-            // Show "Assign to me" only for UNASSIGNED cases and only on the All tab
-            // Show "Score" button only if in My Cases tab or in All Cases assigned to current agent
-            // Show "Unassign" button in My Cases tab
-            let assignBtn = '';
+            let action = "";
             if (activeTab === "all") {
-                if (status === "UNASSIGNED") {
-                    assignBtn = `<button class="action-btn assign" onclick="event.stopPropagation(); assignCase(${t.id})">Assign to me</button>`;
-                } else if (t.agentId === currentAgent.id) {
-                    assignBtn = `<button class="action-btn" onclick="event.stopPropagation(); openScoring(${t.id})">Score →</button>`;
-                }
+                if (status === "UNASSIGNED")
+                    action = `<button class="row-btn assign" onclick="event.stopPropagation();assignCase(${t.id})">Assign to me</button>`;
+                else if (t.agentId === currentAgent.id)
+                    action = `<button class="row-btn" onclick="event.stopPropagation();openScoring(${t.id})">Review →</button>`;
             } else {
-                assignBtn = `<div style="display: flex; gap: 6px;">
-                    <button class="action-btn" onclick="event.stopPropagation(); openScoring(${t.id})">Score →</button>
-                    <button class="action-btn" onclick="event.stopPropagation(); unassignCase(${t.id})" style="color: #be3d2a; border-color: #be3d2a;">Unassign</button>
+                action = `<div class="row-btn-group">
+                    <button class="row-btn" onclick="event.stopPropagation();openScoring(${t.id})">Review →</button>
+                    <button class="row-btn danger" onclick="event.stopPropagation();unassignCase(${t.id})">Unassign</button>
                 </div>`;
             }
 
-            // Only allow clicking on rows in "My Cases" tab
-            const rowClass = activeTab === "all" ? 'class="non-clickable"' : '';
-            const rowClick = activeTab === "all" ? '' : `onclick="openScoring(${t.id})"`;
+            const nc = activeTab === "all" ? 'class="non-clickable"' : '';
+            const rc = activeTab === "all" ? '' : `onclick="openScoring(${t.id})"`;
 
-            return `
-                <tr ${rowClass} ${rowClick}>
-                    <td><strong>${t.id}</strong></td>
-                    <td><span class="status-badge ${status}">${status.replace("_", " ")}</span></td>
-                    <td><span class="risk-badge ${riskClass}">${riskLabel}</span></td>
-                    <td>${amount}</td>
-                    <td>${t.currency || "—"}</td>
-                    <td>${t.accountId ?? "—"}</td>
-                    <td>${t.agentId ?? "—"}</td>
-                    <td>${created}</td>
-                    <td>${assignBtn}</td>
-                </tr>`;
+            return `<tr ${nc} ${rc}>
+                <td><span class="case-id">RF-${String(t.id).padStart(4,"0")}</span></td>
+                <td><span class="badge ${status}">${statusLabel}</span></td>
+                <td><span class="risk-pill ${riskClass}">${riskLabel}</span></td>
+                <td class="dim">${amount}</td>
+                <td class="dim">${t.currency || "—"}</td>
+                <td class="dim">${t.accountId ?? "—"}</td>
+                <td class="dim">${t.agentId ?? "—"}</td>
+                <td class="dim">${created}</td>
+                <td>${action}</td>
+            </tr>`;
         }).join("");
     }
 
-    // ── Navigation ─────────────────────────────────────────────────────────────
-    function openScoring(id) {
-        window.location.href = `/index.html?id=${id}`;
-    }
-
-    // ── Error handling ─────────────────────────────────────────────────────────
-    function showError(message) {
-        errorBanner.textContent = message;
-        errorBanner.style.display = "block";
-    }
-
-    function clearError() {
-        errorBanner.textContent = "";
-        errorBanner.style.display = "none";
-    }
+    function openScoring(id) { window.location.href = `/index.html?id=${id}`; }
+    function showError(msg)  { errorBanner.textContent = msg; errorBanner.style.display = "block"; }
+    function clearError()    { errorBanner.textContent = "";  errorBanner.style.display = "none"; }
 </script>
 
-<!-- Pre-fill transaction ID when coming from dashboard via ?id=X -->
 <script>
     const params = new URLSearchParams(window.location.search);
     if (params.has("id")) {
-        const input = document.querySelector("#transactionId");
-        if (input) input.value = params.get("id");
+        const inp = document.querySelector("#transactionId");
+        if (inp) inp.value = params.get("id");
     }
 </script>
 </body>

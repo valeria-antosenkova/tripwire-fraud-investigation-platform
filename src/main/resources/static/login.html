@@ -3,161 +3,392 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Tripwire Login</title>
+    <title>Tripwire — Sign In</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
         :root {
-            color-scheme: light;
-            font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-            color: #18202a;
-            background: #f4f7fb;
+            --accent: #4F46E5;
+            --accent-hover: #4338CA;
+            --text: #0F172A;
+            --text-2: #475569;
+            --text-3: #94A3B8;
+            --border: #E2E8F0;
+            --surface: #FFFFFF;
+            --bg: #F1F5F9;
+            --red: #EF4444;
+            --red-dim: #FEE2E2;
         }
 
-        * { box-sizing: border-box; }
+        html, body { height: 100%; }
 
         body {
-            margin: 0;
+            font-family: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
+            background: var(--bg);
             min-height: 100vh;
+            display: flex;
+            align-items: stretch;
+        }
+
+        /* ── Left hero ─────────────────────────────────── */
+        .hero {
+            flex: 1;
+            background: #0F172A;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 48px 56px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -120px; right: -120px;
+            width: 420px; height: 420px;
+            background: radial-gradient(circle, rgba(79,70,229,0.25) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            bottom: -80px; left: -80px;
+            width: 320px; height: 320px;
+            background: radial-gradient(circle, rgba(16,185,129,0.12) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .hero-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-logo {
+            width: 42px; height: 42px;
+            background: var(--accent);
+            border-radius: 12px;
             display: grid;
             place-items: center;
-            background:
-                radial-gradient(circle at top left, rgba(20, 87, 121, 0.12), transparent 34%),
-                radial-gradient(circle at bottom right, rgba(203, 88, 60, 0.12), transparent 30%),
-                #f4f7fb;
+            flex-shrink: 0;
         }
 
-        .card {
-            width: min(440px, calc(100% - 32px));
-            padding: 32px;
-            border: 1px solid #d5dde7;
-            border-radius: 16px;
-            background: rgba(255, 255, 255, 0.92);
-            box-shadow: 0 18px 50px rgba(42, 52, 65, 0.12);
+        .hero-logo svg {
+            width: 20px; height: 20px;
+            fill: none; stroke: #fff;
+            stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
         }
 
-        h1 {
-            margin: 0 0 8px;
-            font-size: 2rem;
+        .hero-wordmark {
+            font-size: 20px; font-weight: 800;
+            color: #fff; letter-spacing: -0.4px;
         }
 
-        p {
-            margin: 0 0 24px;
-            color: #52606d;
-            line-height: 1.5;
+        .hero-body {
+            position: relative;
+            z-index: 1;
+            padding-bottom: 24px;
         }
 
-        label {
-            display: grid;
-            gap: 6px;
-            margin-bottom: 16px;
-            color: #52606d;
-            font-size: 0.82rem;
-            font-weight: 700;
+        .hero-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            font-size: 11.5px; font-weight: 600;
+            color: rgba(255,255,255,0.4);
             text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 28px;
+            padding: 6px 14px;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 20px;
+            background: rgba(255,255,255,0.05);
         }
 
-        input {
-            min-height: 46px;
-            border: 1px solid #b8c3cf;
-            border-radius: 8px;
-            padding: 10px 12px;
-            font: inherit;
-            color: #18202a;
-            background: #fff;
+        .hero-tag::before {
+            content: '';
+            width: 7px; height: 7px;
+            background: #10B981;
+            border-radius: 50%;
+            box-shadow: 0 0 8px rgba(16,185,129,0.6);
         }
 
-        button {
+        .hero-title {
+            font-size: 40px; font-weight: 800;
+            color: #fff; line-height: 1.15;
+            letter-spacing: -0.8px;
+            margin-bottom: 18px;
+        }
+
+        .hero-title span { color: #818CF8; }
+
+        .hero-desc {
+            font-size: 15px; color: rgba(255,255,255,0.4);
+            line-height: 1.75; max-width: 380px;
+        }
+
+        .hero-stats {
+            display: flex;
+            gap: 36px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hs-num {
+            font-size: 24px; font-weight: 800;
+            color: #fff; letter-spacing: -0.5px;
+            line-height: 1; margin-bottom: 5px;
+        }
+
+        .hs-label {
+            font-size: 12px; color: rgba(255,255,255,0.35);
+            font-weight: 500;
+        }
+
+        /* ── Right form ────────────────────────────────── */
+        .form-panel {
+            width: 480px;
+            flex-shrink: 0;
+            background: var(--surface);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 48px 56px;
+        }
+
+        .form-inner { width: 100%; max-width: 360px; }
+
+        .form-header { margin-bottom: 36px; }
+
+        .form-title {
+            font-size: 26px; font-weight: 800;
+            color: var(--text); letter-spacing: -0.5px;
+            margin-bottom: 6px;
+        }
+
+        .form-sub { font-size: 14px; color: var(--text-3); line-height: 1.6; }
+
+        .field { margin-bottom: 18px; }
+
+        .field label {
+            display: block;
+            font-size: 12px; font-weight: 600;
+            color: var(--text-2);
+            letter-spacing: 0.04em;
+            margin-bottom: 7px;
+        }
+
+        .input-wrap { position: relative; }
+
+        .input-wrap svg {
+            position: absolute;
+            left: 14px; top: 50%;
+            transform: translateY(-50%);
+            width: 16px; height: 16px;
+            fill: none; stroke: var(--text-3);
+            stroke-width: 1.75;
+            stroke-linecap: round; stroke-linejoin: round;
+            pointer-events: none;
+        }
+
+        .field input {
+            display: block;
             width: 100%;
-            min-height: 46px;
-            border: 0;
-            border-radius: 8px;
-            background: #155f7d;
+            height: 48px;
+            border: 1.5px solid var(--border);
+            border-radius: 12px;
+            padding: 0 14px 0 42px;
+            font: inherit;
+            font-size: 14px;
+            color: var(--text);
+            background: var(--bg);
+            outline: none;
+            transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
+        }
+
+        .field input:focus {
+            border-color: var(--accent);
+            background: #fff;
+            box-shadow: 0 0 0 3px rgba(79,70,229,0.1);
+        }
+
+        .field input::placeholder { color: var(--text-3); }
+
+        .submit {
+            width: 100%;
+            height: 48px;
+            background: var(--accent);
+            border: none;
+            border-radius: 12px;
             color: #fff;
             font: inherit;
-            font-weight: 800;
-            cursor: pointer;
-        }
-
-        button:disabled {
-            cursor: wait;
-            opacity: 0.7;
-        }
-
-        .error {
-            display: none;
-            margin-top: 16px;
-            border: 1px solid #e1ad9f;
-            border-radius: 8px;
-            padding: 10px 12px;
-            background: #fff4f1;
-            color: #8c2c1d;
+            font-size: 14px;
             font-weight: 700;
+            letter-spacing: 0.01em;
+            cursor: pointer;
+            margin-top: 8px;
+            transition: background 0.15s, box-shadow 0.15s, transform 0.08s;
+            box-shadow: 0 4px 14px rgba(79,70,229,0.35);
         }
 
-        .hint {
-            margin-top: 16px;
-            color: #52606d;
-            font-size: 0.95rem;
+        .submit:hover:not(:disabled) {
+            background: var(--accent-hover);
+            box-shadow: 0 6px 20px rgba(79,70,229,0.45);
+        }
+
+        .submit:active:not(:disabled) { transform: translateY(1px); }
+        .submit:disabled { opacity: 0.55; cursor: wait; }
+
+        .error-box {
+            display: none;
+            margin-top: 14px;
+            padding: 12px 14px;
+            background: var(--red-dim);
+            border-radius: 10px;
+            color: #B91C1C;
+            font-size: 13px;
+            font-weight: 500;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .error-box.visible { display: flex; }
+
+        .error-box svg {
+            width: 15px; height: 15px; flex-shrink: 0;
+            fill: none; stroke: currentColor;
+            stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
+        }
+
+        .demo {
+            margin-top: 24px;
+            padding: 14px 16px;
+            background: var(--bg);
+            border: 1.5px solid var(--border);
+            border-radius: 12px;
+        }
+
+        .demo-label {
+            font-size: 10.5px; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 0.08em;
+            color: var(--text-3); margin-bottom: 7px;
+        }
+
+        .demo-cred {
+            font-family: ui-monospace, "SF Mono", Consolas, monospace;
+            font-size: 12px; color: var(--text-2);
+            line-height: 1.9;
+        }
+
+        @media (max-width: 860px) {
+            .hero { display: none; }
+            .form-panel { width: 100%; padding: 40px 24px; }
         }
     </style>
 </head>
 <body>
-<main class="card">
-    <h1>Agent Login</h1>
-    <p>Enter your agent email and password to access Tripwire.</p>
 
-    <form id="loginForm">
-        <label>
-            Email
-            <input id="email" type="email" autocomplete="username" required>
-        </label>
+<!-- Left hero -->
+<div class="hero">
+    <div class="hero-brand">
+        <div class="hero-logo">
+            <svg viewBox="0 0 24 24"><path d="M12 2L4 6v6c0 5.25 3.5 10.15 8 11.35C16.5 22.15 20 17.25 20 12V6L12 2z"/></svg>
+        </div>
+        <span class="hero-wordmark">Tripwire</span>
+    </div>
 
-        <label>
-            Password
-            <input id="password" type="password" autocomplete="current-password" required>
-        </label>
+    <div class="hero-body">
+        <div class="hero-tag">Fraud Intelligence Platform</div>
+        <div class="hero-title">Stop fraud<br>before it <span>lands.</span></div>
+        <div class="hero-desc">Real-time transaction scoring, AI-powered risk signals, and a streamlined case review workflow built for modern fraud teams.</div>
+    </div>
 
-        <button id="loginButton" type="submit">Login</button>
-        <div id="error" class="error"></div>
-    </form>
+    <div class="hero-stats">
+        <div class="hs-item">
+            <div class="hs-num">99.2%</div>
+            <div class="hs-label">Detection rate</div>
+        </div>
+        <div class="hs-item">
+            <div class="hs-num">&lt;120ms</div>
+            <div class="hs-label">Score latency</div>
+        </div>
+        <div class="hs-item">
+            <div class="hs-num">40+</div>
+            <div class="hs-label">Risk signals</div>
+        </div>
+    </div>
+</div>
 
-    <div class="hint">Demo: <strong>sarah.okafor@tripwire.internal</strong> / <strong>tripwire123</strong></div>
-</main>
+<!-- Right form -->
+<div class="form-panel">
+    <div class="form-inner">
+        <div class="form-header">
+            <div class="form-title">Welcome back</div>
+            <div class="form-sub">Sign in to your Tripwire workspace to continue.</div>
+        </div>
+
+        <form id="loginForm">
+            <div class="field">
+                <label for="email">Email address</label>
+                <div class="input-wrap">
+                    <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                    <input id="email" type="email" autocomplete="username" placeholder="you@tripwire.internal" required>
+                </div>
+            </div>
+            <div class="field">
+                <label for="password">Password</label>
+                <div class="input-wrap">
+                    <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+                    <input id="password" type="password" autocomplete="current-password" placeholder="••••••••" required>
+                </div>
+            </div>
+            <button id="loginButton" class="submit" type="submit">Sign in</button>
+            <div id="error" class="error-box">
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                <span id="errorText"></span>
+            </div>
+        </form>
+
+        <div class="demo">
+            <div class="demo-label">Demo credentials</div>
+            <div class="demo-cred">sarah.okafor@tripwire.internal</div>
+            <div class="demo-cred" style="color:#94A3B8">tripwire123</div>
+        </div>
+    </div>
+</div>
 
 <script>
-    // Already logged in → skip to dashboard
-    if (localStorage.getItem("agent")) {
-        window.location.href = "/dashboard.html";
-    }
+    if (localStorage.getItem("agent")) window.location.href = "/dashboard.html";
 
     const form = document.querySelector("#loginForm");
     const email = document.querySelector("#email");
     const password = document.querySelector("#password");
     const loginButton = document.querySelector("#loginButton");
-    const error = document.querySelector("#error");
+    const errorBox = document.querySelector("#error");
+    const errorText = document.querySelector("#errorText");
 
-    form.addEventListener("submit", async (event) => {
-        event.preventDefault();
+    form.addEventListener("submit", async (e) => {
+        e.preventDefault();
         setLoading(true);
         clearError();
-
         try {
-            const response = await fetch("/agent/login", {
+            const res = await fetch("/agent/login", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    email:    email.value.trim(),
-                    password: password.value
-                })
+                body: JSON.stringify({ email: email.value.trim(), password: password.value })
             });
-
-            const text = await response.text();
+            const text = await res.text();
             const data = text ? JSON.parse(text) : {};
-
-            if (!response.ok) {
-                throw new Error(data.error || data.message || "Login failed");
-            }
-
-            // Persist agent session in localStorage
+            if (!res.ok) throw new Error(data.error || data.message || "Login failed");
             localStorage.setItem("agent", JSON.stringify(data));
             window.location.href = "/dashboard.html";
         } catch (err) {
@@ -167,21 +398,12 @@
         }
     });
 
-    function setLoading(isLoading) {
-        loginButton.disabled = isLoading;
-        loginButton.textContent = isLoading ? "Logging in..." : "Login";
+    function setLoading(v) {
+        loginButton.disabled = v;
+        loginButton.textContent = v ? "Signing in…" : "Sign in";
     }
-
-    function showError(message) {
-        error.textContent = message;
-        error.style.display = "block";
-    }
-
-    function clearError() {
-        error.textContent = "";
-        error.style.display = "none";
-    }
+    function showError(msg) { errorText.textContent = msg; errorBox.classList.add("visible"); }
+    function clearError()   { errorText.textContent = "";  errorBox.classList.remove("visible"); }
 </script>
 </body>
 </html>
-

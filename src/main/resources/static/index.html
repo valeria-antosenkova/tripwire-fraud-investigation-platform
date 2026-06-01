@@ -3,1154 +3,1124 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Tripwire Fraud Review</title>
+    <title>Tripwire — Refund Case Details</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        :root {
-            color-scheme: dark;
-            font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-            --bg: #101214;
-            --panel: #1b1d21;
-            --panel-2: #202328;
-            --panel-3: #262a30;
-            --border: #353b42;
-            --text: #f1f5f9;
-            --muted: #aeb7c2;
-            --muted-2: #7f8a96;
-            --good: #2a8a5e;
-            --amber: #c0821a;
-            --red: #d04848;
-            --soft-red: #f7d7d7;
-            --soft-amber: #f4dfb1;
-            --soft-green: #d7f0e2;
-        }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-        * { box-sizing: border-box; }
+        :root {
+            --bg: #F1F5F9;
+            --surface: #FFFFFF;
+            --surface-2: #F8FAFC;
+            --accent: #4F46E5;
+            --accent-dim: #EEF2FF;
+            --sidebar: #0F172A;
+            --sidebar-border: rgba(255,255,255,0.06);
+            --text: #0F172A;
+            --text-2: #475569;
+            --text-3: #94A3B8;
+            --border: #E2E8F0;
+            --green: #10B981;
+            --green-dim: #D1FAE5;
+            --red: #EF4444;
+            --red-dim: #FEE2E2;
+            --amber: #F59E0B;
+            --amber-dim: #FEF3C7;
+            --blue: #3B82F6;
+            --blue-dim: #DBEAFE;
+        }
 
         body {
-            margin: 0;
-            min-height: 100vh;
-            background:
-                radial-gradient(circle at top left, rgba(67, 76, 92, 0.26), transparent 32%),
-                radial-gradient(circle at top right, rgba(149, 66, 44, 0.18), transparent 30%),
-                linear-gradient(180deg, #0f1114 0%, #14171b 100%);
+            font-family: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
+            font-size: 14px;
             color: var(--text);
-        }
-
-        main {
-            width: min(1240px, calc(100% - 32px));
-            margin: 0 auto;
-            padding: 16px 0 28px;
-        }
-
-        a { color: inherit; }
-
-        .topbar {
+            background: var(--bg);
+            min-height: 100vh;
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 18px;
-            margin-bottom: 16px;
-            flex-wrap: wrap;
         }
 
-        .back-link {
+        /* ── Sidebar ───────────────────────────────────── */
+        .sidebar {
+            width: 220px;
+            background: var(--sidebar);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+        }
+        .sb-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 24px 20px 20px;
+            border-bottom: 1px solid var(--sidebar-border);
+            flex-shrink: 0;
+            text-decoration: none;
+        }
+        .sb-logo {
+            width: 34px; height: 34px;
+            background: var(--accent);
+            border-radius: 9px;
+            display: grid; place-items: center;
+            flex-shrink: 0;
+        }
+        .sb-logo svg { width: 16px; height: 16px; fill: none; stroke: #fff; stroke-width: 2.25; stroke-linecap: round; stroke-linejoin: round; }
+        .sb-wordmark { font-size: 15px; font-weight: 800; color: #fff; letter-spacing: -0.3px; }
+        .sb-nav {
+            flex: 1;
+            padding: 16px 12px;
+            display: flex; flex-direction: column; gap: 2px;
+            overflow-y: auto;
+        }
+        .sb-section {
+            font-size: 10.5px; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 0.1em;
+            color: rgba(255,255,255,0.25);
+            padding: 4px 10px;
+            margin-top: 12px; margin-bottom: 4px;
+        }
+        .sb-section:first-child { margin-top: 0; }
+        .sb-item {
+            display: flex; align-items: center; gap: 10px;
+            padding: 9px 10px;
+            border-radius: 9px;
+            color: rgba(255,255,255,0.5);
+            font-size: 13.5px; font-weight: 500;
+            cursor: pointer;
+            transition: background 0.12s, color 0.12s;
+            text-decoration: none;
+        }
+        .sb-item:hover  { background: rgba(255,255,255,0.07); color: rgba(255,255,255,0.85); }
+        .sb-item.active { background: rgba(79,70,229,0.25); color: #fff; }
+        .sb-item svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
+        .sb-footer { padding: 16px 12px; border-top: 1px solid var(--sidebar-border); }
+        .sb-agent {
+            display: flex; align-items: center; gap: 10px;
+            padding: 10px; border-radius: 10px; margin-bottom: 8px;
+            background: rgba(255,255,255,0.05);
+        }
+        .sb-avatar {
+            width: 34px; height: 34px; border-radius: 50%;
+            background: var(--accent);
+            display: grid; place-items: center;
+            font-size: 12px; font-weight: 700; color: #fff;
+            flex-shrink: 0;
+        }
+        .sb-agent-info { flex: 1; min-width: 0; }
+        .sb-agent-name { font-size: 13px; font-weight: 600; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .sb-agent-role { font-size: 11px; color: rgba(255,255,255,0.35); }
+        .sb-logout {
+            display: flex; align-items: center; gap: 9px;
+            padding: 8px 10px; border-radius: 8px;
+            border: none; background: none;
+            color: rgba(255,255,255,0.35);
+            font: inherit; font-size: 13px; font-weight: 500;
+            cursor: pointer; width: 100%; text-align: left;
+            transition: background 0.1s, color 0.1s;
+        }
+        .sb-logout:hover { background: rgba(239,68,68,0.12); color: #FCA5A5; }
+        .sb-logout svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
+
+        /* ── Shell (everything right of sidebar) ──────── */
+        .shell { flex: 1; min-width: 0; display: flex; flex-direction: column; overflow-y: auto; }
+
+        /* ── Top header ─────────────────────────────────── */
+        .topbar {
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            padding: 0 32px;
+        }
+        .tb-back {
             display: inline-flex;
             align-items: center;
-            gap: 8px;
-            min-height: 38px;
-            padding: 0 14px;
-            border: 1px solid var(--border);
-            border-radius: 999px;
-            background: rgba(255,255,255,0.03);
+            gap: 6px;
+            padding: 10px 0;
+            font-size: 12.5px;
+            font-weight: 500;
+            color: var(--text-3);
             text-decoration: none;
-            font-weight: 700;
+            transition: color 0.12s;
         }
-
-        .case-meta {
-            margin-left: auto;
+        .tb-back:hover { color: var(--accent); }
+        .tb-back svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+        .tb-main {
             display: flex;
-            gap: 14px;
-            align-items: center;
-            flex-wrap: wrap;
-            color: var(--muted);
-            font-size: 0.92rem;
-            font-weight: 600;
-        }
-
-        .case-id {
-            color: var(--text);
-            font-weight: 800;
-            letter-spacing: 0.02em;
-        }
-
-        .timestamp {
-            padding-left: 14px;
-            border-left: 1px solid var(--border);
-        }
-
-        .headline {
-            display: flex;
+            align-items: flex-end;
             justify-content: space-between;
-            align-items: end;
+            padding-bottom: 18px;
             gap: 16px;
-            margin-bottom: 16px;
-            flex-wrap: wrap;
         }
-
-        h1 {
-            margin: 0;
-            font-size: clamp(2rem, 4vw, 3.5rem);
-            line-height: 0.95;
-            letter-spacing: -0.02em;
+        .tb-case-id {
+            font-size: 24px; font-weight: 800;
+            color: var(--text); letter-spacing: -0.5px;
+            line-height: 1.1;
         }
+        .tb-case-sub { font-size: 13px; color: var(--accent); font-weight: 500; margin-top: 3px; }
+        .tb-right { display: flex; align-items: center; gap: 14px; flex-shrink: 0; }
 
-        .subtitle {
-            margin: 8px 0 0;
-            max-width: 700px;
-            color: var(--muted);
-            line-height: 1.5;
+        .risk-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 7px 16px;
+            border-radius: 20px;
+            font-size: 13px; font-weight: 700;
+            background: var(--text-3);
+            color: #fff;
         }
+        .risk-badge.high   { background: var(--red); }
+        .risk-badge.medium { background: var(--amber); }
+        .risk-badge.low    { background: var(--green); }
+        .risk-badge svg { width: 13px; height: 13px; fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
 
-        .status-pill {
-            padding: 8px 12px;
-            border: 1px solid var(--border);
-            border-radius: 999px;
-            background: rgba(255,255,255,0.03);
-            color: var(--muted);
-            font-weight: 700;
-            white-space: nowrap;
-        }
+        .risk-score-block { display: flex; flex-direction: column; align-items: flex-end; line-height: 1; }
+        .rs-label { font-size: 10.5px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text-3); margin-bottom: 2px; }
+        .rs-num { font-size: 38px; font-weight: 800; font-variant-numeric: tabular-nums; color: var(--text-3); line-height: 1; }
+        .rs-num.high   { color: var(--red); }
+        .rs-num.medium { color: var(--amber); }
+        .rs-num.low    { color: var(--green); }
 
-        .grid-top {
+        /* ── Page layout ─────────────────────────────────── */
+        .page-content {
             display: grid;
-            grid-template-columns: minmax(0, 1.35fr) minmax(300px, 0.95fr);
-            gap: 14px;
-            align-items: stretch;
+            grid-template-columns: 1fr 320px;
+            gap: 20px;
+            padding: 24px 32px 48px;
         }
 
+        /* ── Cards ───────────────────────────────────────── */
         .card {
+            background: var(--surface);
             border: 1px solid var(--border);
             border-radius: 14px;
-            background: linear-gradient(180deg, rgba(255,255,255,0.035), rgba(255,255,255,0.02)), var(--panel);
-            box-shadow: 0 22px 52px rgba(0,0,0,0.28);
+            padding: 20px 22px;
+            margin-bottom: 16px;
         }
-
-        .customer-card,
-        .decision-card,
-        .risk-card,
-        .signals-card,
-        .notes-card {
-            padding: 18px;
+        .card:last-child { margin-bottom: 0; }
+        .card-header { display: flex; align-items: center; gap: 10px; margin-bottom: 18px; }
+        .card-icon {
+            width: 32px; height: 32px;
+            border-radius: 8px;
+            background: var(--accent-dim);
+            display: grid; place-items: center;
+            flex-shrink: 0;
         }
+        .card-icon svg { width: 15px; height: 15px; fill: none; stroke: var(--accent); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+        .card-icon.red { background: var(--red-dim); }
+        .card-icon.red svg { stroke: #DC2626; }
+        .card-title { font-size: 14.5px; font-weight: 700; color: var(--text); letter-spacing: -0.1px; }
 
-        .customer-card {
-            display: grid;
-            gap: 16px;
-        }
-
-        .customer-head {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 14px;
-            flex-wrap: wrap;
-        }
-
-        .identity {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            min-width: 0;
-        }
-
-        .avatar {
-            width: 54px;
-            height: 54px;
-            border-radius: 50%;
-            display: grid;
-            place-items: center;
-            background: linear-gradient(135deg, #4778da, #39a5a1);
-            color: #fff;
-            font-weight: 900;
-            letter-spacing: 0.02em;
-            flex: none;
-        }
-
-        .customer-name {
-            margin: 0;
-            font-size: 1.18rem;
-            font-weight: 900;
-        }
-
-        .customer-sub {
-            margin: 4px 0 0;
-            color: var(--muted);
-            font-size: 0.96rem;
-        }
-
-        .badge {
-            padding: 6px 10px;
-            border-radius: 999px;
-            font-weight: 800;
-            font-size: 0.78rem;
-            border: 1px solid transparent;
-            white-space: nowrap;
-        }
-
-        .badge.new { background: rgba(247, 223, 177, 0.18); color: #f3ce7c; border-color: rgba(243,206,124,0.35); }
-        .badge.review { background: rgba(240, 187, 116, 0.18); color: #f0b65c; border-color: rgba(240,182,92,0.35); }
-        .badge.good { background: rgba(108, 200, 152, 0.18); color: #6cc898; border-color: rgba(108,200,152,0.35); }
-
-        .meta-grid {
-            display: grid;
-            grid-template-columns: repeat(4, minmax(0, 1fr));
-            gap: 10px;
-        }
-
-        .meta-item {
-            padding: 12px;
+        /* data-label note — marks synthetic fields */
+        .synth-note {
+            font-size: 10px; font-weight: 600;
+            text-transform: uppercase; letter-spacing: 0.04em;
+            color: var(--text-3);
+            background: var(--surface-2);
             border: 1px solid var(--border);
-            border-radius: 12px;
-            background: rgba(255,255,255,0.02);
-            min-width: 0;
+            border-radius: 4px;
+            padding: 1px 5px;
+            margin-left: 5px;
+            vertical-align: middle;
         }
 
-        .meta-label {
-            color: var(--muted-2);
-            font-size: 0.72rem;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 0.06em;
+        /* ── Customer info ───────────────────────────────── */
+        .info-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 24px; margin-bottom: 14px; }
+        .field-label {
+            font-size: 11px; font-weight: 600;
+            text-transform: uppercase; letter-spacing: 0.06em;
+            color: var(--text-3); margin-bottom: 3px;
         }
+        .field-value { font-size: 13.5px; font-weight: 600; color: var(--text); }
 
-        .meta-value {
-            margin-top: 6px;
-            color: var(--text);
-            font-weight: 700;
-            word-break: break-word;
+        .acct-status { display: inline-flex; align-items: center; gap: 5px; font-size: 13px; font-weight: 600; }
+        .acct-status::before { content: ''; width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+        .acct-status.active { color: #059669; }
+        .acct-status.active::before { background: #059669; }
+        .acct-status.new    { color: #D97706; }
+        .acct-status.new::before { background: var(--amber); }
+
+        .icon-row {
+            display: flex; align-items: center; gap: 9px;
+            padding: 10px 0; border-bottom: 1px solid var(--border);
+            font-size: 13px; color: var(--text-2);
         }
+        .icon-row:last-child { border-bottom: none; }
+        .icon-row svg { width: 15px; height: 15px; fill: none; stroke: var(--text-3); stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
+        .icon-rows-wrap { margin-bottom: 16px; }
 
-        .decision-card {
-            display: grid;
-            gap: 12px;
-            align-content: start;
+        .stat-grid {
+            display: grid; grid-template-columns: 1fr 1fr;
+            gap: 1px; background: var(--border);
+            border-radius: 10px; overflow: hidden;
         }
+        .stat-cell { background: var(--surface-2); padding: 12px 14px; display: flex; align-items: flex-start; gap: 8px; }
+        .stat-cell svg { width: 14px; height: 14px; fill: none; stroke: var(--text-3); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; margin-top: 3px; }
+        .stat-cell-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-3); margin-bottom: 3px; }
+        .stat-cell-value { font-size: 14px; font-weight: 700; color: var(--text); }
+        /* real = from DB, synth = estimated */
+        .stat-cell-value.real  { color: var(--text); }
+        .stat-cell-value.synth { color: var(--text-2); }
 
-        .decision-head {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 12px;
+        /* ── Order details ───────────────────────────────── */
+        .order-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px 24px; margin-bottom: 16px; }
+        .order-label {
+            font-size: 11px; font-weight: 600;
+            text-transform: uppercase; letter-spacing: 0.06em;
+            color: var(--text-3); margin-bottom: 4px;
+            display: flex; align-items: center; gap: 4px;
         }
+        .order-label svg { width: 11px; height: 11px; fill: none; stroke: var(--text-3); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+        .order-value       { font-size: 13.5px; font-weight: 600; color: var(--text); }
+        .order-value.muted { font-weight: 500; color: var(--text-2); font-size: 13px; }
 
-        .decision-title {
-            margin: 0;
-            font-size: 1.02rem;
-            font-weight: 900;
+        .items-section-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-3); margin-bottom: 8px; }
+        .items-list { list-style: none; margin: 0 0 16px; padding: 0; }
+        .items-list li { font-size: 13px; color: var(--text-2); padding: 2px 0 2px 14px; position: relative; }
+        .items-list li::before { content: '•'; position: absolute; left: 0; color: var(--text-3); }
+
+        /* ── Potential risks ─────────────────────────────── */
+        .risks-sub { font-size: 12.5px; color: var(--text-2); margin-top: -10px; margin-bottom: 14px; }
+        .risk-item {
+            display: flex; align-items: flex-start; justify-content: space-between; gap: 12px;
+            background: var(--surface-2); border: 1px solid var(--border);
+            border-radius: 10px; padding: 14px 16px; margin-bottom: 10px;
         }
+        .risk-item:last-child { margin-bottom: 0; }
+        .risk-item-left { display: flex; align-items: flex-start; gap: 10px; flex: 1; min-width: 0; }
+        .risk-icon { width: 30px; height: 30px; border-radius: 7px; background: var(--red-dim); display: grid; place-items: center; flex-shrink: 0; margin-top: 1px; }
+        .risk-icon.medium { background: var(--amber-dim); }
+        .risk-icon.low    { background: var(--green-dim); }
+        .risk-icon svg { width: 14px; height: 14px; fill: none; stroke: #DC2626; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+        .risk-icon.medium svg { stroke: #D97706; }
+        .risk-icon.low    svg { stroke: #059669; }
+        .risk-item-title { font-size: 13.5px; font-weight: 700; color: var(--text); margin-bottom: 3px; }
+        .risk-item-desc  { font-size: 12px; color: var(--text-2); line-height: 1.5; margin-bottom: 5px; }
+        .risk-item-ts    { font-size: 11px; color: var(--text-3); }
+        .sev-badge { display: inline-flex; align-items: center; padding: 3px 11px; border-radius: 20px; font-size: 11.5px; font-weight: 700; flex-shrink: 0; align-self: flex-start; }
+        .sev-badge.high   { background: var(--red);       color: #fff; }
+        .sev-badge.medium { background: var(--amber-dim); color: #D97706; border: 1px solid #FDE68A; }
+        .sev-badge.low    { background: var(--green-dim); color: #059669; }
 
-        .recommended {
-            color: var(--muted);
-            font-size: 0.9rem;
-            font-weight: 700;
-        }
+        /* ── Right column ────────────────────────────────── */
+        /* Refund summary */
+        .summary-amount { font-size: 30px; font-weight: 800; color: var(--text); letter-spacing: -0.5px; margin-bottom: 18px; font-variant-numeric: tabular-nums; }
+        .summary-row { padding: 10px 0; border-bottom: 1px solid var(--border); }
+        .summary-row:last-child { border-bottom: none; }
+        .sr-label { font-size: 11.5px; color: var(--text-3); font-weight: 500; margin-bottom: 4px; }
+        .sr-value { font-size: 13px; font-weight: 600; color: var(--text); }
 
-        .decision-actions {
-            display: grid;
-            gap: 8px;
-        }
+        .status-pill { display: inline-flex; align-items: center; gap: 5px; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+        .status-pill::before { content: ''; width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+        .status-pill.APPROVED     { background: var(--green-dim); color: #059669; }
+        .status-pill.APPROVED::before { background: #059669; }
+        .status-pill.DENIED       { background: var(--red-dim); color: #DC2626; }
+        .status-pill.DENIED::before { background: #DC2626; }
+        .status-pill.UNDER_REVIEW { background: var(--blue-dim); color: #2563EB; }
+        .status-pill.UNDER_REVIEW::before { background: #3B82F6; }
+        .status-pill.UNASSIGNED   { background: #F1F5F9; color: var(--text-3); border: 1px solid var(--border); }
+        .status-pill.UNASSIGNED::before { background: var(--text-3); }
 
-        .decision-row {
-            display: grid;
-            grid-template-columns: repeat(3, minmax(0, 1fr));
-            gap: 8px;
-        }
-
-        .btn {
-            min-height: 42px;
-            border: 0;
-            border-radius: 10px;
-            padding: 0 14px;
-            color: #fff;
-            font: inherit;
-            font-weight: 900;
-            cursor: pointer;
-            transition: transform 0.08s ease, filter 0.12s ease, opacity 0.12s ease;
-        }
-
-        .btn:hover { filter: brightness(1.03); }
-        .btn:active { transform: translateY(1px); }
-        .btn:disabled { cursor: wait; opacity: 0.65; }
-
-        .btn-approve { background: #2c8d60; }
-        .btn-review { background: #c38a22; }
-        .btn-deny { background: #c94545; }
-        .btn-secondary {
-            background: transparent;
+        /* Customer message card */
+        .msg-bubble {
+            background: var(--surface-2);
             border: 1px solid var(--border);
-            color: var(--text);
-            min-height: 42px;
-            border-radius: 10px;
-            padding: 0 14px;
-            font: inherit;
-            font-weight: 800;
-            cursor: pointer;
+            border-left: 3px solid var(--accent);
+            border-radius: 0 10px 10px 0;
+            padding: 12px 14px;
+            font-size: 13px;
+            color: var(--text-2);
+            line-height: 1.7;
+            font-style: italic;
         }
+        .msg-bubble.empty { font-style: normal; color: var(--text-3); }
 
-        .decision-state {
-            display: grid;
-            grid-template-columns: 110px 1fr;
-            gap: 12px;
-            align-items: center;
-            padding: 12px;
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            background: rgba(255,255,255,0.02);
-        }
-
-        .decision-score {
-            display: grid;
-            place-items: center;
-            width: 94px;
-            height: 94px;
-            border: 10px solid var(--border);
-            border-radius: 50%;
-            font-size: 1.8rem;
-            font-weight: 900;
-        }
-
-        .decision-score.high { border-color: #cf4d4d; color: #ffaaaa; }
-        .decision-score.medium { border-color: #c38a22; color: #f1ca6f; }
-        .decision-score.low { border-color: #2c8d60; color: #8be0b0; }
-
-        .decision-copy .label {
-            margin: 0;
-            color: var(--muted);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            font-size: 0.72rem;
-            font-weight: 800;
-        }
-
-        .decision-copy .value {
-            margin: 4px 0 0;
-            font-size: 1.18rem;
-            font-weight: 900;
-        }
-
-        .decision-copy .hint {
-            margin: 6px 0 0;
-            color: var(--muted);
-            line-height: 1.45;
-            font-size: 0.94rem;
-        }
-
-        .section {
-            margin-top: 14px;
-        }
-
-        .risk-card {
-            margin-top: 14px;
-        }
-
-        .risk-shell {
-            display: grid;
-            grid-template-columns: 140px minmax(0, 1fr);
-            gap: 14px;
-            align-items: center;
-        }
-
-        .risk-ring {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            border: 12px solid var(--border);
-            display: grid;
-            place-items: center;
-            text-align: center;
-            margin: 0 auto;
-            background: rgba(255,255,255,0.02);
-        }
-
-        .risk-ring.high { border-color: #c94545; color: #ffb4b4; }
-        .risk-ring.medium { border-color: #c38a22; color: #f1ca6f; }
-        .risk-ring.low { border-color: #2c8d60; color: #8be0b0; }
-
-        .risk-ring .score {
-            font-size: 2rem;
-            line-height: 1;
-            font-weight: 900;
-        }
-
-        .risk-ring .out-of {
-            margin-top: 2px;
-            color: var(--muted);
-            font-size: 0.78rem;
-            font-weight: 700;
-        }
-
-        .risk-heading {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 10px;
-            flex-wrap: wrap;
+        /* Action buttons */
+        .action-btn {
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            width: 100%; height: 44px; border-radius: 10px; border: none;
+            font: inherit; font-size: 14px; font-weight: 700; cursor: pointer;
             margin-bottom: 8px;
+            transition: opacity 0.12s, transform 0.08s;
         }
+        .action-btn:last-child { margin-bottom: 0; }
+        .action-btn:hover:not(:disabled)  { opacity: 0.87; }
+        .action-btn:active:not(:disabled) { transform: translateY(1px); }
+        .action-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+        .action-btn svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2.25; stroke-linecap: round; stroke-linejoin: round; }
+        .action-btn.approve { background: var(--text); color: #fff; box-shadow: 0 2px 8px rgba(15,23,42,0.18); }
+        .action-btn.reject  { background: var(--red);  color: #fff; box-shadow: 0 2px 8px rgba(239,68,68,0.22); }
+        .action-btn.info    { background: var(--surface); color: var(--text-2); border: 1.5px solid var(--border); }
+        .action-btn.info:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); opacity: 1; }
+        .action-btn.rescore { background: var(--surface); color: var(--text-2); border: 1.5px solid var(--border); margin-top: 4px; font-size: 13px; height: 38px; }
+        .action-btn.rescore:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); opacity: 1; }
 
-        .risk-title {
-            margin: 0;
-            font-size: 1rem;
-            font-weight: 900;
-        }
-
-        .risk-label {
-            padding: 6px 10px;
-            border-radius: 999px;
-            font-weight: 900;
-            font-size: 0.84rem;
-        }
-
-        .risk-label.high { background: rgba(201,69,69,0.18); color: #ffb4b4; }
-        .risk-label.medium { background: rgba(195,138,34,0.18); color: #f1ca6f; }
-        .risk-label.low { background: rgba(44,141,96,0.18); color: #8be0b0; }
-
-        .summary-row {
-            display: grid;
-            grid-template-columns: repeat(3, minmax(0, 1fr));
-            gap: 10px;
-            margin-top: 12px;
-        }
-
-        .summary-tile {
-            padding: 12px;
-            border-radius: 12px;
-            border: 1px solid var(--border);
-            background: rgba(255,255,255,0.02);
-        }
-
-        .summary-tile .k {
-            color: var(--muted-2);
-            text-transform: uppercase;
-            font-size: 0.72rem;
-            font-weight: 800;
-            letter-spacing: 0.06em;
-        }
-
-        .summary-tile .v {
-            margin-top: 6px;
-            font-weight: 900;
-        }
-
-        .signals-card { margin-top: 14px; }
-
-        .signals-head {
-            display: flex;
-            justify-content: space-between;
-            align-items: baseline;
-            gap: 10px;
-            flex-wrap: wrap;
-            margin-bottom: 14px;
-        }
-
-        .signals-head h2,
-        .notes-card h2 {
-            margin: 0;
-            font-size: 1rem;
-        }
-
-        .signals-count {
-            color: var(--muted);
-            font-size: 0.9rem;
-            font-weight: 700;
-        }
-
-        .signal-grid {
-            display: grid;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 12px;
-        }
-
-        .signal-card {
-            padding: 14px;
-            border: 1px solid var(--border);
-            border-radius: 14px;
-            background: linear-gradient(180deg, rgba(255,255,255,0.025), rgba(255,255,255,0.01));
-        }
-
-        .signal-top {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 12px;
-        }
-
-        .category {
-            color: var(--muted);
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-            font-size: 0.72rem;
-            font-weight: 900;
-        }
-
-        .signal-score {
-            font-size: 0.92rem;
-            font-weight: 900;
-        }
-
-        .signal-score.high { color: #ffb4b4; }
-        .signal-score.medium { color: #f1ca6f; }
-        .signal-score.low { color: #8be0b0; }
-
-        .signal-title {
-            margin: 0;
-            font-size: 1.02rem;
-            font-weight: 900;
-        }
-
-        .signal-desc {
-            margin: 8px 0 10px;
-            color: var(--muted);
-            line-height: 1.5;
-            font-size: 0.94rem;
-        }
-
-        .signal-detail {
-            padding: 10px 12px;
+        /* Agent notes */
+        .notes-box {
+            background: var(--amber-dim);
+            border: 1px solid #FDE68A;
             border-radius: 10px;
-            border: 1px solid #323840;
-            background: #15181d;
-            color: #d2dae5;
-            font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-            font-size: 0.8rem;
-            white-space: pre-wrap;
-            word-break: break-word;
+            padding: 14px 16px;
+            font-size: 13px; color: #78350F;
+            line-height: 1.6;
+            min-height: 90px; width: 100%;
+            font-family: inherit; resize: vertical; outline: none;
+            transition: border-color 0.15s, box-shadow 0.15s;
+        }
+        .notes-box:focus { border-color: var(--amber); box-shadow: 0 0 0 3px rgba(245,158,11,0.15); }
+        .notes-box::placeholder { color: #A16207; opacity: 0.6; }
+
+        /* Error bar */
+        .error-bar { display: none; padding: 12px 16px; margin: 8px 32px 0; background: var(--red-dim); border-radius: 10px; color: #B91C1C; font-size: 13px; font-weight: 500; align-items: center; gap: 8px; }
+        .error-bar.visible { display: flex; }
+        .error-bar svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
+
+        /* Loading overlay */
+        .page-loader { position: fixed; inset: 0; z-index: 9999; background: var(--bg); display: flex; align-items: center; justify-content: center; transition: opacity 0.35s ease, visibility 0.35s ease; }
+        .page-loader.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+        .pl-card { display: flex; flex-direction: column; align-items: center; gap: 16px; }
+        .pl-spinner { width: 48px; height: 48px; animation: pl-spin 0.9s linear infinite; }
+        .pl-spinner svg { width: 48px; height: 48px; }
+        .pl-spinner circle { stroke: var(--accent); stroke-linecap: round; stroke-dasharray: 80 200; animation: pl-dash 1.4s ease-in-out infinite; }
+        @keyframes pl-spin { to { transform: rotate(360deg); } }
+        @keyframes pl-dash { 0% { stroke-dasharray: 1 200; stroke-dashoffset: 0; } 50% { stroke-dasharray: 100 200; stroke-dashoffset: -30px; } 100% { stroke-dasharray: 100 200; stroke-dashoffset: -120px; } }
+        .pl-title { font-size: 15px; font-weight: 700; color: var(--text); }
+        .pl-sub   { font-size: 13px; color: var(--text-3); margin-top: -8px; }
+
+        @media (max-width: 1100px) {
+            .sidebar { width: 68px; }
+            .sb-brand { justify-content: center; padding: 20px 8px; }
+            .sb-brand .sb-wordmark { display: none; }
+            .sb-section { display: none; }
+            .sb-item { justify-content: center; padding: 10px; }
+            .sb-item span { display: none; }
+            .sb-agent { justify-content: center; padding: 8px; }
+            .sb-agent-info { display: none; }
+            .sb-logout { justify-content: center; padding: 8px; }
+            .sb-logout span { display: none; }
         }
 
-        .notes-card { margin-top: 14px; }
-
-        .notes-wrap {
-            display: grid;
-            gap: 10px;
-            margin-top: 12px;
+        @media (max-width: 900px) {
+            .page-content { grid-template-columns: 1fr; padding: 18px; }
+            .topbar { padding: 0 18px; }
+            .error-bar { margin-left: 18px; margin-right: 18px; }
         }
 
-        label.notes-label {
-            display: inline-block;
-            color: var(--muted);
-            font-size: 0.78rem;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 0.06em;
-        }
-
-        textarea {
-            width: 100%;
-            min-height: 120px;
-            resize: vertical;
-            border-radius: 14px;
-            border: 1px solid var(--border);
-            background: #15181d;
-            color: var(--text);
-            padding: 14px;
-            font: inherit;
-            line-height: 1.5;
-        }
-
-        textarea::placeholder { color: var(--muted-2); }
-
-        .error {
-            display: none;
-            margin-top: 14px;
-            border: 1px solid rgba(208,72,72,0.45);
-            border-radius: 12px;
-            padding: 10px 12px;
-            background: rgba(208,72,72,0.14);
-            color: #ffcece;
-            font-weight: 700;
-        }
-
-        .loading {
-            color: var(--muted);
-            font-size: 0.92rem;
-            font-weight: 700;
-        }
-
-        @media (max-width: 980px) {
-            .grid-top,
-            .risk-shell,
-            .signal-grid,
-            .meta-grid,
-            .summary-row,
-            .decision-row {
-                grid-template-columns: 1fr;
-            }
-
-            .case-meta { margin-left: 0; }
-        }
-
-        @media (max-width: 700px) {
-            main { width: min(100% - 18px, 1240px); }
-            .decision-state { grid-template-columns: 1fr; }
-            .risk-ring { margin: 0; }
+        @media (max-width: 640px) {
+            .sidebar { display: none; }
         }
     </style>
 </head>
 <body>
-<main>
-    <div class="topbar">
-        <a class="back-link" href="javascript:history.back()">← Back to queue</a>
-        <div class="case-meta">
-            <span class="case-id" id="caseId">Case —</span>
-            <span class="timestamp" id="caseTimestamp">—</span>
-        </div>
-    </div>
 
-    <div class="headline">
+<!-- ── Sidebar ────────────────────────────────────────────────────────── -->
+<nav class="sidebar">
+    <a class="sb-brand" href="/dashboard.html">
+        <div class="sb-logo">
+            <svg viewBox="0 0 24 24"><path d="M12 2L4 6v6c0 5.25 3.5 10.15 8 11.35C16.5 22.15 20 17.25 20 12V6L12 2z"/></svg>
+        </div>
+        <span class="sb-wordmark">Tripwire</span>
+    </a>
+    <div class="sb-nav">
+        <div class="sb-section">Workspace</div>
+        <a class="sb-item" href="/dashboard.html">
+            <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+            <span>Dashboard</span>
+        </a>
+        <a class="sb-item active" href="#">
+            <svg viewBox="0 0 24 24"><path d="M20 7H4a2 2 0 00-2 2v10a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2z"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg>
+            <span>Case Review</span>
+        </a>
+        <a class="sb-item" href="#">
+            <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+            <span>Analytics</span>
+        </a>
+        <div class="sb-section">System</div>
+        <a class="sb-item" href="#">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+            <span>Settings</span>
+        </a>
+    </div>
+    <div class="sb-footer">
+        <div class="sb-agent">
+            <div class="sb-avatar" id="agentInitials">—</div>
+            <div class="sb-agent-info">
+                <div class="sb-agent-name" id="agentName">Loading…</div>
+                <div class="sb-agent-role">Fraud Analyst</div>
+            </div>
+        </div>
+        <button class="sb-logout" id="logoutBtn">
+            <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+            <span>Sign out</span>
+        </button>
+    </div>
+</nav>
+
+<!-- ── Shell (topbar + content, right of sidebar) ──────────────────────── -->
+<div class="shell">
+
+<!-- ── Top header ────────────────────────────────────────────────────────── -->
+<div class="topbar">
+    <a class="tb-back" href="/dashboard.html">
+        <svg viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+        Back to Dashboard
+    </a>
+    <div class="tb-main">
         <div>
-            <h1>Fraud Review Dashboard</h1>
-            <p class="subtitle">Single-case ops view for internal fraud analysts. Review customer context, inspect risk signals, document reasoning, then choose a decision.</p>
+            <div class="tb-case-id" id="caseId">RFD-—</div>
+            <div class="tb-case-sub">Refund Case Details</div>
         </div>
-        <div class="status-pill" id="statusPill">Loading case…</div>
+        <div class="tb-right">
+            <span class="risk-badge" id="riskBadge">
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                <span id="riskBadgeLabel">Scoring…</span>
+            </span>
+            <div class="risk-score-block">
+                <div class="rs-label">Risk Score</div>
+                <div class="rs-num" id="riskScoreDisplay">—</div>
+            </div>
+        </div>
     </div>
+</div>
 
-    <div id="error" class="error"></div>
+<!-- Error bar -->
+<div id="error" class="error-bar">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+    <span id="errorText"></span>
+</div>
 
-    <section class="grid-top">
-        <article class="card customer-card">
-            <div class="customer-head">
-                <div class="identity">
-                    <div class="avatar" id="avatar">MC</div>
-                    <div style="min-width:0;">
-                        <h2 class="customer-name" id="customerName">Loading…</h2>
-                        <p class="customer-sub" id="customerSub">Fetching case details</p>
-                    </div>
+<!-- ── Two-column layout ─────────────────────────────────────────────────── -->
+<div class="page-content">
+
+    <!-- LEFT COLUMN ────────────────────────────────────────────────────── -->
+    <div>
+
+        <!-- Customer Information -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon">
+                    <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
                 </div>
-                <span class="badge new" id="accountBadge">New account</span>
+                <div class="card-title">Customer Information</div>
             </div>
 
-            <div class="meta-grid">
-                <div class="meta-item">
-                    <div class="meta-label">Email</div>
-                    <div class="meta-value" id="emailField">—</div>
-                </div>
-                <div class="meta-item">
-                    <div class="meta-label">IP Address</div>
-                    <div class="meta-value" id="ipField">—</div>
-                </div>
-                <div class="meta-item">
-                    <div class="meta-label">Location</div>
-                    <div class="meta-value" id="locationField">—</div>
-                </div>
-                <div class="meta-item">
-                    <div class="meta-label">Phone</div>
-                    <div class="meta-value" id="phoneField">—</div>
-                </div>
-            </div>
-        </article>
-
-        <article class="card decision-card">
-            <div class="decision-head">
-                <h2 class="decision-title">Decision</h2>
-            </div>
-
-            <div class="decision-row">
-                <button class="btn btn-approve" id="approveBtn" type="button">Approve</button>
-                <button class="btn btn-review" id="reviewBtn" type="button">Review</button>
-                <button class="btn btn-deny" id="denyBtn" type="button">Deny</button>
-            </div>
-
-            <button class="btn-secondary" id="rescoreBtn" type="button">Trigger rescore</button>
-
-            <div class="decision-state">
-                <div class="decision-score" id="decisionScore">--</div>
-                <div class="decision-copy">
-                    <p class="label">Current case status</p>
-                    <p class="value" id="currentDecision">Not scored</p>
-                    <p class="hint" id="decisionHint">Open a transaction to load the case and generate the fraud score.</p>
-                </div>
-            </div>
-        </article>
-    </section>
-
-    <section class="card risk-card">
-        <div class="risk-heading">
-            <h2 class="risk-title">Risk Assessment</h2>
-            <span class="risk-label" id="riskLabel">—</span>
-        </div>
-        <div class="risk-shell">
-            <div class="risk-ring" id="riskRing">
+            <!-- Name + account status: name is synthetic, status derived from account age -->
+            <div class="info-2col">
                 <div>
-                    <div class="score" id="riskScore">--</div>
-                    <div class="out-of">/ 100</div>
+                    <div class="field-label">Full Name <span class="synth-note">est.</span></div>
+                    <div class="field-value" id="customerName">—</div>
                 </div>
-            </div>
-            <div>
-                <div class="summary-row">
-                    <div class="summary-tile">
-                        <div class="k">Amount</div>
-                        <div class="v" id="amountField">—</div>
-                    </div>
-                    <div class="summary-tile">
-                        <div class="k">Recommended action</div>
-                        <div class="v" id="actionField">—</div>
-                    </div>
-                    <div class="summary-tile">
-                        <div class="k">Reason</div>
-                        <div class="v" id="reasonField">—</div>
+                <div>
+                    <div class="field-label">Account Status</div>
+                    <div class="field-value">
+                        <span class="acct-status active" id="accountStatus">Active</span>
                     </div>
                 </div>
-                <p class="subtitle" style="margin-top:12px; max-width:none;" id="riskSummary">Scoring will appear here after the case is loaded.</p>
             </div>
-        </div>
-    </section>
 
-    <section class="card signals-card">
-        <div class="signals-head">
-            <h2>Risk Signals</h2>
-            <div class="signals-count" id="signalCount">0 signals · 0 elevated</div>
-        </div>
-        <div class="signal-grid" id="signalGrid">
-            <div class="signal-card">
-                <div class="signal-top">
-                    <div class="category">Awaiting data</div>
-                    <div class="signal-score low">0/10</div>
+            <!-- Contact: synthetic enrichment -->
+            <div class="icon-rows-wrap">
+                <div class="icon-row">
+                    <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                    <span id="emailField">—</span>
                 </div>
-                <h3 class="signal-title">No signals loaded yet</h3>
-                <p class="signal-desc">Load a transaction to populate the fraud signal cards.</p>
-                <div class="signal-detail">GET /transaction/{id} and POST /transaction/{id}/score</div>
+                <div class="icon-row">
+                    <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 01.03 1.18 2 2 0 012 0h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.09 7.91A16 16 0 0016 17.91l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/></svg>
+                    <span id="phoneField">—</span>
+                </div>
+            </div>
+
+            <!-- Stats: account ID is real, rest are synthetic enrichment -->
+            <div class="stat-grid">
+                <div class="stat-cell">
+                    <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                    <div>
+                        <div class="stat-cell-label">Account Age <span class="synth-note">est.</span></div>
+                        <div class="stat-cell-value synth" id="accountAge">—</div>
+                    </div>
+                </div>
+                <div class="stat-cell">
+                    <svg viewBox="0 0 24 24"><path d="M20 7H4a2 2 0 00-2 2v10a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2z"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg>
+                    <div>
+                        <div class="stat-cell-label">Account ID</div>
+                        <div class="stat-cell-value real" id="accountIdDisplay">—</div>
+                    </div>
+                </div>
+                <div class="stat-cell">
+                    <svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+                    <div>
+                        <div class="stat-cell-label">Total Spent <span class="synth-note">est.</span></div>
+                        <div class="stat-cell-value synth" id="totalSpent">—</div>
+                    </div>
+                </div>
+                <div class="stat-cell">
+                    <svg viewBox="0 0 24 24"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+                    <div>
+                        <div class="stat-cell-label">Prior Refunds <span class="synth-note">est.</span></div>
+                        <div class="stat-cell-value synth" id="prevRefunds">—</div>
+                    </div>
+                </div>
             </div>
         </div>
-    </section>
 
-    <section class="card notes-card">
-        <h2>Investigation notes</h2>
-        <div class="notes-wrap">
-            <label class="notes-label" for="investigationNotes">Document your reasoning before submitting a decision…</label>
-            <textarea id="investigationNotes" placeholder="Document your reasoning before submitting a decision..."></textarea>
+        <!-- Order Details -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon">
+                    <svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+                </div>
+                <div class="card-title">Order Details <span class="synth-note" style="font-size:10px;font-weight:600;">estimated</span></div>
+            </div>
+
+            <div class="order-2col">
+                <div>
+                    <div class="order-label">Order ID</div>
+                    <div class="order-value" id="orderId">—</div>
+                </div>
+                <div>
+                    <div class="order-label">Order Date</div>
+                    <div class="order-value" id="orderDate">—</div>
+                </div>
+            </div>
+
+            <div class="items-section-label">Items Ordered</div>
+            <ul class="items-list" id="itemsList"><li>Loading…</li></ul>
+
+            <div class="order-2col">
+                <div>
+                    <div class="order-label">
+                        <svg viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+                        Payment Method
+                    </div>
+                    <div class="order-value" id="paymentMethod">—</div>
+                </div>
+                <div>
+                    <div class="order-label">Currency</div>
+                    <div class="order-value real" id="currencyDisplay">—</div>
+                </div>
+            </div>
+
+            <div class="order-2col" style="margin-bottom:0;">
+                <div>
+                    <div class="order-label">
+                        <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                        Shipping Address
+                    </div>
+                    <div class="order-value muted" id="shippingAddr">—</div>
+                </div>
+                <div>
+                    <div class="order-label">
+                        <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                        Billing Address
+                    </div>
+                    <div class="order-value muted" id="billingAddr">—</div>
+                </div>
+            </div>
         </div>
-    </section>
 
-    <div class="loading" id="loadingState" style="margin-top:12px;display:none;">Working…</div>
-</main>
+        <!-- Potential Risks -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon red">
+                    <svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                </div>
+                <div class="card-title">Potential Risks</div>
+            </div>
+            <div class="risks-sub" id="risksSubheader">Analyzing indicators…</div>
+            <div id="risksList"></div>
+        </div>
+
+    </div><!-- /left col -->
+
+    <!-- RIGHT COLUMN ───────────────────────────────────────────────────── -->
+    <div>
+
+        <!-- Refund Summary — all fields from DB -->
+        <div class="card">
+            <div class="card-title" style="margin-bottom:16px;">Refund Summary</div>
+            <div class="summary-amount" id="refundAmount">—</div>
+            <div class="summary-row">
+                <div class="sr-label">Request Date</div>
+                <div class="sr-value" id="requestDate">—</div>
+            </div>
+            <div class="summary-row">
+                <div class="sr-label">Transaction ID</div>
+                <div class="sr-value" id="txIdDisplay">—</div>
+            </div>
+            <div class="summary-row" style="border-bottom:none;">
+                <div class="sr-label">Status</div>
+                <div class="sr-value" style="margin-top:4px;">
+                    <span class="status-pill UNASSIGNED" id="statusPill">Loading…</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Customer Message — from DB reason_text field -->
+        <div class="card">
+            <div class="card-header" style="margin-bottom:12px;">
+                <div class="card-icon">
+                    <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+                </div>
+                <div class="card-title">Customer Message</div>
+            </div>
+            <div class="msg-bubble empty" id="customerMessage">No message provided.</div>
+        </div>
+
+        <!-- Case Actions -->
+        <div class="card">
+            <div class="card-title" style="margin-bottom:16px;">Case Actions</div>
+            <button class="action-btn approve" id="approveBtn" disabled>
+                <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                Approve Refund
+            </button>
+            <button class="action-btn reject" id="denyBtn" disabled>
+                <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                Reject Refund
+            </button>
+            <button class="action-btn info" id="reviewBtn" disabled>
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                Request More Info
+            </button>
+            <button class="action-btn rescore" id="rescoreBtn">
+                <svg viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
+                Re-assess Risk
+            </button>
+        </div>
+
+        <!-- Agent Notes — blank for agent to fill in -->
+        <div class="card">
+            <div class="card-title" style="margin-bottom:14px;">Agent Notes</div>
+            <textarea class="notes-box" id="investigationNotes"
+                placeholder="Add observations or context before recording your decision…"></textarea>
+        </div>
+
+    </div><!-- /right col -->
+
+</div><!-- /page-content -->
+
+</div><!-- /shell -->
+
+<!-- Loading overlay -->
+<div class="page-loader" id="pageLoader">
+    <div class="pl-card">
+        <div class="pl-spinner">
+            <svg viewBox="0 0 50 50"><circle cx="25" cy="25" r="20" fill="none" stroke-width="4"/></svg>
+        </div>
+        <div class="pl-title">Loading case</div>
+        <div class="pl-sub" id="pageLoaderSub">Fetching transaction details…</div>
+    </div>
+</div>
 
 <script>
-    const params = new URLSearchParams(window.location.search);
+    // ── Auth guard + sidebar agent info ──────────────────────────────────
+    (function () {
+        const raw = localStorage.getItem('agent');
+        if (!raw) { window.location.href = '/login.html'; return; }
+        const agent = JSON.parse(raw);
+        document.querySelector('#agentName').textContent = agent.name || '—';
+        document.querySelector('#agentInitials').textContent =
+            (agent.name || '?').split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+        document.querySelector('#logoutBtn').addEventListener('click', () => {
+            localStorage.removeItem('agent');
+            window.location.href = '/login.html';
+        });
+    })();
+
+    const params        = new URLSearchParams(window.location.search);
     const transactionId = Number(params.get('id') || 1);
 
     const els = {
-        caseId: document.querySelector('#caseId'),
-        caseTimestamp: document.querySelector('#caseTimestamp'),
-        statusPill: document.querySelector('#statusPill'),
-        error: document.querySelector('#error'),
-        avatar: document.querySelector('#avatar'),
-        customerName: document.querySelector('#customerName'),
-        customerSub: document.querySelector('#customerSub'),
-        accountBadge: document.querySelector('#accountBadge'),
-        emailField: document.querySelector('#emailField'),
-        ipField: document.querySelector('#ipField'),
-        locationField: document.querySelector('#locationField'),
-        phoneField: document.querySelector('#phoneField'),
-        recommendedDecision: document.querySelector('#recommendedDecision'),
-        approveBtn: document.querySelector('#approveBtn'),
-        reviewBtn: document.querySelector('#reviewBtn'),
-        denyBtn: document.querySelector('#denyBtn'),
-        rescoreBtn: document.querySelector('#rescoreBtn'),
-        decisionScore: document.querySelector('#decisionScore'),
-        currentDecision: document.querySelector('#currentDecision'),
-        decisionHint: document.querySelector('#decisionHint'),
-        riskScore: document.querySelector('#riskScore'),
-        riskRing: document.querySelector('#riskRing'),
-        riskLabel: document.querySelector('#riskLabel'),
-        amountField: document.querySelector('#amountField'),
-        actionField: document.querySelector('#actionField'),
-        reasonField: document.querySelector('#reasonField'),
-        riskSummary: document.querySelector('#riskSummary'),
-        signalGrid: document.querySelector('#signalGrid'),
-        signalCount: document.querySelector('#signalCount'),
+        caseId:             document.querySelector('#caseId'),
+        riskBadge:          document.querySelector('#riskBadge'),
+        riskBadgeLabel:     document.querySelector('#riskBadgeLabel'),
+        riskScoreDisplay:   document.querySelector('#riskScoreDisplay'),
+        error:              document.querySelector('#error'),
+        errorText:          document.querySelector('#errorText'),
+        // Customer (left)
+        customerName:       document.querySelector('#customerName'),
+        accountStatus:      document.querySelector('#accountStatus'),
+        emailField:         document.querySelector('#emailField'),
+        phoneField:         document.querySelector('#phoneField'),
+        accountAge:         document.querySelector('#accountAge'),
+        accountIdDisplay:   document.querySelector('#accountIdDisplay'),
+        totalSpent:         document.querySelector('#totalSpent'),
+        prevRefunds:        document.querySelector('#prevRefunds'),
+        // Order (left)
+        orderId:            document.querySelector('#orderId'),
+        orderDate:          document.querySelector('#orderDate'),
+        itemsList:          document.querySelector('#itemsList'),
+        paymentMethod:      document.querySelector('#paymentMethod'),
+        currencyDisplay:    document.querySelector('#currencyDisplay'),
+        shippingAddr:       document.querySelector('#shippingAddr'),
+        billingAddr:        document.querySelector('#billingAddr'),
+        // Risks (left)
+        risksSubheader:     document.querySelector('#risksSubheader'),
+        risksList:          document.querySelector('#risksList'),
+        // Right column
+        refundAmount:       document.querySelector('#refundAmount'),
+        requestDate:        document.querySelector('#requestDate'),
+        txIdDisplay:        document.querySelector('#txIdDisplay'),
+        statusPill:         document.querySelector('#statusPill'),
+        customerMessage:    document.querySelector('#customerMessage'),
+        approveBtn:         document.querySelector('#approveBtn'),
+        denyBtn:            document.querySelector('#denyBtn'),
+        reviewBtn:          document.querySelector('#reviewBtn'),
+        rescoreBtn:         document.querySelector('#rescoreBtn'),
         investigationNotes: document.querySelector('#investigationNotes'),
-        loadingState: document.querySelector('#loadingState')
+        pageLoader:         document.querySelector('#pageLoader'),
+        pageLoaderSub:      document.querySelector('#pageLoaderSub'),
     };
 
-    const state = {
-        transaction: null,
-        score: null,
-        caseProfile: null,
-        manualDecision: null
-    };
+    const state = { transaction: null, score: null };
 
+    /* ──────────────────────────────────────────────────────────────────────
+     * Synthetic enrichment — used ONLY when the DB has no real value.
+     * These functions derive stable fake values from the real transaction ID
+     * so the same case always shows the same enrichment.
+     * ────────────────────────────────────────────────────────────────────── */
     const NAMES = [
-        { name: 'Marcus Chen', initials: 'MC' },
-        { name: 'Ava Patel', initials: 'AP' },
-        { name: 'Jordan Lee', initials: 'JL' },
-        { name: 'Nina Brooks', initials: 'NB' },
-        { name: 'Diego Santos', initials: 'DS' },
-        { name: 'Maya Hassan', initials: 'MH' }
+        { name: 'Sarah Mitchell', initials: 'SM' },
+        { name: 'Marcus Chen',    initials: 'MC' },
+        { name: 'Ava Patel',      initials: 'AP' },
+        { name: 'Jordan Lee',     initials: 'JL' },
+        { name: 'Nina Brooks',    initials: 'NB' },
+        { name: 'Diego Santos',   initials: 'DS' },
+        { name: 'Maya Hassan',    initials: 'MH' },
     ];
 
-    function clamp(n, min, max) {
-        return Math.max(min, Math.min(max, n));
-    }
+    const ITEMS_POOL = [
+        ['MacBook Pro 16"', 'AirPods Pro'],
+        ['iPhone 15 Pro', 'Apple Watch Series 9'],
+        ['Sony WH-1000XM5', 'USB-C Hub'],
+        ['Samsung 55" QLED TV', 'HDMI 2.1 Cable'],
+        ['LG OLED Monitor 27"', 'Ergonomic Mouse'],
+        ['iPad Pro 12.9"', 'Apple Pencil', 'Smart Keyboard Folio'],
+        ['Nike Air Max 270', 'Running Socks 3-pack'],
+    ];
 
-    function formatMoney(value) {
-        if (value == null || value === '') return '—';
-        const num = Number(value);
-        if (Number.isNaN(num)) return String(value);
-        return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(num);
-    }
+    const STREETS     = ['123 Main St','456 Oak Ave','789 Elm Blvd','22 Pine Rd','54 River Dr','900 Maple Ln','10 Cedar Ct'];
+    const CITY_STATES = ['Austin, TX 78701','Miami, FL 33101','Denver, CO 80201','Chicago, IL 60601','Seattle, WA 98101','Atlanta, GA 30301','Boston, MA 02101'];
+    const CARD_LAST4  = ['4532','1234','8821','0091','5577','3310','6624'];
 
-    function formatDate(value) {
-        if (!value) return new Date().toLocaleString();
-        const dt = new Date(value);
-        return Number.isNaN(dt.getTime()) ? String(value) : dt.toLocaleString();
-    }
+    /** Returns enrichment data derived deterministically from the transaction. */
+    function enrichFromTx(tx) {
+        const seed = Number(tx?.id) || 1;
+        const base = NAMES[seed % NAMES.length];
 
-    function statusLabel(score) {
-        if (score >= 80) return 'High risk';
-        if (score >= 50) return 'Moderate risk';
-        return 'Low risk';
-    }
+        // Account age: seeded but plausible (10–710 days)
+        const accountAgeDays = 10 + (seed * 7) % 700;
 
-    function statusTone(score) {
-        if (score >= 80) return 'high';
-        if (score >= 50) return 'medium';
-        return 'low';
-    }
+        // Estimated profile stats
+        const prevRefunds = (seed * 2) % 7;
+        const totalSpent  = ((seed * 317.83) + 500).toFixed(2);
 
-    function recommendedAction(score) {
-        if (score >= 80) return 'Deny';
-        if (score >= 50) return 'Review';
-        return 'Approve';
-    }
-
-    function syntheticProfile(tx) {
-        const base = NAMES[(Number(tx?.id) || 1) % NAMES.length];
-        const accountAgeDays = 10 + ((Number(tx?.id) || 1) * 7) % 280;
-        const orders = 1 + ((Number(tx?.id) || 1) * 3) % 9;
-        const refunds = ((Number(tx?.id) || 1) * 2) % 5;
-        const badge = accountAgeDays < 30 ? 'New account' : accountAgeDays < 120 ? 'Recent account' : 'Established';
-        const locationPool = ['Lagos, NG', 'Austin, US', 'London, UK', 'Toronto, CA', 'Lisbon, PT', 'Nairobi, KE'];
-        const location = locationPool[(Number(tx?.id) || 1) % locationPool.length];
+        // Contact info (synthetic)
         const email = base.name.toLowerCase().replace(/[^a-z]+/g, '.') + '@maildrop.cc';
-        const ip = `203.0.113.${(Number(tx?.id) || 1) % 255 || 11}`;
-        const phone = `+1 ${(410 + ((Number(tx?.id) || 1) % 300)).toString().padStart(3, '0')} ${(2800 + ((Number(tx?.id) || 1) * 11) % 7000).toString().padStart(4, '0')}`;
+        const phone = `+1 (${(410 + seed % 300).toString().padStart(3,'0')}) `
+                    + `${(200 + (seed*11)%800).toString().padStart(3,'0')}-`
+                    + `${(1000 + (seed*31)%9000).toString().padStart(4,'0')}`;
+
+        // Order details (synthetic, but the ORDER DATE is anchored to createdAt)
+        const items = ITEMS_POOL[seed % ITEMS_POOL.length];
+        const orderId = `ORD-${String(tx.accountId || seed).padStart(3,'0')}${String(seed).padStart(2,'0')}`.slice(0,12);
+        const createdMs = tx.createdAt ? new Date(tx.createdAt).getTime() : Date.now();
+        // Order happened a few days before the refund request
+        const orderMs  = createdMs - ((seed % 14) + 3) * 86400000;
+        const orderDate = new Date(orderMs).toISOString().slice(0,10);
+        const card = CARD_LAST4[seed % CARD_LAST4.length];
+
         return {
             ...base,
-            badge,
             accountAgeDays,
-            orders,
-            refunds,
+            prevRefunds,
+            totalSpent,
             email,
-            ip,
-            location,
-            phone
+            phone,
+            orderId,
+            orderDate,
+            items,
+            paymentMethod: `Credit Card (**** ${card})`,
+            shippingAddr:  `${STREETS[seed % STREETS.length]}, ${CITY_STATES[seed % CITY_STATES.length]}`,
+            billingAddr:   `${STREETS[(seed+3) % STREETS.length]}, ${CITY_STATES[(seed+2) % CITY_STATES.length]}`,
         };
     }
 
-    function riskClassFromScore(score10) {
-        if (score10 >= 8) return 'high';
-        if (score10 >= 5) return 'medium';
-        return 'low';
+    /* ── Helpers ──────────────────────────────────────────────────────────── */
+    function fmt$(v, curr) {
+        if (v == null) return '—';
+        const n = Number(v);
+        if (isNaN(n)) return '—';
+        const c = (curr && curr.length === 3) ? curr : 'USD';
+        try { return new Intl.NumberFormat('en-US', { style: 'currency', currency: c }).format(n); }
+        catch { return `$${n.toLocaleString('en-US', { minimumFractionDigits: 2 })}`; }
     }
 
-    function score10FromBooleans(...flags) {
-        const positives = flags.filter(Boolean).length;
-        return clamp(Math.round((positives / Math.max(flags.length, 1)) * 10), 0, 10);
+    function fmtDate(v) {
+        if (!v) return '—';
+        const d = new Date(v);
+        return isNaN(d.getTime()) ? '—' : d.toISOString().slice(0, 10);
     }
 
-    function makeSignal(category, score10, title, description, detail) {
-        return { category, score10, title, description, detail };
+    function ageStr(days) {
+        if (days < 30)  return `${days} day${days !== 1 ? 's' : ''}`;
+        if (days < 365) { const m = Math.floor(days/30); return `${m} month${m !== 1 ? 's' : ''}`; }
+        const y = Math.floor(days/365); return `${y} year${y !== 1 ? 's' : ''}`;
     }
 
-    function buildSignals(tx, scoreData) {
-        const fallbackReason = `Case ${tx.id} review summary from transaction and account intelligence.`;
-        const email = scoreData?.email || {};
-        const ip = scoreData?.ip || {};
-        const phone = scoreData?.phone || {};
-        const iban = scoreData?.iban || {};
-        const domain = scoreData?.domain || {};
-        const userAgent = scoreData?.userAgent || {};
-        const wallet = scoreData?.wallet || {};
-        const creditCard = scoreData?.creditCard || {};
-        const url = scoreData?.url || {};
+    function tone(score) {
+        return score >= 80 ? 'high' : score >= 50 ? 'medium' : score > 0 ? 'low' : '';
+    }
 
-        const signals = [
-            makeSignal(
-                'BEHAVIORAL',
-                score10FromBooleans(tx.status === 'UNASSIGNED', Number(tx.riskScore || 0) >= 50, (tx.amount || 0) > 500),
-                'Risk velocity',
-                'Refund and review volume are aligned with the current risk state.',
-                `score=${tx.riskScore ?? 0}; amount=${formatMoney(tx.amount)}; status=${tx.status || 'UNASSIGNED'}`
-            ),
-            makeSignal(
-                'IDENTITY',
-                score10FromBooleans(email.fraud, email.proxiedEmail, email.freeSubdomain, email.noReply, email.roleAccount),
-                'Email risk',
-                'Disposable, proxied, or otherwise suspicious email characteristics detected.',
-                `email=${email.email || state.caseProfile.email}; domain=${email.domain || 'unknown'}; realUser=${email.realUser || 'n/a'}`
-            ),
-            makeSignal(
-                'IDENTITY',
-                score10FromBooleans(ip.fraud, ip.vpn, ip.proxy, String(ip.hosting).toLowerCase() === 'true', String(ip.type).toLowerCase().includes('hosting')),
-                'IP risk',
-                'VPN, proxy, or datacenter IP traits elevate fraud probability.',
-                `ip=${ip.ip || state.caseProfile.ip}; country=${ip.country || state.caseProfile.location}; isp=${ip.isp || 'n/a'}`
-            ),
-            makeSignal(
-                'BEHAVIORAL',
-                score10FromBooleans(phone.fraud, phone.country && state.caseProfile.location && !String(phone.country).includes(String(state.caseProfile.location).split(',')[1]?.trim() || ''), phone.lineType && phone.lineType !== 'mobile'),
-                'Phone-country mismatch',
-                'Phone identity and account geography do not align cleanly.',
-                `phone=${phone.phone || state.caseProfile.phone}; country=${phone.country || 'n/a'}; carrier=${phone.carrierInfo?.carrierName || 'n/a'}`
-            ),
-            makeSignal(
-                'BEHAVIORAL',
-                score10FromBooleans(iban.fraud, !iban.valid, String(iban.countryCode || '').length === 0, String(wallet.fraud || '').toLowerCase() === 'true'),
-                'Payment destination validity',
-                'New payment destination should be checked before release.',
-                `iban=${iban.iban || 'n/a'}; bic=${iban.bic || 'n/a'}; country=${iban.country || 'n/a'}`
-            ),
-            makeSignal(
-                'IDENTITY',
-                score10FromBooleans(domain.fraud, domain.valid === false, url.fraud, creditCard.fraud, userAgent.fraud),
-                'Identity surface anomalies',
-                'Linked identity surfaces show secondary fraud indicators.',
-                `domain=${email.domain || 'n/a'}; ua=${userAgent.valid === false ? 'flagged' : 'ok'}; url=${url.valid === false ? 'flagged' : 'ok'}`
-            )
-        ];
+    function riskLabel(score) {
+        if (score >= 80) return 'High Risk';
+        if (score >= 50) return 'Medium Risk';
+        if (score > 0)   return 'Low Risk';
+        return 'Unscored';
+    }
 
-        if (scoreData?.signals?.length) {
-            signals.unshift(
-                makeSignal(
-                    'BEHAVIORAL',
-                    clamp(Math.round((scoreData.score || 0) / 10), 0, 10),
-                    'Dymo score summary',
-                    'Overall Dymo score returned from the verification API.',
-                    scoreData.signals[0] || fallbackReason
-                )
-            );
-        } else {
-            signals.unshift(
-                makeSignal(
-                    'BEHAVIORAL',
-                    clamp(Math.round(((scoreData?.score || tx.riskScore || 0) / 10)), 0, 10),
-                    'Case summary',
-                    'Synthetic review summary based on the loaded transaction.',
-                    fallbackReason
-                )
-            );
+    function statusLabel(s) {
+        return { APPROVED:'Approved', DENIED:'Denied', UNDER_REVIEW:'Under Review', UNASSIGNED:'Unassigned' }[s]
+            || (s || 'Unknown').replace(/_/g, ' ');
+    }
+
+    function nowTs(offsetMs = 0) {
+        return new Date(Date.now() - offsetMs).toISOString().slice(0, 16).replace('T', ' ');
+    }
+
+    /* ── Build risk items ────────────────────────────────────────────────── */
+    function buildRiskItems(tx, sd) {
+        const email  = sd?.email      || {};
+        const ip     = sd?.ip         || {};
+        const phone  = sd?.phone      || {};
+        const iban   = sd?.iban       || {};
+        const wallet = sd?.wallet     || {};
+        const ua     = sd?.userAgent  || {};
+        const enrich = enrichFromTx(tx);
+        const items  = [];
+
+        if (email.fraud || email.proxiedEmail || email.freeSubdomain || email.noReply || email.roleAccount) {
+            items.push({
+                title: 'Disposable Email',
+                desc: email.fraud ? 'Email domain flagged in fraud databases.' : 'Email domain associated with temporary email services.',
+                severity: 'high', ts: nowTs(),
+            });
         }
 
-        return signals;
+        if (enrich.prevRefunds >= 3) {
+            items.push({
+                title: 'Multiple Refund Requests',
+                desc: `Account has ${enrich.prevRefunds} estimated prior refunds — above average frequency.`,
+                severity: enrich.prevRefunds >= 5 ? 'high' : 'high', ts: nowTs(),
+            });
+        }
+
+        if (ip.fraud || ip.vpn || ip.proxy) {
+            items.push({
+                title: ip.fraud ? 'Flagged IP Address' : 'Anonymised Connection',
+                desc: ip.fraud ? 'IP flagged in fraud databases.'
+                    : ip.vpn && ip.proxy ? 'Connection routed through both VPN and proxy.'
+                    : ip.vpn ? 'Customer connected via a VPN.' : 'Connection through a proxy server.',
+                severity: ip.fraud ? 'high' : 'medium', ts: nowTs(3 * 60000),
+            });
+        }
+
+        if (phone.country && !phone.country.includes(enrich.location?.split(',')[1]?.trim() || '')) {
+            items.push({
+                title: 'Phone Country Mismatch',
+                desc: `Phone registered in ${phone.country}; account appears to be elsewhere.`,
+                severity: 'medium', ts: nowTs(),
+            });
+        }
+
+        if (iban.fraud || wallet.fraud) {
+            items.push({ title: 'Flagged Payment Destination', desc: 'Payment destination flagged as fraudulent.', severity: 'high', ts: nowTs() });
+        }
+
+        if (ua.fraud) {
+            items.push({ title: 'Suspicious Device', desc: 'Browser fingerprint consistent with automated tooling.', severity: 'medium', ts: nowTs() });
+        }
+
+        // High-value with no live scoring
+        if (!sd?.apiAvailable && Number(tx.amount || 0) >= 1000 && items.length === 0) {
+            items.push({
+                title: 'High-Value Request',
+                desc: `Refund of ${fmt$(tx.amount, tx.currency)} is above average. Manual review recommended.`,
+                severity: 'medium', ts: nowTs(),
+            });
+        }
+
+        if (items.length === 0) {
+            items.push({ title: 'No Indicators Detected', desc: 'All automated checks passed with no fraud signals.', severity: 'low', ts: nowTs() });
+        }
+
+        return items;
     }
 
-    function renderSignalGrid(signals) {
-        const elevated = signals.filter(item => item.score10 >= 5).length;
-        els.signalCount.textContent = `${signals.length} signals · ${elevated} elevated`;
-        els.signalGrid.innerHTML = signals.map(item => {
-            const tone = riskClassFromScore(item.score10);
-            return `
-                <article class="signal-card">
-                    <div class="signal-top">
-                        <div class="category">${item.category}</div>
-                        <div class="signal-score ${tone}">${item.score10}/10</div>
+    function renderRisks(items) {
+        const flagged = items.filter(i => i.severity !== 'low').length;
+        els.risksSubheader.textContent = (items.length === 1 && items[0].severity === 'low')
+            ? 'No fraud indicators identified.'
+            : `${flagged} potential fraud indicator${flagged !== 1 ? 's' : ''} identified`;
+
+        els.risksList.innerHTML = items.map(i => `
+            <div class="risk-item">
+                <div class="risk-item-left">
+                    <div class="risk-icon ${i.severity !== 'high' ? i.severity : ''}">
+                        <svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
                     </div>
-                    <h3 class="signal-title">${item.title}</h3>
-                    <p class="signal-desc">${item.description}</p>
-                    <div class="signal-detail">${escapeHtml(item.detail)}</div>
-                </article>
-            `;
-        }).join('');
+                    <div>
+                        <div class="risk-item-title">${i.title}</div>
+                        <div class="risk-item-desc">${i.desc}</div>
+                        <div class="risk-item-ts">Detected: ${i.ts}</div>
+                    </div>
+                </div>
+                <span class="sev-badge ${i.severity}">${i.severity.charAt(0).toUpperCase() + i.severity.slice(1)}</span>
+            </div>`).join('');
     }
 
-    function escapeHtml(value) {
-        return String(value)
-            .replaceAll('&', '&amp;')
-            .replaceAll('<', '&lt;')
-            .replaceAll('>', '&gt;')
-            .replaceAll('"', '&quot;');
-    }
+    /* ── Render all UI from state ──────────────────────────────────────────── */
+    function renderAll() {
+        const tx     = state.transaction;
+        if (!tx) return;
 
-    function renderCustomerAndDecision() {
-        const tx = state.transaction || { id: transactionId };
-        const profile = state.caseProfile || syntheticProfile(tx);
-        const scoreValue = Math.round(state.score?.score ?? tx.riskScore ?? 0);
-        const currentDecision = state.manualDecision || tx.status || (scoreValue >= 80 ? 'DENIED' : scoreValue >= 50 ? 'UNDER_REVIEW' : scoreValue ? 'APPROVED' : 'UNASSIGNED');
-        const txStatus = tx.status || 'UNASSIGNED';
-        const canAct = txStatus === 'UNDER_REVIEW' && tx.agentId != null;
-        const riskTone = statusTone(scoreValue);
-        const recommended = recommendedAction(scoreValue);
-        const label = statusLabel(scoreValue);
-        const reason = state.score?.signals?.[0] || `Risk profile currently indicates ${label.toLowerCase()}.`;
+        const enrich = enrichFromTx(tx);
+        // Real DB values
+        const score  = Math.round(state.score?.score ?? tx.riskScore ?? 0);
+        const status = tx.status || 'UNASSIGNED';
+        const t      = tone(score);
+        const canAct = status === 'UNDER_REVIEW' && tx.agentId != null;
 
-        els.caseId.textContent = `Case / RF-${String(tx.id).padStart(4, '0')}`;
-        els.caseTimestamp.textContent = formatDate(tx.createdAt);
-        els.avatar.textContent = profile.initials;
-        els.customerName.textContent = profile.name;
-        els.customerSub.textContent = `Account created ${profile.accountAgeDays} days ago · ${profile.orders} orders · ${profile.refunds} refunds`;
-        els.accountBadge.textContent = profile.badge;
-        els.accountBadge.className = `badge ${profile.accountAgeDays < 30 ? 'new' : profile.accountAgeDays < 120 ? 'review' : 'good'}`;
-        els.emailField.textContent = profile.email;
-        els.ipField.textContent = profile.ip;
-        els.locationField.textContent = profile.location;
-        els.phoneField.textContent = profile.phone;
+        // ── Top header ──────────────────────────────────────────────────────
+        const year = tx.createdAt ? new Date(tx.createdAt).getFullYear() : new Date().getFullYear();
+        els.caseId.textContent          = `RFD-${year}-${String(tx.id).padStart(3, '0')}`;
+        els.riskBadgeLabel.textContent  = riskLabel(score);
+        els.riskBadge.className         = `risk-badge ${t}`;
+        els.riskScoreDisplay.textContent = score || '—';
+        els.riskScoreDisplay.className  = `rs-num ${t}`;
 
-        els.statusPill.textContent = state.score ? 'Case scored' : 'Case loaded';
-        els.decisionScore.textContent = scoreValue || '--';
-        els.decisionScore.className = `decision-score ${riskTone}`;
-        els.currentDecision.textContent = currentDecision.replaceAll('_', ' ');
-        els.decisionHint.textContent = state.score
-            ? (canAct
-                ? 'Use the buttons above to record the analyst decision, then document your rationale below.'
-                : 'Assign the case before making a final decision.')
-            : 'Waiting for scoring output.';
+        // ── Left: Customer (synthetic enrichment) ──────────────────────────
+        els.customerName.textContent   = enrich.name;
+        const isNew = enrich.accountAgeDays < 30;
+        els.accountStatus.textContent  = isNew ? 'New' : 'Active';
+        els.accountStatus.className    = `acct-status ${isNew ? 'new' : 'active'}`;
+        els.emailField.textContent     = enrich.email;
+        els.phoneField.textContent     = enrich.phone;
+        els.accountAge.textContent     = ageStr(enrich.accountAgeDays);
+        // Real DB field
+        els.accountIdDisplay.textContent = `#${tx.accountId}`;
+        els.totalSpent.textContent     = fmt$(enrich.totalSpent, 'USD');
+        els.prevRefunds.textContent    = enrich.prevRefunds;
+
+        // ── Left: Order Details (synthetic enrichment, anchored to createdAt) ─
+        els.orderId.textContent        = enrich.orderId;
+        els.orderDate.textContent      = enrich.orderDate;
+        els.itemsList.innerHTML        = enrich.items.map(i => `<li>${i}</li>`).join('');
+        els.paymentMethod.textContent  = enrich.paymentMethod;
+        // Real DB field
+        els.currencyDisplay.textContent = tx.currency || '—';
+        els.shippingAddr.textContent   = enrich.shippingAddr;
+        els.billingAddr.textContent    = enrich.billingAddr;
+
+        // ── Right: Refund Summary (all real DB fields) ──────────────────────
+        els.refundAmount.textContent   = fmt$(tx.amount, tx.currency);
+        els.requestDate.textContent    = fmtDate(tx.createdAt);
+        els.txIdDisplay.textContent    = `TXN-${String(tx.id).padStart(4, '0')}`;
+        els.statusPill.textContent     = statusLabel(status);
+        els.statusPill.className       = `status-pill ${status}`;
+
+        // ── Right: Customer Message (real DB field: reason_text) ────────────
+        if (tx.reasonText && tx.reasonText.trim()) {
+            els.customerMessage.textContent = tx.reasonText;
+            els.customerMessage.className   = 'msg-bubble';
+        } else {
+            els.customerMessage.textContent = 'No message provided by the customer.';
+            els.customerMessage.className   = 'msg-bubble empty';
+        }
+
+        // ── Right: Buttons ──────────────────────────────────────────────────
         els.approveBtn.disabled = !canAct;
-        els.reviewBtn.disabled = !canAct;
-        els.denyBtn.disabled = !canAct;
-        els.riskScore.textContent = scoreValue || '--';
-        els.riskRing.className = `risk-ring ${riskTone}`;
-        els.riskLabel.textContent = label;
-        els.riskLabel.className = `risk-label ${riskTone}`;
-        els.amountField.textContent = formatMoney(tx.amount);
-        els.actionField.textContent = recommended;
-        els.reasonField.textContent = reason.length > 42 ? reason.slice(0, 42) + '…' : reason;
-        els.riskSummary.textContent = state.score?.apiAvailable === false
-            ? 'The external verification API was unavailable, so the case score was computed from the local fallback model.'
-            : 'The case score and signals below are sourced from the Dymo/TPE verification API response.';
+        els.denyBtn.disabled    = !canAct;
+        els.reviewBtn.disabled  = !canAct;
     }
 
-    function setLoading(isLoading, label) {
-        els.loadingState.style.display = isLoading ? 'block' : 'none';
-        els.loadingState.textContent = label || 'Working…';
-        [els.approveBtn, els.reviewBtn, els.denyBtn, els.rescoreBtn].forEach(btn => btn.disabled = isLoading);
-    }
+    /* ── API helpers ─────────────────────────────────────────────────────── */
+    function showError(msg) { els.errorText.textContent = msg; els.error.classList.add('visible'); }
+    function clearError()   { els.errorText.textContent = '';  els.error.classList.remove('visible'); }
 
-    function showError(message) {
-        els.error.textContent = message;
-        els.error.style.display = 'block';
-        els.statusPill.textContent = 'Error';
-    }
-
-    function clearError() {
-        els.error.textContent = '';
-        els.error.style.display = 'none';
-    }
-
-    async function request(url, options = {}) {
-        const opts = { ...options };
-        if (opts.body && typeof opts.body === 'object' && !(opts.body instanceof FormData)) {
-            opts.body = JSON.stringify(opts.body);
-            opts.headers = { ...(opts.headers || {}), 'Content-Type': 'application/json' };
+    async function request(url, opts = {}) {
+        const o = { ...opts };
+        if (o.body && typeof o.body === 'object') {
+            o.body    = JSON.stringify(o.body);
+            o.headers = { ...(o.headers || {}), 'Content-Type': 'application/json' };
         }
-
-        const response = await fetch(url, opts);
-        const text = await response.text();
+        const r    = await fetch(url, o);
+        const text = await r.text();
         let data = {};
-        if (text) {
-            try {
-                data = JSON.parse(text);
-            } catch {
-                data = { message: text };
-            }
-        }
-
-        if (!response.ok) {
-            throw new Error(data.message || `Request failed with ${response.status}`);
-        }
-
+        if (text) { try { data = JSON.parse(text); } catch { data = { message: text }; } }
+        if (!r.ok) throw new Error(data.message || `Request failed ${r.status}`);
         return data;
     }
 
     async function loadTransaction() {
-        setLoading(true, 'Loading case…');
         clearError();
-        try {
-            const tx = await request(`/transaction/${transactionId}`);
-            state.transaction = tx;
-            state.caseProfile = syntheticProfile(tx);
-            state.manualDecision = null;
-            els.statusPill.textContent = 'Case loaded';
-            renderCustomerAndDecision();
-        } catch (err) {
-            showError(err.message);
-        } finally {
-            setLoading(false, 'Ready');
-        }
+        const tx = await request(`/transaction/${transactionId}`);
+        state.transaction = tx;
+        renderAll();
+        renderRisks(buildRiskItems(tx, {}));
     }
 
     async function scoreTransaction() {
         if (!state.transaction) return;
-        setLoading(true, 'Scoring case…');
+        els.pageLoaderSub.textContent = 'Running risk analysis…';
         clearError();
-        try {
-            const result = await request(`/transaction/${state.transaction.id}/score`, { method: 'POST' });
-            state.score = result;
-            // Preserve the analyst's chosen decision if already set.
-            if (!state.manualDecision && state.transaction?.status && state.transaction.status !== 'UNASSIGNED') {
-                state.manualDecision = state.transaction.status;
-            }
-            renderCustomerAndDecision();
-            renderSignalGrid(buildSignals(state.transaction, result));
-            els.caseTimestamp.textContent = formatDate(state.transaction.createdAt);
-            els.statusPill.textContent = result.apiAvailable ? 'Scored live' : 'Fallback score';
-        } catch (err) {
-            showError(err.message);
-        } finally {
-            setLoading(false, 'Ready');
-        }
+        const result = await request(`/transaction/${state.transaction.id}/score`, { method: 'POST' });
+        state.score = result;
+        renderAll();
+        renderRisks(buildRiskItems(state.transaction, result));
     }
 
     async function persistDecision(status) {
         if (!state.transaction) return;
         if (state.transaction.status !== 'UNDER_REVIEW' || state.transaction.agentId == null) {
-            showError('Assign the case before recording an approval or denial.');
+            showError('Assign this case to yourself on the dashboard before recording a decision.');
             return;
         }
-        setLoading(true, `${status.replaceAll('_', ' ')}…`);
         clearError();
+        [els.approveBtn, els.denyBtn, els.reviewBtn, els.rescoreBtn].forEach(b => b.disabled = true);
         try {
-            state.manualDecision = status;
-            // Keep the backend in the loop, but preserve the analyst choice locally for the UI.
             const payload = {
                 ...state.transaction,
                 status,
-                investigationNotes: els.investigationNotes.value || ''
+                // persist agent notes back to reason_text only if the agent wrote something
+                reasonText: els.investigationNotes.value.trim() || state.transaction.reasonText || '',
             };
-            const updated = await request(`/transaction/${state.transaction.id}`, {
-                method: 'PUT',
-                body: payload
-            });
+            const updated = await request(`/transaction/${state.transaction.id}`, { method: 'PUT', body: payload });
             state.transaction = { ...updated, status };
-            if (state.score) {
-                state.score = { ...state.score };
-            }
-            els.statusPill.textContent = `Decision saved: ${status.replaceAll('_', ' ')}`;
-            renderCustomerAndDecision();
-            renderSignalGrid(buildSignals(state.transaction, state.score));
+            renderAll();
+            renderRisks(buildRiskItems(state.transaction, state.score || {}));
         } catch (err) {
             showError(err.message);
-        } finally {
-            setLoading(false, 'Ready');
+            renderAll(); // re-enable buttons
         }
     }
 
-    async function triggerRescore() {
-        if (!state.transaction) return;
-        await scoreTransaction();
-    }
-
     els.approveBtn.addEventListener('click', () => persistDecision('APPROVED'));
-    els.reviewBtn.addEventListener('click', () => persistDecision('UNDER_REVIEW'));
-    els.denyBtn.addEventListener('click', () => persistDecision('DENIED'));
-    els.rescoreBtn.addEventListener('click', triggerRescore);
+    els.denyBtn.addEventListener('click',    () => persistDecision('DENIED'));
+    els.reviewBtn.addEventListener('click',  () => persistDecision('UNDER_REVIEW'));
+    els.rescoreBtn.addEventListener('click', scoreTransaction);
 
     (async function init() {
         try {
             await loadTransaction();
             await scoreTransaction();
-        } catch {
-            // Errors are already surfaced in the UI.
+        } catch (err) {
+            showError(err.message);
+        } finally {
+            els.pageLoader.classList.add('hidden');
         }
     })();
 </script>
