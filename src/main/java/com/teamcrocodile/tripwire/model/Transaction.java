@@ -12,7 +12,7 @@ public class Transaction {
     private String currency;
     private Double riskScore;
     private Status status;
-    private String reasonId;
+    private String reasonText;
     private Date createdAt;
 
     public int getId() {
@@ -64,11 +64,11 @@ public class Transaction {
         this.status = status;
     }
 
-    public String getReasonId() {
-        return reasonId;
+    public String getReasonText() {
+        return reasonText;
     }
-    public void setReasonId(String reasonId) {
-        this.reasonId = reasonId;
+    public void setReasonText(String reasonText) {
+        this.reasonText = reasonText;
     }
 
     public Date getCreatedAt() {

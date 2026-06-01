@@ -58,9 +58,9 @@ VALUES (
            4,
             3499.00,
            'USD',
-           0.00,                          -- your engine fills this in
-           'Not received',
-           '2026-05-28 04:52:00'          -- ~3h after account was created
+           0.00,
+           'I placed this order 3 days ago and it still has not arrived. The tracking page shows no updates since the label was created. I need this refunded immediately as I required the item urgently.',
+           '2026-05-28 04:52:00'
        );
 
 -- ----------------------------------------------------------
@@ -136,7 +136,7 @@ VALUES (
            4750.00,
            'USD',
            0.00,
-           'Not received',
+           'My package was marked as delivered but I never received it. I checked with my neighbours and no one has it. Please issue a full refund.',
            '2026-05-28 04:18:00'
        );
 
@@ -226,11 +226,11 @@ INSERT INTO Transactions (
 )
 VALUES
     -- Prior refund 1 (10 days ago, approved)
-    (3, 1, 3, 2, 124.00, 'USD', 0.0, 'Not received',       '2026-05-18 11:05:00'),
+    (3, 1, 3, 2, 124.00, 'USD', 0.0, 'The item I received is not the one I ordered. The size is completely wrong and the colour is different from the product page.', '2026-05-18 11:05:00'),
     -- Prior refund 2 (4 days ago, under review)
-    (4, 1, 3, 1, 310.00, 'USD', 0.0, 'Damaged on arrival', '2026-05-24 09:40:00'),
+    (4, 1, 3, 1, 310.00, 'USD', 0.0, '{"text":"The package arrived with visible damage to the box and the product inside was broken. I have taken photos as evidence of the damage. Please see the attached images and process a full refund or replacement as soon as possible.","images":["/attachments/case-4/damage-box.jpg","/attachments/case-4/damage-screen.png"]}', '2026-05-24 09:40:00'),
     -- Current case — the one to score
-    (5, NULL, 3, 4, 660.00, 'USD', 0.0, 'Damaged on arrival', '2026-05-28 05:07:00');
+    (5, NULL, 3, 4, 660.00, 'USD', 0.0, 'Another item from you that arrived damaged. The screen is cracked and the casing is dented. I am very disappointed and want a refund right away.', '2026-05-28 05:07:00');
 
 -- 5. Transaction_Reason links
 INSERT INTO Transaction_Reason (transaction_id, reason_id) VALUES (3, 1);
@@ -321,10 +321,10 @@ INSERT INTO Transactions (
     amount, currency, risk_score, reason_text, created_at
 )
 VALUES
-    (6, 3, 4, 2,  195.00, 'EUR', 0.0, 'Not received', '2026-05-22 20:14:00'),
-    (7, 1, 4, 2,  340.00, 'EUR', 0.00, 'Not received', '2026-05-24 11:30:00'),
-    (8, 2, 4, 1,  480.00, 'EUR', 0.00, 'Not received', '2026-05-26 16:55:00'),
-    (9, NULL, 4, 4, 620.00, 'EUR', 0.00, 'Not received', '2026-05-28 08:22:00');
+    (6, 3, 4, 2,  195.00, 'EUR', 0.0, 'I never received my order. It has been two weeks with no updates on the tracking. Please refund the full amount.', '2026-05-22 20:14:00'),
+    (7, 1, 4, 2,  340.00, 'EUR', 0.00, 'Order still not delivered after 10 days. Shipping carrier says it is lost. This is the second time this happens. I want my money back now.', '2026-05-24 11:30:00'),
+    (8, 2, 4, 1,  480.00, 'EUR', 0.00, 'Another lost parcel. The delivery company confirmed the package is missing. I have been waiting 3 weeks and I need an immediate refund.', '2026-05-26 16:55:00'),
+    (9, NULL, 4, 4, 620.00, 'EUR', 0.00, 'Order has not arrived after 14 days and the tracking has not updated in a week. Please process my refund as soon as possible.', '2026-05-28 08:22:00');
 
 -- 5. Transaction_Reason links (all four use reason 1 = Not received)
 INSERT INTO Transaction_Reason (transaction_id, reason_id) VALUES (6, 1);
