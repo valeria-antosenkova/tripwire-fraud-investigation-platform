@@ -228,7 +228,7 @@ VALUES
     -- Prior refund 1 (10 days ago, approved)
     (3, 1, 3, 2, 124.00, 'USD', 0.0, 'The item I received is not the one I ordered. The size is completely wrong and the colour is different from the product page.', '2026-05-18 11:05:00'),
     -- Prior refund 2 (4 days ago, under review)
-    (4, 1, 3, 1, 310.00, 'USD', 0.0, 'The package arrived with visible damage to the box and the product inside was broken. I have taken photos and would like a full refund or a replacement.', '2026-05-24 09:40:00'),
+    (4, 1, 3, 1, 310.00, 'USD', 0.0, '{"text":"The package arrived with visible damage to the box and the product inside was broken. I have taken photos as evidence of the damage. Please see the attached images and process a full refund or replacement as soon as possible.","images":["/attachments/case-4/damage-box.jpg","/attachments/case-4/damage-screen.png"]}', '2026-05-24 09:40:00'),
     -- Current case — the one to score
     (5, NULL, 3, 4, 660.00, 'USD', 0.0, 'Another item from you that arrived damaged. The screen is cracked and the casing is dented. I am very disappointed and want a refund right away.', '2026-05-28 05:07:00');
 

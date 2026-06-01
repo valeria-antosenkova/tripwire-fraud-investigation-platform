@@ -339,6 +339,42 @@
         }
         .msg-bubble.empty { font-style: normal; color: var(--text-3); }
 
+        .msg-text { margin-bottom: 12px; }
+        .msg-text:only-child { margin-bottom: 0; }
+
+        .msg-attachments {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 8px;
+            margin-top: 12px;
+        }
+        .msg-attachment-img {
+            width: 100%;
+            aspect-ratio: 4/3;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            cursor: zoom-in;
+            transition: opacity 0.1s, transform 0.1s;
+        }
+        .msg-attachment-img:hover { opacity: 0.92; transform: scale(1.01); }
+
+        /* Lightbox */
+        .lightbox {
+            display: none;
+            position: fixed; inset: 0; z-index: 9000;
+            background: rgba(0,0,0,0.85);
+            align-items: center; justify-content: center;
+            cursor: zoom-out;
+        }
+        .lightbox.open { display: flex; }
+        .lightbox img {
+            max-width: 90vw; max-height: 90vh;
+            border-radius: 10px;
+            box-shadow: 0 24px 80px rgba(0,0,0,0.6);
+            pointer-events: none;
+        }
+
         /* Action buttons */
         .action-btn {
             display: flex; align-items: center; justify-content: center; gap: 8px;
@@ -622,6 +658,17 @@
             </div>
         </div>
 
+        <!-- Customer Message — from DB reason_text field -->
+        <div class="card">
+            <div class="card-header" style="margin-bottom:12px;">
+                <div class="card-icon">
+                    <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+                </div>
+                <div class="card-title">Customer Message</div>
+            </div>
+            <div class="msg-bubble empty" id="customerMessage">No message provided.</div>
+        </div>
+
         <!-- Potential Risks -->
         <div class="card">
             <div class="card-header">
@@ -659,17 +706,6 @@
             </div>
         </div>
 
-        <!-- Customer Message — from DB reason_text field -->
-        <div class="card">
-            <div class="card-header" style="margin-bottom:12px;">
-                <div class="card-icon">
-                    <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
-                </div>
-                <div class="card-title">Customer Message</div>
-            </div>
-            <div class="msg-bubble empty" id="customerMessage">No message provided.</div>
-        </div>
-
         <!-- Case Actions -->
         <div class="card">
             <div class="card-title" style="margin-bottom:16px;">Case Actions</div>
@@ -703,6 +739,11 @@
 </div><!-- /page-content -->
 
 </div><!-- /shell -->
+
+<!-- Lightbox for message attachment images -->
+<div class="lightbox" id="lightbox">
+    <img id="lightboxImg" src="" alt="Evidence photo">
+</div>
 
 <!-- Loading overlay -->
 <div class="page-loader" id="pageLoader">
@@ -960,6 +1001,57 @@
         return items;
     }
 
+    /* ── Customer message renderer (plain text OR JSON with images) ──── */
+    function renderCustomerMessage(raw) {
+        const el = els.customerMessage;
+        if (!raw || !raw.trim()) {
+            el.className = 'msg-bubble empty';
+            el.innerHTML = 'No message provided by the customer.';
+            return;
+        }
+
+        let text = raw;
+        let images = [];
+
+        // Try to parse as JSON payload: {"text":"…","images":["url",…]}
+        if (raw.trim().startsWith('{')) {
+            try {
+                const parsed = JSON.parse(raw);
+                text   = parsed.text   || '';
+                images = Array.isArray(parsed.images) ? parsed.images : [];
+            } catch { /* fall through — treat entire string as plain text */ }
+        }
+
+        el.className = 'msg-bubble';
+
+        const textHtml = text
+            ? `<div class="msg-text">${text.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</div>`
+            : '';
+
+        const imagesHtml = images.length
+            ? `<div class="msg-attachments">
+                 ${images.map(src => `
+                   <img class="msg-attachment-img"
+                        src="${src}"
+                        alt="Customer evidence photo"
+                        onclick="openLightbox('${src}')">`
+                 ).join('')}
+               </div>`
+            : '';
+
+        el.innerHTML = textHtml + imagesHtml;
+    }
+
+    /* ── Lightbox ──────────────────────────────────────────────────────── */
+    function openLightbox(src) {
+        document.querySelector('#lightboxImg').src = src;
+        document.querySelector('#lightbox').classList.add('open');
+    }
+    document.querySelector('#lightbox').addEventListener('click', () => {
+        document.querySelector('#lightbox').classList.remove('open');
+        document.querySelector('#lightboxImg').src = '';
+    });
+
     function renderRisks(items) {
         const flagged = items.filter(i => i.severity !== 'low').length;
         els.risksSubheader.textContent = (items.length === 1 && items[0].severity === 'low')
@@ -1032,14 +1124,8 @@
         els.statusPill.textContent     = statusLabel(status);
         els.statusPill.className       = `status-pill ${status}`;
 
-        // ── Right: Customer Message (real DB field: reason_text) ────────────
-        if (tx.reasonText && tx.reasonText.trim()) {
-            els.customerMessage.textContent = tx.reasonText;
-            els.customerMessage.className   = 'msg-bubble';
-        } else {
-            els.customerMessage.textContent = 'No message provided by the customer.';
-            els.customerMessage.className   = 'msg-bubble empty';
-        }
+        // ── Left: Customer Message (real DB field: reason_text) ────────────
+        renderCustomerMessage(tx.reasonText);
 
         // ── Right: Buttons ──────────────────────────────────────────────────
         els.approveBtn.disabled = !canAct;
