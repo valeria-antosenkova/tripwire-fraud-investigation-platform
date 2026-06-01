@@ -74,6 +74,12 @@ public class AgentDaoImpl implements AgentDao {
     }
 
     @Override
+    public void updatePasswordHash(int id, String passwordHash) {
+        final String sql = "UPDATE Agent SET password_hash = ? WHERE agent_id = ?;";
+        jdbcTemplate.update(sql, passwordHash, id);
+    }
+
+    @Override
     public void deleteAgent(int id) {
 
         final String sql = "DELETE FROM Agent WHERE agent_id = ?;";

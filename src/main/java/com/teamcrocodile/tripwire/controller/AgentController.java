@@ -39,6 +39,21 @@ public class AgentController {
         return agentService.updateAgentData(id, agent);
     }
 
+    @PutMapping("/{id}/password")
+    public ResponseEntity<?> changePassword(@PathVariable int id, @RequestBody ChangePasswordRequest request) {
+        if (request == null) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Request body is required"));
+        }
+        try {
+            agentService.changePassword(id, request.getCurrentPassword(), request.getNewPassword());
+            return ResponseEntity.ok(Map.of("message", "Password updated successfully"));
+        } catch (SecurityException ex) {
+            return ResponseEntity.status(401).body(Map.of("error", ex.getMessage()));
+        } catch (IllegalArgumentException ex) {
+            return ResponseEntity.badRequest().body(Map.of("error", ex.getMessage()));
+        }
+    }
+
     @DeleteMapping("/{id}")
     public void deleteAgent(@PathVariable int id) {
         agentService.deleteAgent(id);
@@ -65,6 +80,27 @@ public class AgentController {
                 "name",  agent.getName(),
                 "email", agent.getEmail()
         ));
+    }
+
+    public static class ChangePasswordRequest {
+        private String currentPassword;
+        private String newPassword;
+
+        public String getCurrentPassword() {
+            return currentPassword;
+        }
+
+        public void setCurrentPassword(String currentPassword) {
+            this.currentPassword = currentPassword;
+        }
+
+        public String getNewPassword() {
+            return newPassword;
+        }
+
+        public void setNewPassword(String newPassword) {
+            this.newPassword = newPassword;
+        }
     }
 
 }

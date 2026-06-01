@@ -11,6 +11,7 @@ public interface AgentDao {
     Agent getAgentById(int id);
     Agent getAgentByEmail(String email);
     void updateAgent(Agent agent);
+    void updatePasswordHash(int id, String passwordHash);
     void deleteAgent(int id);
 
 }

@@ -40,12 +40,40 @@ public class AgentServiceImpl implements AgentService {
                 return false;
             }
 
-            if (stored.startsWith("{")) {
-                return passwordEncoder.matches(password, stored);
-            }
-
-            return password.equals(stored);
+            return matchesPassword(password, stored);
       }
+
+    @Override
+    public void changePassword(int id, String currentPassword, String newPassword) {
+        if (currentPassword == null || currentPassword.isBlank()) {
+            throw new IllegalArgumentException("Current password is required");
+        }
+        if (newPassword == null || newPassword.isBlank()) {
+            throw new IllegalArgumentException("New password is required");
+        }
+        if (newPassword.length() < 8) {
+            throw new IllegalArgumentException("New password must be at least 8 characters");
+        }
+
+        Agent agent = agentDao.getAgentById(id);
+        if (agent == null) {
+            throw new IllegalArgumentException("Agent with id " + id + " not found");
+        }
+
+        String stored = agent.getPass_hash();
+        if (stored == null || stored.isBlank()) {
+            throw new IllegalStateException("Password is not set for this account");
+        }
+        if (!matchesPassword(currentPassword, stored)) {
+            throw new SecurityException("Current password is incorrect");
+        }
+        if (matchesPassword(newPassword, stored)) {
+            throw new IllegalArgumentException("New password must be different from current password");
+        }
+
+        String encoded = passwordEncoder.encode(newPassword);
+        agentDao.updatePasswordHash(id, encoded);
+    }
 
     @Override
     public Agent addNewAgent(Agent agent) {
@@ -73,6 +101,13 @@ public class AgentServiceImpl implements AgentService {
     @Override
     public List<Agent> getAllAgents() {
         return agentDao.getAllAgents();
+    }
+
+    private boolean matchesPassword(String rawPassword, String storedPassword) {
+        if (storedPassword.startsWith("{")) {
+            return passwordEncoder.matches(rawPassword, storedPassword);
+        }
+        return rawPassword.equals(storedPassword);
     }
 
 

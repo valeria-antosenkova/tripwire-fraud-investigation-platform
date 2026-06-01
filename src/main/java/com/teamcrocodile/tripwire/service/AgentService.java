@@ -12,6 +12,7 @@ public interface AgentService {
     Agent getAgentById(int id);
     Agent getAgentByEmail(String email);
     boolean authenticateAgent(String email, String password);
+    void changePassword(int id, String currentPassword, String newPassword);
     Agent updateAgentData(int id, Agent agent);
     void deleteAgent(int id);
 }
