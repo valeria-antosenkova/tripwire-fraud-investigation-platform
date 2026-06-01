@@ -34,8 +34,8 @@ public class TransactionDaoImpl implements TransactionDao{
 
         final String SQL =
                 "INSERT INTO transactions (agent_id, account_id, amount, currency, risk_score, status_id," +
-                " order_id, order_date, items, payment_method, shipping_address, billing_address)" +
-                " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                " order_id, order_date, items, payment_method, shipping_address, billing_address, reason_text)" +
+                " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbc.update(con -> {
@@ -52,6 +52,7 @@ public class TransactionDaoImpl implements TransactionDao{
             ps.setString(10, transaction.getPaymentMethod());
             ps.setString(11, transaction.getShippingAddress());
             ps.setString(12, transaction.getBillingAddress());
+            ps.setString(13, transaction.getReasonText());
             return ps;
         }, keyHolder);
 
