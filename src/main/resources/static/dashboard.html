@@ -151,6 +151,13 @@
             font-size: 12px; font-weight: 700;
             color: #fff;
             flex-shrink: 0;
+            overflow: hidden;
+        }
+
+        .sb-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
 
         .sb-agent-info { flex: 1; min-width: 0; }
@@ -376,37 +383,6 @@
             border: 1px solid var(--border);
         }
 
-        .panel-header {
-            display: flex;
-            align-items: center;
-            border-bottom: 1px solid var(--border);
-        }
-
-        /* Tabs */
-        .tabs {
-            display: flex;
-            padding: 0 8px;
-            flex: 1;
-        }
-
-        .tab {
-            height: 50px;
-            padding: 0 18px;
-            border: none;
-            border-bottom: 2.5px solid transparent;
-            background: none;
-            color: var(--text-3);
-            font: inherit;
-            font-size: 13.5px;
-            font-weight: 600;
-            cursor: pointer;
-            margin-bottom: -1px;
-            transition: color 0.12s, border-color 0.12s;
-        }
-
-        .tab:hover { color: var(--text-2); }
-        .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
-
         /* Toolbar */
         .toolbar {
             display: flex;
@@ -615,17 +591,17 @@
 
     <div class="sb-nav">
         <div class="sb-section">Workspace</div>
-        <a class="sb-item active" href="/dashboard.html">
+        <a class="sb-item js-case-nav active" data-view="all" href="dashboard.html?view=all">
             <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
             <span>Dashboard</span>
         </a>
-        <a class="sb-item" href="/dashboard.html">
+        <a class="sb-item js-case-nav" data-view="mine" href="dashboard.html?view=mine">
             <svg viewBox="0 0 24 24"><path d="M20 7H4a2 2 0 00-2 2v10a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2z"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg>
             <span>My Cases</span>
         </a>
 
         <div class="sb-section">System</div>
-        <a class="sb-item" href="#">
+        <a class="sb-item" href="/settings.html">
             <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
             <span>Settings</span>
         </a>
@@ -695,13 +671,6 @@
         </div>
 
         <div class="panel">
-            <div class="panel-header">
-                <div class="tabs">
-                    <button class="tab active" data-tab="all">All Cases</button>
-                    <button class="tab" data-tab="mine">My Cases</button>
-                </div>
-            </div>
-
             <div class="toolbar">
                 <button class="filter-btn active" data-filter="ALL">All</button>
                 <button class="filter-btn" data-filter="UNASSIGNED">Unassigned</button>
@@ -743,8 +712,18 @@
     const currentAgent = JSON.parse(agentJson);
 
     document.querySelector("#agentName").textContent = currentAgent.name;
-    document.querySelector("#agentInitials").textContent =
-        (currentAgent.name || "?").split(" ").map(w => w[0]).join("").slice(0, 2).toUpperCase();
+
+    // Display profile picture or initials in sidebar
+    const agentAvatarDiv = document.querySelector("#agentInitials");
+    if (currentAgent.profilePicture) {
+        const img = document.createElement("img");
+        img.src = currentAgent.profilePicture;
+        agentAvatarDiv.innerHTML = "";
+        agentAvatarDiv.appendChild(img);
+    } else {
+        agentAvatarDiv.textContent =
+            (currentAgent.name || "?").split(" ").map(w => w[0]).join("").slice(0, 2).toUpperCase();
+    }
 
     document.querySelector("#logoutBtn").addEventListener("click", () => {
         localStorage.removeItem("agent");
@@ -752,16 +731,19 @@
     });
 
     let allCases = [], myCases = [];
-    let activeTab = "all", activeFilter = "ALL", showCompleted = false;
+    const viewParam = new URLSearchParams(window.location.search).get("view");
+    let activeTab = viewParam === "mine" ? "mine" : "all";
+    let activeFilter = "ALL", showCompleted = false;
 
     const tableBody   = document.querySelector("#tableBody");
     const searchInput = document.querySelector("#searchInput");
     const refreshBtn  = document.querySelector("#refreshBtn");
     const errorBanner = document.querySelector("#errorBanner");
     const filterBtns  = document.querySelectorAll(".filter-btn");
-    const tabBtns     = document.querySelectorAll(".tab");
+    const caseNavItems = document.querySelectorAll(".js-case-nav");
     const showCompletedCb = document.querySelector("#showCompleted");
 
+    syncCaseNav();
     loadAll();
 
     refreshBtn.addEventListener("click", loadAll);
@@ -774,10 +756,18 @@
         renderTable();
     }));
 
-    tabBtns.forEach(btn => btn.addEventListener("click", () => {
-        tabBtns.forEach(b => b.classList.remove("active"));
-        btn.classList.add("active");
-        activeTab = btn.dataset.tab;
+    caseNavItems.forEach(item => item.addEventListener("click", event => {
+        const nextView = item.dataset.view;
+        if (!nextView) return;
+        event.preventDefault();
+
+        activeTab = nextView;
+        syncCaseNav();
+
+        const url = new URL(window.location.href);
+        url.searchParams.set("view", activeTab);
+        history.replaceState({}, "", url);
+
         renderTable();
     }));
 
@@ -903,6 +893,11 @@
     function openScoring(id) { window.location.href = `/index.html?id=${id}`; }
     function showError(msg)  { errorBanner.textContent = msg; errorBanner.style.display = "block"; }
     function clearError()    { errorBanner.textContent = "";  errorBanner.style.display = "none"; }
+    function syncCaseNav() {
+        caseNavItems.forEach(item => {
+            item.classList.toggle("active", item.dataset.view === activeTab);
+        });
+    }
 </script>
 
 <script>
@@ -914,3 +909,5 @@
 </script>
 </body>
 </html>
+
+

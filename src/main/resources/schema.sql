@@ -12,6 +12,7 @@ INSERT INTO Status (status_name) VALUES
 
 CREATE TABLE Account (
                          account_id   INT          PRIMARY KEY AUTO_INCREMENT,
+                         name         VARCHAR(100),
                          email        VARCHAR(150),
                          ip_address   VARCHAR(45),
                          iban         VARCHAR(34),
@@ -21,10 +22,11 @@ CREATE TABLE Account (
 
 
 CREATE TABLE Agent (
-                       agent_id      INT          PRIMARY KEY AUTO_INCREMENT,
-                        name          VARCHAR(100) NOT NULL,
-                        email         VARCHAR(150) UNIQUE NOT NULL,
-                        password_hash VARCHAR(255) NOT NULL
+                       agent_id        INT          PRIMARY KEY AUTO_INCREMENT,
+                       name            VARCHAR(100) NOT NULL,
+                       email           VARCHAR(150) UNIQUE NOT NULL,
+                       password_hash   VARCHAR(255) NOT NULL,
+                       profile_picture LONGTEXT
 );
 
 
@@ -37,15 +39,21 @@ CREATE TABLE IF NOT EXISTS agent (
 
 
 CREATE TABLE Transactions (
-                              transaction_id INT            PRIMARY KEY AUTO_INCREMENT,
-                              agent_id       INT            DEFAULT NULL,
-                              account_id     INT            NOT NULL,
-                              status_id      INT            NOT NULL DEFAULT 4,
-                              amount         DECIMAL(10, 2) NOT NULL,
-                              currency       VARCHAR(10),
-                              risk_score     DECIMAL(5, 2)  DEFAULT 0,
-                              reason_text    TEXT           DEFAULT NULL,
-                              created_at     TIMESTAMP      DEFAULT CURRENT_TIMESTAMP,
+                              transaction_id    INT            PRIMARY KEY AUTO_INCREMENT,
+                              agent_id          INT            DEFAULT NULL,
+                              account_id        INT            NOT NULL,
+                              status_id         INT            NOT NULL DEFAULT 4,
+                              amount            DECIMAL(10, 2) NOT NULL,
+                              currency          VARCHAR(10),
+                              risk_score        DECIMAL(5, 2)  DEFAULT 0,
+                              reason_text       TEXT           DEFAULT NULL,
+                              order_id          VARCHAR(50)    DEFAULT NULL,
+                              order_date        DATE           DEFAULT NULL,
+                              items             TEXT           DEFAULT NULL,
+                              payment_method    VARCHAR(100)   DEFAULT NULL,
+                              shipping_address  TEXT           DEFAULT NULL,
+                              billing_address   TEXT           DEFAULT NULL,
+                              created_at        TIMESTAMP      DEFAULT CURRENT_TIMESTAMP,
 
                               CONSTRAINT fk_transaction_agent
                                   FOREIGN KEY (agent_id) REFERENCES Agent(agent_id)
@@ -83,4 +91,4 @@ CREATE TABLE Transaction_Reason (
                                             ON DELETE RESTRICT
 );
 
-ALTER TABLE Transactions ALTER COLUMN transaction_id RESTART WITH 2;
+-- Sequences are reset by data.sql after all explicit inserts.

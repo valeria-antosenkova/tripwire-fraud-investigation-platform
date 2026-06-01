@@ -71,4 +71,10 @@ public class TransactionController {
         return transactionService.getTransactionsByAgentId(agentId);
     }
 
+    // Get full transaction history for an account (used by case detail page)
+    @GetMapping("/account/{accountId}")
+    public List<Transaction> getTransactionsByAccount(@PathVariable int accountId) {
+        return transactionService.getTransactionsByAccountId(accountId);
+    }
+
 }

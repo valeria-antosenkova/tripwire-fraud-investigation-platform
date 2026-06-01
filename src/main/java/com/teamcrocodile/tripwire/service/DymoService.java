@@ -137,13 +137,13 @@ public class DymoService {
         String phoneCountry = countryFromPhone(account.getPhoneNumber());
         String ibanCountry = countryFromIban(account.getIban());
         if (phoneCountry != null && ibanCountry != null && !phoneCountry.equals(ibanCountry)) {
-            score += 10;
+            score += 20;
             response.getSignals().add("Phone country does not match IBAN country");
         }
 
         Long ageHours = accountAgeHours(account.getCreatedAt());
         if (ageHours != null && ageHours <= 24) {
-            score += 15;
+            score += 20;
             response.getSignals().add("Account is less than 24 hours old");
         } else if (ageHours != null && ageHours <= 7 * 24) {
             score += 10;

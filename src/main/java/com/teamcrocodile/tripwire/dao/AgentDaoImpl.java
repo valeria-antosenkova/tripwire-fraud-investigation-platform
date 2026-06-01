@@ -55,6 +55,7 @@ public class AgentDaoImpl implements AgentDao {
             agent.setName(rs.getString("name"));
             agent.setEmail(rs.getString("email"));
             agent.setPass_hash(rs.getString("password_hash"));
+            agent.setProfile_picture(rs.getString("profile_picture"));
             return agent;
         });
     }
@@ -69,6 +70,7 @@ public class AgentDaoImpl implements AgentDao {
             agent.setName(rs.getString("name"));
             agent.setEmail(rs.getString("email"));
             agent.setPass_hash(rs.getString("password_hash"));
+            agent.setProfile_picture(rs.getString("profile_picture"));
             return agent;
         });
     }
@@ -82,6 +84,7 @@ public class AgentDaoImpl implements AgentDao {
             agent.setName(rs.getString("name"));
             agent.setEmail(rs.getString("email"));
             agent.setPass_hash(rs.getString("password_hash"));
+            agent.setProfile_picture(rs.getString("profile_picture"));
             return agent;
         }).stream().findFirst().orElse(null);
     }
@@ -94,10 +97,22 @@ public class AgentDaoImpl implements AgentDao {
     }
 
     @Override
+    public void updatePasswordHash(int id, String passwordHash) {
+        final String sql = "UPDATE Agent SET password_hash = ? WHERE agent_id = ?;";
+        jdbcTemplate.update(sql, passwordHash, id);
+    }
+
+    @Override
     public void deleteAgent(int id) {
 
         final String sql = "DELETE FROM Agent WHERE agent_id = ?;";
         jdbcTemplate.update(sql, id);
 
+    }
+
+    @Override
+    public void updateProfilePicture(int id, String profilePicture) {
+        final String sql = "UPDATE Agent SET profile_picture = ? WHERE agent_id = ?;";
+        jdbcTemplate.update(sql, profilePicture, id);
     }
 }

@@ -469,13 +469,13 @@
         </a>
         <a class="sb-item active" href="#">
             <svg viewBox="0 0 24 24"><path d="M20 7H4a2 2 0 00-2 2v10a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2z"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg>
-            <span>Case Review</span>
-        </a>
-        <a class="sb-item" href="#">
-            <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-            <span>Analytics</span>
+            <span>My Cases</span>
         </a>
         <div class="sb-section">System</div>
+        <a class="sb-item" href="/refund.html" target="_blank">
+            <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+            <span>Customer Portal</span>
+        </a>
         <a class="sb-item" href="#">
             <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
             <span>Settings</span>
@@ -547,7 +547,7 @@
             <!-- Name + account status: name is synthetic, status derived from account age -->
             <div class="info-2col">
                 <div>
-                    <div class="field-label">Full Name <span class="synth-note">est.</span></div>
+                    <div class="field-label">Full Name</div>
                     <div class="field-value" id="customerName">—</div>
                 </div>
                 <div>
@@ -575,8 +575,8 @@
                 <div class="stat-cell">
                     <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
                     <div>
-                        <div class="stat-cell-label">Account Age <span class="synth-note">est.</span></div>
-                        <div class="stat-cell-value synth" id="accountAge">—</div>
+                        <div class="stat-cell-label">Account Age</div>
+                        <div class="stat-cell-value real" id="accountAge">—</div>
                     </div>
                 </div>
                 <div class="stat-cell">
@@ -589,15 +589,15 @@
                 <div class="stat-cell">
                     <svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
                     <div>
-                        <div class="stat-cell-label">Total Spent <span class="synth-note">est.</span></div>
-                        <div class="stat-cell-value synth" id="totalSpent">—</div>
+                        <div class="stat-cell-label">Total Refunded</div>
+                        <div class="stat-cell-value real" id="totalSpent">—</div>
                     </div>
                 </div>
                 <div class="stat-cell">
                     <svg viewBox="0 0 24 24"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
                     <div>
-                        <div class="stat-cell-label">Prior Refunds <span class="synth-note">est.</span></div>
-                        <div class="stat-cell-value synth" id="prevRefunds">—</div>
+                        <div class="stat-cell-label">Prior Claims</div>
+                        <div class="stat-cell-value real" id="prevRefunds">—</div>
                     </div>
                 </div>
             </div>
@@ -609,7 +609,7 @@
                 <div class="card-icon">
                     <svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
                 </div>
-                <div class="card-title">Order Details <span class="synth-note" style="font-size:10px;font-weight:600;">estimated</span></div>
+                <div class="card-title">Order Details</div>
             </div>
 
             <div class="order-2col">
@@ -816,79 +816,7 @@
         pageLoaderSub:      document.querySelector('#pageLoaderSub'),
     };
 
-    const state = { transaction: null, score: null };
-
-    /* ──────────────────────────────────────────────────────────────────────
-     * Synthetic enrichment — used ONLY when the DB has no real value.
-     * These functions derive stable fake values from the real transaction ID
-     * so the same case always shows the same enrichment.
-     * ────────────────────────────────────────────────────────────────────── */
-    const NAMES = [
-        { name: 'Sarah Mitchell', initials: 'SM' },
-        { name: 'Marcus Chen',    initials: 'MC' },
-        { name: 'Ava Patel',      initials: 'AP' },
-        { name: 'Jordan Lee',     initials: 'JL' },
-        { name: 'Nina Brooks',    initials: 'NB' },
-        { name: 'Diego Santos',   initials: 'DS' },
-        { name: 'Maya Hassan',    initials: 'MH' },
-    ];
-
-    const ITEMS_POOL = [
-        ['MacBook Pro 16"', 'AirPods Pro'],
-        ['iPhone 15 Pro', 'Apple Watch Series 9'],
-        ['Sony WH-1000XM5', 'USB-C Hub'],
-        ['Samsung 55" QLED TV', 'HDMI 2.1 Cable'],
-        ['LG OLED Monitor 27"', 'Ergonomic Mouse'],
-        ['iPad Pro 12.9"', 'Apple Pencil', 'Smart Keyboard Folio'],
-        ['Nike Air Max 270', 'Running Socks 3-pack'],
-    ];
-
-    const STREETS     = ['123 Main St','456 Oak Ave','789 Elm Blvd','22 Pine Rd','54 River Dr','900 Maple Ln','10 Cedar Ct'];
-    const CITY_STATES = ['Austin, TX 78701','Miami, FL 33101','Denver, CO 80201','Chicago, IL 60601','Seattle, WA 98101','Atlanta, GA 30301','Boston, MA 02101'];
-    const CARD_LAST4  = ['4532','1234','8821','0091','5577','3310','6624'];
-
-    /** Returns enrichment data derived deterministically from the transaction. */
-    function enrichFromTx(tx) {
-        const seed = Number(tx?.id) || 1;
-        const base = NAMES[seed % NAMES.length];
-
-        // Account age: seeded but plausible (10–710 days)
-        const accountAgeDays = 10 + (seed * 7) % 700;
-
-        // Estimated profile stats
-        const prevRefunds = (seed * 2) % 7;
-        const totalSpent  = ((seed * 317.83) + 500).toFixed(2);
-
-        // Contact info (synthetic)
-        const email = base.name.toLowerCase().replace(/[^a-z]+/g, '.') + '@maildrop.cc';
-        const phone = `+1 (${(410 + seed % 300).toString().padStart(3,'0')}) `
-                    + `${(200 + (seed*11)%800).toString().padStart(3,'0')}-`
-                    + `${(1000 + (seed*31)%9000).toString().padStart(4,'0')}`;
-
-        // Order details (synthetic, but the ORDER DATE is anchored to createdAt)
-        const items = ITEMS_POOL[seed % ITEMS_POOL.length];
-        const orderId = `ORD-${String(tx.accountId || seed).padStart(3,'0')}${String(seed).padStart(2,'0')}`.slice(0,12);
-        const createdMs = tx.createdAt ? new Date(tx.createdAt).getTime() : Date.now();
-        // Order happened a few days before the refund request
-        const orderMs  = createdMs - ((seed % 14) + 3) * 86400000;
-        const orderDate = new Date(orderMs).toISOString().slice(0,10);
-        const card = CARD_LAST4[seed % CARD_LAST4.length];
-
-        return {
-            ...base,
-            accountAgeDays,
-            prevRefunds,
-            totalSpent,
-            email,
-            phone,
-            orderId,
-            orderDate,
-            items,
-            paymentMethod: `Credit Card (**** ${card})`,
-            shippingAddr:  `${STREETS[seed % STREETS.length]}, ${CITY_STATES[seed % CITY_STATES.length]}`,
-            billingAddr:   `${STREETS[(seed+3) % STREETS.length]}, ${CITY_STATES[(seed+2) % CITY_STATES.length]}`,
-        };
-    }
+    const state = { transaction: null, account: null, history: [], score: null };
 
     /* ── Helpers ──────────────────────────────────────────────────────────── */
     function fmt$(v, curr) {
@@ -940,22 +868,21 @@
         const iban   = sd?.iban       || {};
         const wallet = sd?.wallet     || {};
         const ua     = sd?.userAgent  || {};
-        const enrich = enrichFromTx(tx);
+        const signals = Array.isArray(sd?.signals) ? sd.signals : [];
         const items  = [];
 
+        // ── Helper: check whether any signal string contains a keyword ──
+        const hasSignal = (...keywords) =>
+            signals.some(s => keywords.some(k => s.toLowerCase().includes(k.toLowerCase())));
+        const findSignal = (...keywords) =>
+            signals.find(s => keywords.some(k => s.toLowerCase().includes(k.toLowerCase())));
+
+        // ── Identity-based indicators ───────────────────────────────────
         if (email.fraud || email.proxiedEmail || email.freeSubdomain || email.noReply || email.roleAccount) {
             items.push({
                 title: 'Disposable Email',
                 desc: email.fraud ? 'Email domain flagged in fraud databases.' : 'Email domain associated with temporary email services.',
                 severity: 'high', ts: nowTs(),
-            });
-        }
-
-        if (enrich.prevRefunds >= 3) {
-            items.push({
-                title: 'Multiple Refund Requests',
-                desc: `Account has ${enrich.prevRefunds} estimated prior refunds — above average frequency.`,
-                severity: enrich.prevRefunds >= 5 ? 'high' : 'high', ts: nowTs(),
             });
         }
 
@@ -969,7 +896,7 @@
             });
         }
 
-        if (phone.country && !phone.country.includes(enrich.location?.split(',')[1]?.trim() || '')) {
+        if (phone.country) {
             items.push({
                 title: 'Phone Country Mismatch',
                 desc: `Phone registered in ${phone.country}; account appears to be elsewhere.`,
@@ -985,8 +912,75 @@
             items.push({ title: 'Suspicious Device', desc: 'Browser fingerprint consistent with automated tooling.', severity: 'medium', ts: nowTs() });
         }
 
-        // High-value with no live scoring
-        if (!sd?.apiAvailable && Number(tx.amount || 0) >= 1000 && items.length === 0) {
+        // ── Local scoring signals (from scoring-engine signals list) ────
+        if (hasSignal('Disposable email domain')) {
+            const sig = findSignal('Disposable email domain');
+            if (!items.some(i => i.title === 'Disposable Email')) {
+                items.push({ title: 'Disposable Email', desc: sig || 'Disposable email domain detected.', severity: 'high', ts: nowTs() });
+            }
+        }
+
+        if (hasSignal('Account is less than 24 hours old', 'Account is less than 7 days old')) {
+            const sig = findSignal('Account is less than');
+            items.push({ title: 'Very New Account', desc: sig || 'Account was recently created.', severity: 'high', ts: nowTs(2 * 60000) });
+        }
+
+        // ── Behavioural indicators (from scoring-engine signals list) ────
+        if (hasSignal('consistent amount escalation', 'amount escalation pattern')) {
+            const sig = findSignal('amount escalation');
+            items.push({
+                title: 'Escalating Claim Amounts',
+                desc: sig || 'Refund amounts are systematically increasing with each successive claim — a hallmark of deliberate policy exploitation.',
+                severity: 'high', ts: nowTs(2 * 60000),
+            });
+        }
+
+        if (hasSignal('high refund frequency')) {
+            const sig = findSignal('high refund frequency');
+            items.push({
+                title: 'Abnormal Claim Frequency',
+                desc: sig || 'Multiple refund claims filed within a short window — far above the account cohort average.',
+                severity: 'high', ts: nowTs(4 * 60000),
+            });
+        }
+
+        if (hasSignal('refund velocity')) {
+            const sig = findSignal('refund velocity');
+            items.push({
+                title: 'High Refund Velocity',
+                desc: sig || 'Unusually high total number of refund claims originating from this account.',
+                severity: 'high', ts: nowTs(6 * 60000),
+            });
+        }
+
+        if (hasSignal('repeated claim reason')) {
+            const sig = findSignal('repeated claim reason');
+            items.push({
+                title: 'Repeated Claim Reason',
+                desc: sig || 'The same refund reason has been submitted repeatedly.',
+                severity: 'medium', ts: nowTs(8 * 60000),
+            });
+        }
+
+        if (hasSignal('rapid sequential claim filings')) {
+            items.push({
+                title: 'Rapid Sequential Filings',
+                desc: 'Multiple claims were filed in quick succession, suggesting systematic rather than incidental behaviour.',
+                severity: 'medium', ts: nowTs(10 * 60000),
+            });
+        }
+
+        if (hasSignal('high refund approval rate')) {
+            const sig = findSignal('approval rate');
+            items.push({
+                title: 'Systematic Approval Exploitation',
+                desc: sig || 'A disproportionately high share of prior claims were approved, indicating repeated policy abuse.',
+                severity: 'high', ts: nowTs(12 * 60000),
+            });
+        }
+
+        // ── Fallback: high-value with no live scoring ───────────────────
+        if (signals.length === 0 && Number(tx.amount || 0) >= 1000 && items.length === 0) {
             items.push({
                 title: 'High-Value Request',
                 desc: `Refund of ${fmt$(tx.amount, tx.currency)} is above average. Manual review recommended.`,
@@ -1076,10 +1070,11 @@
 
     /* ── Render all UI from state ──────────────────────────────────────────── */
     function renderAll() {
-        const tx     = state.transaction;
+        const tx      = state.transaction;
+        const acct    = state.account    || {};
+        const history = state.history    || [];
         if (!tx) return;
 
-        const enrich = enrichFromTx(tx);
         // Real DB values
         const score  = Math.round(state.score?.score ?? tx.riskScore ?? 0);
         const status = tx.status || 'UNASSIGNED';
@@ -1094,30 +1089,55 @@
         els.riskScoreDisplay.textContent = score || '—';
         els.riskScoreDisplay.className  = `rs-num ${t}`;
 
-        // ── Left: Customer (synthetic enrichment) ──────────────────────────
-        els.customerName.textContent   = enrich.name;
-        const isNew = enrich.accountAgeDays < 30;
-        els.accountStatus.textContent  = isNew ? 'New' : 'Active';
-        els.accountStatus.className    = `acct-status ${isNew ? 'new' : 'active'}`;
-        els.emailField.textContent     = enrich.email;
-        els.phoneField.textContent     = enrich.phone;
-        els.accountAge.textContent     = ageStr(enrich.accountAgeDays);
-        // Real DB field
+        // ── Left: Customer — all real DB fields ─────────────────────────────
+        const customerName = acct.name || '—';
+        els.customerName.textContent = customerName;
+
+        // Account age from real DB created_at
+        const acctCreatedAt = acct.createdAt;
+        let accountAgeDays = null;
+        if (acctCreatedAt) {
+            accountAgeDays = Math.floor((Date.now() - new Date(acctCreatedAt).getTime()) / 86400000);
+        }
+        const isNew = accountAgeDays !== null && accountAgeDays < 30;
+        els.accountStatus.textContent = isNew ? 'New' : 'Active';
+        els.accountStatus.className   = `acct-status ${isNew ? 'new' : 'active'}`;
+        els.emailField.textContent    = acct.email    || '—';
+        els.phoneField.textContent    = acct.phoneNumber || '—';
+        els.accountAge.textContent    = accountAgeDays !== null ? ageStr(accountAgeDays) : '—';
         els.accountIdDisplay.textContent = `#${tx.accountId}`;
-        els.totalSpent.textContent     = fmt$(enrich.totalSpent, 'USD');
-        els.prevRefunds.textContent    = enrich.prevRefunds;
 
-        // ── Left: Order Details (synthetic enrichment, anchored to createdAt) ─
-        els.orderId.textContent        = enrich.orderId;
-        els.orderDate.textContent      = enrich.orderDate;
-        els.itemsList.innerHTML        = enrich.items.map(i => `<li>${i}</li>`).join('');
-        els.paymentMethod.textContent  = enrich.paymentMethod;
-        // Real DB field
-        els.currencyDisplay.textContent = tx.currency || '—';
-        els.shippingAddr.textContent   = enrich.shippingAddr;
-        els.billingAddr.textContent    = enrich.billingAddr;
+        // Prior refunds from real history (exclude current tx)
+        const prior = history.filter(h => h.id !== tx.id);
+        els.prevRefunds.textContent = prior.length;
 
-        // ── Right: Refund Summary (all real DB fields) ──────────────────────
+        // Total claimed from history (sum of amounts for approved refunds)
+        const totalClaimed = prior
+            .filter(h => h.status === 'APPROVED')
+            .reduce((sum, h) => sum + Number(h.amount || 0), 0);
+        els.totalSpent.textContent = totalClaimed > 0
+            ? new Intl.NumberFormat('en-US', { style: 'currency', currency: tx.currency || 'USD' }).format(totalClaimed)
+            : '—';
+
+        // ── Left: Order Details — all real DB fields ─────────────────────────
+        els.orderId.textContent       = tx.orderId    || '—';
+        els.orderDate.textContent     = tx.orderDate  || '—';
+
+        // Items: stored as JSON array string
+        let itemsArr = [];
+        if (tx.items) {
+            try { itemsArr = JSON.parse(tx.items); } catch { itemsArr = [tx.items]; }
+        }
+        els.itemsList.innerHTML = itemsArr.length
+            ? itemsArr.map(i => `<li>${i}</li>`).join('')
+            : '<li>—</li>';
+
+        els.paymentMethod.textContent = tx.paymentMethod  || '—';
+        els.currencyDisplay.textContent = tx.currency     || '—';
+        els.shippingAddr.textContent  = tx.shippingAddress || '—';
+        els.billingAddr.textContent   = tx.billingAddress  || '—';
+
+        // ── Right: Refund Summary — real DB fields ──────────────────────────
         els.refundAmount.textContent   = fmt$(tx.amount, tx.currency);
         els.requestDate.textContent    = fmtDate(tx.createdAt);
         els.txIdDisplay.textContent    = `TXN-${String(tx.id).padStart(4, '0')}`;
@@ -1155,6 +1175,15 @@
         clearError();
         const tx = await request(`/transaction/${transactionId}`);
         state.transaction = tx;
+
+        // Fetch account and full history in parallel
+        const [acct, history] = await Promise.all([
+            request(`/account/${tx.accountId}`).catch(() => ({})),
+            request(`/transaction/account/${tx.accountId}`).catch(() => []),
+        ]);
+        state.account  = acct;
+        state.history  = Array.isArray(history) ? history : [];
+
         renderAll();
         renderRisks(buildRiskItems(tx, {}));
     }

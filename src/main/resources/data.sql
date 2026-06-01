@@ -29,9 +29,10 @@ VALUES (
 --    phone: Brazilian (+55) — mismatches the NL hosting IP
 --    iban : German — mismatches phone country (BR) and IP (NL)
 -- ----------------------------------------------------------
-INSERT INTO Account (account_id, email, ip_address, iban, phone_number, created_at)
+INSERT INTO Account (account_id, name, email, ip_address, iban, phone_number, created_at)
 VALUES (
            1,
+           'Alex Turner',
            'urgentclaim992@guerrillamail.com',
            '45.95.147.19',
            'DE75512108001245126199',
@@ -49,17 +50,25 @@ VALUES (
 -- ----------------------------------------------------------
 INSERT INTO Transactions (
     transaction_id, agent_id, account_id, status_id,
-    amount, currency, risk_score, reason_text, created_at
+    amount, currency, risk_score, reason_text,
+    order_id, order_date, items, payment_method,
+    shipping_address, billing_address, created_at
 )
 VALUES (
            1,
            NULL,
            1,
            4,
-            3499.00,
+           3499.00,
            'USD',
            0.00,
            'I placed this order 3 days ago and it still has not arrived. The tracking page shows no updates since the label was created. I need this refunded immediately as I required the item urgently.',
+           'ORD-10001',
+           '2026-05-25',
+           '["MacBook Pro 16-inch"]',
+           'Credit Card (**** 4829)',
+           '456 Oak Ave, Miami, FL 33101',
+           '22 Pine Rd, Chicago, IL 60601',
            '2026-05-28 04:52:00'
        );
 
@@ -109,9 +118,10 @@ VALUES (1, 1);
 --    phone   : UK (+44) — mismatches Tor IP which has no consistent geo
 --    iban    : GB94BARC... — payout destination, different from payment method
 --    created : 2026-05-27 21:30 — account is ~6h old when refund is filed
-INSERT INTO Account (account_id, email, ip_address, iban, phone_number, created_at)
+INSERT INTO Account (account_id, name, email, ip_address, iban, phone_number, created_at)
 VALUES (
            2,
+           'Sam Riley',
            'xk82jd@guerrillamail.com',
            '185.220.101.42',
            'GB94BARC10201530093459',
@@ -126,7 +136,9 @@ VALUES (
 --    risk_score 0  : your engine computes and UPDATEs this
 INSERT INTO Transactions (
     transaction_id, agent_id, account_id, status_id,
-    amount, currency, risk_score, reason_text, created_at
+    amount, currency, risk_score, reason_text,
+    order_id, order_date, items, payment_method,
+    shipping_address, billing_address, created_at
 )
 VALUES (
            2,
@@ -137,6 +149,12 @@ VALUES (
            'USD',
            0.00,
            'My package was marked as delivered but I never received it. I checked with my neighbours and no one has it. Please issue a full refund.',
+           'ORD-20001',
+           '2026-05-26',
+           '["Sony WH-1000XM5", "USB-C Hub"]',
+           'Credit Card (**** 3311)',
+           '789 Elm Blvd, Denver, CO 80201',
+           '789 Elm Blvd, Denver, CO 80201',
            '2026-05-28 04:18:00'
        );
 
@@ -178,38 +196,29 @@ VALUES (2, 1);
 -- ============================================================
 
 
-
 -- ============================================================
 --  Tripwire — Case 10 seed (identity mismatch / geo fraud)
 
 -- ============================================================
 
-
 -- 1. Reasons  (two reasons for this case)
 INSERT INTO Reason (reason_id, reason_name, description)
-VALUES
-    (2, 'Damaged on arrival',  'Item arrived in damaged condition.');
+VALUES (2, 'Damaged on arrival', 'Item arrived in damaged condition.');
 
 -- 2. Agent
 INSERT INTO Agent (agent_id, name, email, password_hash)
-VALUES (
-           2,
-           'Vanessa Lee',
-           'vanessa_lee@internal.com',
-           '{noop}tripwire123'
-       );
+VALUES (2, 'Vanessa Lee', 'vanessa_lee@internal.com', '{noop}tripwire123');
 
 -- 3. Account
 --    email   : outlook.com — clean domain, no disposable flag
 --    ip      : 118.200.44.91 — Singtel Fibre Broadband, residential SG
---              (confirmed range: 118.200.0.0/17, Singtel Fibre Broadband)
 --    phone   : +5511912345678 — Brazilian mobile (+55 11)
 --    iban    : SG29DBS... — DBS Bank Singapore payout
---    account : says US, but IP is SG, phone is BR, payout is SG
 --    created : 8 months ago (established account, not new)
-INSERT INTO Account (account_id, email, ip_address, iban, phone_number, created_at)
+INSERT INTO Account (account_id, name, email, ip_address, iban, phone_number, created_at)
 VALUES (
            3,
+           'Maria Santos',
            'maria.santos99@outlook.com',
            '118.200.44.91',
            'SG29DBS80027312345678',
@@ -218,19 +227,30 @@ VALUES (
        );
 
 -- 4. Transactions  (3 total — history + current)
---    tx 1 & 2: past refunds to show the accelerating pattern
---    tx 3    : the current case under review
 INSERT INTO Transactions (
     transaction_id, agent_id, account_id, status_id,
-    amount, currency, risk_score, reason_text, created_at
+    amount, currency, risk_score, reason_text,
+    order_id, order_date, items, payment_method,
+    shipping_address, billing_address, created_at
 )
 VALUES
-    -- Prior refund 1 (10 days ago, approved)
-    (3, 1, 3, 2, 124.00, 'USD', 0.0, 'The item I received is not the one I ordered. The size is completely wrong and the colour is different from the product page.', '2026-05-18 11:05:00'),
-    -- Prior refund 2 (4 days ago, under review)
-    (4, 1, 3, 1, 310.00, 'USD', 0.0, '{"text":"The package arrived with visible damage to the box and the product inside was broken. I have taken photos as evidence of the damage. Please see the attached images and process a full refund or replacement as soon as possible.","images":["/attachments/case-4/damage-box.jpg","/attachments/case-4/damage-screen.png"]}', '2026-05-24 09:40:00'),
-    -- Current case — the one to score
-    (5, NULL, 3, 4, 660.00, 'USD', 0.0, 'Another item from you that arrived damaged. The screen is cracked and the casing is dented. I am very disappointed and want a refund right away.', '2026-05-28 05:07:00');
+    (3, 1, 3, 2,  124.00, 'USD', 0.0,
+     'The item I received is not the one I ordered. The size is completely wrong and the colour is different from the product page.',
+     'ORD-30001', '2026-05-11', '["Nike Air Max 270", "Running Socks 3-pack"]', 'Credit Card (**** 5577)',
+     '88 Orchard Rd, Singapore 238839', '88 Orchard Rd, Singapore 238839',
+     '2026-05-18 11:05:00'),
+
+    (4, 1, 3, 1,  310.00, 'USD', 0.0,
+     '{"text":"The package arrived with visible damage to the box and the product inside was broken. I have taken photos as evidence of the damage. Please see the attached images and process a full refund or replacement as soon as possible.","images":["/attachments/case-4/damage-box.jpg","/attachments/case-4/damage-screen.png"]}',
+     'ORD-30002', '2026-05-20', '["iPad Pro 12.9-inch", "Apple Pencil", "Smart Keyboard Folio"]', 'Credit Card (**** 5577)',
+     '88 Orchard Rd, Singapore 238839', '88 Orchard Rd, Singapore 238839',
+     '2026-05-24 09:40:00'),
+
+    (5, NULL, 3, 4,  660.00, 'USD', 0.0,
+     'Another item from you that arrived damaged. The screen is cracked and the casing is dented. I am very disappointed and want a refund right away.',
+     'ORD-30003', '2026-05-24', '["LG OLED Monitor 27-inch", "Ergonomic Mouse"]', 'Credit Card (**** 5577)',
+     '88 Orchard Rd, Singapore 238839', '88 Orchard Rd, Singapore 238839',
+     '2026-05-28 05:07:00');
 
 -- 5. Transaction_Reason links
 INSERT INTO Transaction_Reason (transaction_id, reason_id) VALUES (3, 1);
@@ -271,39 +291,27 @@ INSERT INTO Transaction_Reason (transaction_id, reason_id) VALUES (5, 2);
 --    Email risk (outlook.com)             → 1
 --
 --  Expected overall score : 62–74 / MEDIUM-HIGH / REVIEW or DENY
---
---  Note: identity signals are CLEAN (residential IP, clean email)
---  which is the whole point of this case — a real person's account
---  being used fraudulently. The score comes from behavioural
---  signals + geo mismatch, not disposable-identity flags.
 -- ============================================================
 
 
 -- ============================================================
 --  Tripwire — Case 4 seed (new account burst / smash-and-grab)
---  Run AFTER your CREATE DATABASE / CREATE TABLE script.
 -- ============================================================
-
 
 -- 2. Agent
 INSERT INTO Agent (agent_id, name, email, password_hash)
-VALUES (
-           3,
-           'John Smith',
-           'john.smith@tripwire.internal',
-           '{noop}tripwire123'
-       );
+VALUES (3, 'John Smith', 'john.smith@tripwire.internal', '{noop}tripwire123');
 
 -- 3. Account
 --    ip     : 46.161.11.11 — Petersburg Internet Network Ltd., RU
---             hosting/colocation range, 989 abuse reports on AbuseIPDB
 --    email  : mail.ru domain — elevated fraud association
 --    phone  : +79161234567 — Russian mobile (MTS, +7 916 prefix)
 --    iban   : DE89370400440532013000 — German payout, mismatches RU identity
---    created: 6 days ago (account age = 6 days at time of this refund)
-INSERT INTO Account (account_id, email, ip_address, iban, phone_number, created_at)
+--    created: 6 days ago
+INSERT INTO Account (account_id, name, email, ip_address, iban, phone_number, created_at)
 VALUES (
            4,
+           'Ivan Petrov',
            'temp.user8821@mail.ru',
            '46.161.11.11',
            'DE89370400440532013000',
@@ -312,19 +320,36 @@ VALUES (
        );
 
 -- 4. Transactions — 4 orders in 6 days, 3 refunded
---    tx1: order 1, approved refund (day 1 — slipped through low score)
---    tx2: order 2, approved refund (day 3 — pattern not yet detected)
---    tx3: order 3, under review   (day 5 — analyst flagged it)
---    tx4: order 4, UNASSIGNED     (today — current case to score)
 INSERT INTO Transactions (
     transaction_id, agent_id, account_id, status_id,
-    amount, currency, risk_score, reason_text, created_at
+    amount, currency, risk_score, reason_text,
+    order_id, order_date, items, payment_method,
+    shipping_address, billing_address, created_at
 )
 VALUES
-    (6, 3, 4, 2,  195.00, 'EUR', 0.0, 'I never received my order. It has been two weeks with no updates on the tracking. Please refund the full amount.', '2026-05-22 20:14:00'),
-    (7, 1, 4, 2,  340.00, 'EUR', 0.00, 'Order still not delivered after 10 days. Shipping carrier says it is lost. This is the second time this happens. I want my money back now.', '2026-05-24 11:30:00'),
-    (8, 2, 4, 1,  480.00, 'EUR', 0.00, 'Another lost parcel. The delivery company confirmed the package is missing. I have been waiting 3 weeks and I need an immediate refund.', '2026-05-26 16:55:00'),
-    (9, NULL, 4, 4, 620.00, 'EUR', 0.00, 'Order has not arrived after 14 days and the tracking has not updated in a week. Please process my refund as soon as possible.', '2026-05-28 08:22:00');
+    (6, 3, 4, 2,  195.00, 'EUR', 0.0,
+     'I never received my order. It has been two weeks with no updates on the tracking. Please refund the full amount.',
+     'ORD-40001', '2026-05-20', '["Samsung 55-inch QLED TV", "HDMI 2.1 Cable"]', 'Credit Card (**** 8821)',
+     '123 Main St, Austin, TX 78701', '54 River Dr, Atlanta, GA 30301',
+     '2026-05-22 20:14:00'),
+
+    (7, 1, 4, 2,  340.00, 'EUR', 0.00,
+     'Order still not delivered after 10 days. Shipping carrier says it is lost. This is the second time this happens. I want my money back now.',
+     'ORD-40002', '2026-05-22', '["iPhone 15 Pro", "Apple Watch Series 9"]', 'Credit Card (**** 8821)',
+     '123 Main St, Austin, TX 78701', '54 River Dr, Atlanta, GA 30301',
+     '2026-05-24 11:30:00'),
+
+    (8, 2, 4, 1,  480.00, 'EUR', 0.00,
+     'Another lost parcel. The delivery company confirmed the package is missing. I have been waiting 3 weeks and I need an immediate refund.',
+     'ORD-40003', '2026-05-24', '["MacBook Pro 16-inch", "AirPods Pro"]', 'Credit Card (**** 8821)',
+     '123 Main St, Austin, TX 78701', '54 River Dr, Atlanta, GA 30301',
+     '2026-05-26 16:55:00'),
+
+    (9, NULL, 4, 4, 620.00, 'EUR', 0.00,
+     'Order has not arrived after 14 days and the tracking has not updated in a week. Please process my refund as soon as possible.',
+     'ORD-40004', '2026-05-26', '["iPad Pro 12.9-inch", "Apple Pencil"]', 'Credit Card (**** 8821)',
+     '123 Main St, Austin, TX 78701', '54 River Dr, Atlanta, GA 30301',
+     '2026-05-28 08:22:00');
 
 -- 5. Transaction_Reason links (all four use reason 1 = Not received)
 INSERT INTO Transaction_Reason (transaction_id, reason_id) VALUES (6, 1);
@@ -366,3 +391,120 @@ INSERT INTO Transaction_Reason (transaction_id, reason_id) VALUES (9, 1);
 --
 --  Expected overall score : 88–96 / HIGH / DENY
 -- ============================================================
+
+
+-- ============================================================
+--  Tripwire — Case 7 seed (refund abuse / policy exploitation)
+--
+--  Identity is completely clean — risk comes entirely from
+--  claim pattern: 8 escalating "not received" claims over 3 months.
+-- ============================================================
+
+-- 3. Account
+--    email   : gmail.com — clean, no disposable flag
+--    ip      : 86.9.44.123 — BT Broadband, residential UK
+--    phone   : +447532109876 — UK mobile (EE network)
+--    iban    : GB29NWBK60161331926819 — NatWest UK payout
+--    phone_country GB = iban_country GB → identity MATCHES (clean signal)
+--    created : 2025-09-15 — 8+ months old (established account)
+INSERT INTO Account (account_id, name, email, ip_address, iban, phone_number, created_at)
+VALUES (
+           5,
+           'Alex Morgan',
+           'alex.morgan.returns@gmail.com',
+           '86.9.44.123',
+           'GB29NWBK60161331926819',
+           '+447532109876',
+           '2025-09-15 14:22:00'
+       );
+
+-- 4. Transactions — 8 claims in 3 months, all "not received", escalating amounts
+INSERT INTO Transactions (
+    transaction_id, agent_id, account_id, status_id,
+    amount, currency, risk_score, reason_text,
+    order_id, order_date, items, payment_method,
+    shipping_address, billing_address, created_at
+)
+VALUES
+    (10, 1, 5, 2,  45.00, 'GBP', 0.0,
+     'I ordered this item over two weeks ago and it still has not arrived. Tracking shows no movement. Please issue a refund.',
+     'ORD-50001', '2026-02-18', '["Phone Case", "Screen Protector"]', 'Credit Card (**** 6624)',
+     '10 Cedar Ct, London EC1A 1BB', '10 Cedar Ct, London EC1A 1BB',
+     '2026-03-02 10:14:00'),
+
+    (11, 1, 5, 2,  89.00, 'GBP', 0.0,
+     'My parcel has not been delivered. I have waited patiently but the tracking has not updated in over a week. I need a refund.',
+     'ORD-50002', '2026-03-05', '["Bluetooth Speaker"]', 'Credit Card (**** 6624)',
+     '10 Cedar Ct, London EC1A 1BB', '10 Cedar Ct, London EC1A 1BB',
+     '2026-03-18 11:30:00'),
+
+    (12, 2, 5, 2, 127.00, 'GBP', 0.0,
+     'Another order that never arrived. The carrier website just says dispatched with no further updates. This is unacceptable, please refund.',
+     'ORD-50003', '2026-03-19', '["Smart Watch Strap", "Wireless Charger"]', 'Credit Card (**** 6624)',
+     '10 Cedar Ct, London EC1A 1BB', '10 Cedar Ct, London EC1A 1BB',
+     '2026-04-01 09:52:00'),
+
+    (13, 2, 5, 2, 203.00, 'GBP', 0.0,
+     'Item not received after 10 days. No delivery attempt was made at my address. Neighbours confirm nothing was left. Full refund required.',
+     'ORD-50004', '2026-04-03', '["Mechanical Keyboard"]', 'Credit Card (**** 6624)',
+     '10 Cedar Ct, London EC1A 1BB', '10 Cedar Ct, London EC1A 1BB',
+     '2026-04-14 14:07:00'),
+
+    (14, 1, 5, 2, 298.00, 'GBP', 0.0,
+     'Once again my order has not arrived. Tracking stopped updating after the label was created. I should not keep having this problem. Please refund immediately.',
+     'ORD-50005', '2026-04-19', '["Sony WH-1000XM5"]', 'Credit Card (**** 6624)',
+     '10 Cedar Ct, London EC1A 1BB', '10 Cedar Ct, London EC1A 1BB',
+     '2026-04-28 08:45:00'),
+
+    (15, 3, 5, 2, 450.00, 'GBP', 0.0,
+     'Package still not received after two weeks. I have contacted the courier and they have no record of a delivery attempt. I want my money back.',
+     'ORD-50006', '2026-04-28', '["iPad Mini"]', 'Credit Card (**** 6624)',
+     '10 Cedar Ct, London EC1A 1BB', '10 Cedar Ct, London EC1A 1BB',
+     '2026-05-09 16:20:00'),
+
+    (16, 3, 5, 1, 612.00, 'GBP', 0.0,
+     'My item has not been delivered. This is the same issue I keep experiencing with orders from your store. Tracking is stuck at label created. Please refund the full amount as soon as possible.',
+     'ORD-50007', '2026-05-13', '["iPhone 15"]', 'Credit Card (**** 6624)',
+     '10 Cedar Ct, London EC1A 1BB', '10 Cedar Ct, London EC1A 1BB',
+     '2026-05-21 13:55:00'),
+
+    (17, NULL, 5, 4, 780.00, 'GBP', 0.0,
+     'Order placed 12 days ago and still not received. The tracking has not moved since the label was printed. I have been a customer for a while now and this keeps happening. I expect a full refund.',
+     'ORD-50008', '2026-05-19', '["MacBook Air 13-inch"]', 'Credit Card (**** 6624)',
+     '10 Cedar Ct, London EC1A 1BB', '10 Cedar Ct, London EC1A 1BB',
+     '2026-05-28 11:30:00');
+
+-- 5. Transaction_Reason links (all eight use reason 1 = Not received)
+INSERT INTO Transaction_Reason (transaction_id, reason_id) VALUES (10, 1);
+INSERT INTO Transaction_Reason (transaction_id, reason_id) VALUES (11, 1);
+INSERT INTO Transaction_Reason (transaction_id, reason_id) VALUES (12, 1);
+INSERT INTO Transaction_Reason (transaction_id, reason_id) VALUES (13, 1);
+INSERT INTO Transaction_Reason (transaction_id, reason_id) VALUES (14, 1);
+INSERT INTO Transaction_Reason (transaction_id, reason_id) VALUES (15, 1);
+INSERT INTO Transaction_Reason (transaction_id, reason_id) VALUES (16, 1);
+INSERT INTO Transaction_Reason (transaction_id, reason_id) VALUES (17, 1);
+
+-- Reset auto-increment past all manually inserted IDs
+ALTER TABLE Transactions ALTER COLUMN transaction_id RESTART WITH 18;
+ALTER TABLE Account      ALTER COLUMN account_id     RESTART WITH 6;
+ALTER TABLE Agent        ALTER COLUMN agent_id        RESTART WITH 4;
+
+-- ============================================================
+--  Scoring engine reference for transaction_id = 17
+--
+--  Identity signals (all CLEAN):
+--    email_domain   : gmail.com (clean)
+--    ip_org         : BT Broadband (residential UK, clean)
+--    phone_country  : GB (+44) — MATCHES iban_country GB
+--    account_age    : 8.5 months
+--
+--  Behavioural signals (all HIGH):
+--    total_claims          : 8  (all "not received")
+--    claims_last_90d       : 6  (tx 12–17)
+--    amount_escalation     : £45→£89→£127→£203→£298→£450→£612→£780
+--    repeated_reason       : "not received" used 8/8 times
+--    prior_approvals       : 6 claims approved
+--
+--  Expected overall score : 55–72 / MEDIUM-HIGH / REVIEW or DENY
+-- ============================================================
+

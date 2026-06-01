@@ -3,15 +3,17 @@ package com.teamcrocodile.tripwire.dao;
 import com.teamcrocodile.tripwire.dao.mappers.AccountMapper;
 import com.teamcrocodile.tripwire.model.Account;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.PreparedStatement;
+import java.sql.Statement;
 import java.util.List;
 
 @Repository
-public class AccountDaoImpl implements AccountDao{
+public class AccountDaoImpl implements AccountDao {
 
     private final JdbcTemplate jdbc;
 
@@ -19,69 +21,46 @@ public class AccountDaoImpl implements AccountDao{
         this.jdbc = jdbc;
     }
 
-
-    /*
     @Override
     @Transactional
     public Account createAccount(Account account) {
-
-        final String INSERT_ACCOUNT = "INSERT INTO account (email, ip_address, iban, phone_number) VALUES (?, ?, ?, ?) ";
-        jdbc.update(INSERT_ACCOUNT, account.getEmail(), account.getIpAddress(), account.getIban(), account.getPhoneNumber());
-
-        return account;
-    }
-
-     */
-
-
-
-    @Override
-    @Transactional
-    public Account createAccount(Account account) {
-        SimpleJdbcInsert insert = new SimpleJdbcInsert(jdbc)
-                .withTableName("account")
-                .usingGeneratedKeyColumns("account_id");
-
-        MapSqlParameterSource params = new MapSqlParameterSource()
-                .addValue("email", account.getEmail())
-                .addValue("ip_address", account.getIpAddress())
-                .addValue("iban", account.getIban())
-                .addValue("phone_number", account.getPhoneNumber());
-
-        Number generatedId = insert.executeAndReturnKey(params);
-        account.setId(generatedId.intValue());
+        final String SQL = "INSERT INTO account (name, email, ip_address, iban, phone_number) VALUES (?, ?, ?, ?, ?)";
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+        jdbc.update(con -> {
+            PreparedStatement ps = con.prepareStatement(SQL, new String[]{"ACCOUNT_ID"});
+            ps.setString(1, account.getName());
+            ps.setString(2, account.getEmail());
+            ps.setString(3, account.getIpAddress());
+            ps.setString(4, account.getIban());
+            ps.setString(5, account.getPhoneNumber());
+            return ps;
+        }, keyHolder);
+        if (keyHolder.getKey() != null) {
+            account.setId(keyHolder.getKey().intValue());
+        }
         return account;
     }
 
     @Override
     public List<Account> getAllAccounts() {
-
-        final String SELECT_ALL_ACCOUNTS = "SELECT * FROM account";
-        return jdbc.query(SELECT_ALL_ACCOUNTS, new AccountMapper());
-
+        return jdbc.query("SELECT * FROM account", new AccountMapper());
     }
 
     @Override
     public Account getAccountById(int id) {
-
-        final String SELECT_ACCOUNT_BY_ID = "SELECT * FROM account WHERE id = ?";
-        return jdbc.queryForObject(SELECT_ACCOUNT_BY_ID, new AccountMapper() , id);
-
+        return jdbc.queryForObject(
+                "SELECT * FROM account WHERE account_id = ?",
+                new AccountMapper(), id);
     }
 
     @Override
     public void updateAccount(Account account) {
-
-        final String UPDATE_ACCOUNT = "UPDATE account SET email = ?, ip_address = ?, iban = ?, phone_number = ?";
-        jdbc.update(UPDATE_ACCOUNT, account.getEmail(), account.getIpAddress(), account.getIban(), account.getPhoneNumber());
-
+        final String SQL = "UPDATE account SET name = ?, email = ?, ip_address = ?, iban = ?, phone_number = ? WHERE account_id = ?";
+        jdbc.update(SQL, account.getName(), account.getEmail(), account.getIpAddress(), account.getIban(), account.getPhoneNumber(), account.getId());
     }
 
     @Override
     public void deleteAc(int id) {
-
-        final String DELETE_ACCOUNT = "DELETE FROM account WHERE id = ?";
-        jdbc.update(DELETE_ACCOUNT, id);
-
+        jdbc.update("DELETE FROM account WHERE account_id = ?", id);
     }
 }

@@ -13,12 +13,12 @@ public class AccountMapper implements RowMapper<Account> {
         Account account = new Account();
 
         account.setId(rs.getInt("account_id"));
+        account.setName(rs.getString("name"));
         account.setEmail(rs.getString("email"));
         account.setIpAddress(rs.getString("ip_address"));
         account.setIban(rs.getString("iban"));
         account.setCreatedAt(rs.getString("created_at"));
         account.setPhoneNumber(rs.getString("phone_number"));
-        // add other fields based on your schema
 
         return account;
     }
