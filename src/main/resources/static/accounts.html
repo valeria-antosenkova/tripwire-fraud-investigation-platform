@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Tripwire — Accounts</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        :root {
+            --bg: #F1F5F9; --surface: #FFFFFF; --surface-2: #F8FAFC;
+            --accent: #4F46E5; --sidebar: #0F172A; --sidebar-border: rgba(255,255,255,0.06);
+            --text: #0F172A; --text-2: #475569; --text-3: #94A3B8; --border: #E2E8F0;
+            --green-dim: #D1FAE5; --red: #EF4444; --red-dim: #FEE2E2;
+        }
+        body { font-family: "Inter", sans-serif; font-size: 14px; color: var(--text); background: var(--bg); min-height: 100vh; display: flex; }
+        .sidebar { width: 220px; background: var(--sidebar); display: flex; flex-direction: column; flex-shrink: 0; position: sticky; top: 0; height: 100vh; }
+        .sb-brand { display: flex; align-items: center; gap: 10px; padding: 24px 20px 20px; border-bottom: 1px solid var(--sidebar-border); text-decoration: none; }
+        .sb-logo { width: 34px; height: 34px; background: var(--accent); border-radius: 9px; display: grid; place-items: center; }
+        .sb-logo svg { width: 16px; height: 16px; fill: none; stroke: #fff; stroke-width: 2.25; }
+        .sb-wordmark { font-size: 15px; font-weight: 800; color: #fff; }
+        .sb-nav { flex: 1; padding: 16px 12px; display: flex; flex-direction: column; gap: 2px; }
+        .sb-section { font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: rgba(255,255,255,0.25); padding: 4px 10px; margin: 12px 0 4px; }
+        .sb-section:first-child { margin-top: 0; }
+        .sb-item { display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: 9px; color: rgba(255,255,255,0.5); font-size: 13.5px; font-weight: 500; text-decoration: none; }
+        .sb-item:hover { background: rgba(255,255,255,0.07); color: rgba(255,255,255,0.85); }
+        .sb-item.active { background: rgba(79,70,229,0.25); color: #fff; }
+        .sb-item svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.75; }
+        .sb-footer { padding: 16px 12px; border-top: 1px solid var(--sidebar-border); }
+        .sb-agent { display: flex; align-items: center; gap: 10px; padding: 10px; border-radius: 10px; margin-bottom: 8px; background: rgba(255,255,255,0.05); }
+        .sb-avatar { width: 34px; height: 34px; border-radius: 50%; background: var(--accent); display: grid; place-items: center; font-size: 12px; font-weight: 700; color: #fff; overflow: hidden; }
+        .sb-avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .sb-agent-name { font-size: 13px; font-weight: 600; color: #fff; }
+        .sb-agent-role { font-size: 11px; color: rgba(255,255,255,0.35); }
+        .sb-logout { display: flex; align-items: center; gap: 9px; padding: 8px 10px; border: none; border-radius: 8px; background: none; color: rgba(255,255,255,0.35); font: inherit; font-size: 13px; cursor: pointer; width: 100%; }
+        .sb-logout:hover { background: rgba(239,68,68,0.12); color: #FCA5A5; }
+        .sb-logout svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 1.75; }
+        .main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+        .topbar { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 24px; height: 60px; display: flex; align-items: center; }
+        .tb-title { font-size: 15px; font-weight: 700; }
+        .content { padding: 28px; max-width: 960px; }
+        .page-title { font-size: 22px; font-weight: 800; margin-bottom: 4px; }
+        .page-sub { font-size: 13.5px; color: var(--text-3); margin-bottom: 24px; }
+        .panel { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 24px; margin-bottom: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        .panel h2 { font-size: 16px; font-weight: 800; margin-bottom: 4px; }
+        .panel p.hint { color: var(--text-3); font-size: 13px; margin-bottom: 20px; }
+        label { display: grid; gap: 6px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-2); margin-bottom: 14px; }
+        input { height: 42px; border: 1.5px solid var(--border); border-radius: 10px; padding: 0 12px; font: inherit; background: var(--surface-2); }
+        input:focus { outline: none; border-color: var(--accent); background: #fff; box-shadow: 0 0 0 3px rgba(79,70,229,0.1); }
+        .actions { display: flex; gap: 10px; margin-top: 8px; }
+        .btn { height: 40px; border: 0; border-radius: 10px; padding: 0 18px; font: inherit; font-size: 13.5px; font-weight: 700; cursor: pointer; }
+        .btn.primary { background: var(--accent); color: #fff; }
+        .btn.secondary { background: var(--surface); border: 1.5px solid var(--border); color: var(--text-2); }
+        .banner { display: none; margin-top: 16px; padding: 12px 14px; border-radius: 10px; font-size: 13px; font-weight: 600; }
+        .banner.error { display: block; background: var(--red-dim); color: #B91C1C; }
+        .banner.success { display: block; background: var(--green-dim); color: #047857; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 12px 14px; text-align: left; border-bottom: 1px solid var(--border); font-size: 13.5px; }
+        th { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-3); background: var(--surface-2); }
+        .role-badge { display: inline-block; padding: 4px 10px; border-radius: 20px; font-size: 11.5px; font-weight: 700; background: #EEF2FF; color: var(--accent); }
+        .role-badge.admin { background: #FEF3C7; color: #B45309; }
+        .btn-delete { height: 30px; border: 1.5px solid var(--border); border-radius: 8px; padding: 0 12px; background: var(--surface); font: inherit; font-size: 12px; font-weight: 600; cursor: pointer; }
+        .btn-delete:hover { background: var(--red-dim); border-color: transparent; color: #B91C1C; }
+    </style>
+</head>
+<body>
+<nav class="sidebar">
+    <a class="sb-brand" href="/dashboard.html">
+        <div class="sb-logo"><svg viewBox="0 0 24 24"><path d="M12 2L4 6v6c0 5.25 3.5 10.15 8 11.35C16.5 22.15 20 17.25 20 12V6L12 2z"/></svg></div>
+        <span class="sb-wordmark">Tripwire</span>
+    </a>
+    <div class="sb-nav">
+        <div class="sb-section">Workspace</div>
+        <a class="sb-item" href="/dashboard.html"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg><span>Dashboard</span></a>
+        <a class="sb-item" href="/dashboard.html?view=mine"><svg viewBox="0 0 24 24"><path d="M20 7H4a2 2 0 00-2 2v10a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2z"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg><span>My Cases</span></a>
+        <a class="sb-item active" href="/accounts"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg><span>Accounts</span></a>
+        <div class="sb-section">System</div>
+        <a class="sb-item" href="/settings.html"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg><span>Settings</span></a>
+    </div>
+    <div class="sb-footer">
+        <div class="sb-agent">
+            <div class="sb-avatar" id="agentInitials">—</div>
+            <div>
+                <div class="sb-agent-name" id="agentName">—</div>
+                <div class="sb-agent-role" id="agentRole">—</div>
+            </div>
+        </div>
+        <button class="sb-logout" id="logoutBtn" type="button"><svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Sign out</button>
+    </div>
+</nav>
+<div class="main">
+    <div class="topbar"><span class="tb-title">Account management</span></div>
+    <div class="content">
+        <div class="page-title">Team accounts</div>
+        <p class="page-sub">Create analyst logins and manage who can access Tripwire.</p>
+        <div class="panel">
+            <h2>Create new user</h2>
+            <p class="hint">New users are fraud analysts. They can sign in immediately with the password you set.</p>
+            <form id="createForm">
+                <label>Full name<input id="name" type="text" required placeholder="e.g. Alex Morgan"></label>
+                <label>Work email<input id="email" type="email" required placeholder="alex.morgan@tripwire.internal"></label>
+                <label>Temporary password<input id="password" type="password" required minlength="8"></label>
+                <label>Confirm password<input id="confirmPassword" type="password" required minlength="8"></label>
+                <div class="actions">
+                    <button class="btn primary" id="submitBtn" type="submit">Create account</button>
+                    <button class="btn secondary" id="resetBtn" type="button">Clear</button>
+                </div>
+            </form>
+            <div id="feedback" class="banner"></div>
+        </div>
+        <div class="panel">
+            <h2>Existing team members</h2>
+            <table>
+                <thead><tr><th>Name</th><th>Email</th><th>Role</th><th></th></tr></thead>
+                <tbody id="teamBody"><tr><td colspan="4">Loading…</td></tr></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<script>
+    const agentJson = localStorage.getItem("agent");
+    if (!agentJson) window.location.href = "/login.html";
+    const currentAgent = JSON.parse(agentJson);
+    if (currentAgent.role !== "ADMIN") window.location.href = "/dashboard.html";
+
+    const avatar = document.querySelector("#agentInitials");
+    document.querySelector("#agentName").textContent = currentAgent.name;
+    document.querySelector("#agentRole").textContent = currentAgent.roleLabel || "Fraud Detection Manager";
+    if (currentAgent.profilePicture) {
+        avatar.innerHTML = `<img src="${currentAgent.profilePicture}" alt="">`;
+    } else {
+        avatar.textContent = (currentAgent.name || "?").split(" ").map(w => w[0]).join("").slice(0, 2).toUpperCase();
+    }
+
+    document.querySelector("#logoutBtn").addEventListener("click", () => {
+        localStorage.removeItem("agent");
+        window.location.href = "/login.html";
+    });
+
+    const form = document.querySelector("#createForm");
+    const feedback = document.querySelector("#feedback");
+    const teamBody = document.querySelector("#teamBody");
+    let teamMembers = [];
+
+    form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        clearFeedback();
+        const password = document.querySelector("#password").value;
+        if (password !== document.querySelector("#confirmPassword").value) {
+            showFeedback("Passwords do not match.", true);
+            return;
+        }
+        try {
+            const res = await fetch("/agent/admin/create", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    adminId: currentAgent.id,
+                    name: document.querySelector("#name").value.trim(),
+                    email: document.querySelector("#email").value.trim(),
+                    password
+                })
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error || "Could not create account");
+            showFeedback(`Created account for ${data.name}.`, false);
+            form.reset();
+            await loadTeam();
+        } catch (err) {
+            showFeedback(err.message, true);
+        }
+    });
+
+    document.querySelector("#resetBtn").addEventListener("click", () => { form.reset(); clearFeedback(); });
+
+    async function loadTeam() {
+        try {
+            const res = await fetch(`/agent/team?adminId=${currentAgent.id}`);
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error || "Could not load team");
+            teamMembers = data;
+            if (!data.length) {
+                teamBody.innerHTML = `<tr><td colspan="4">No team members yet.</td></tr>`;
+                return;
+            }
+            teamBody.innerHTML = data.map(agent => {
+                const protected = agent.role === "ADMIN" || agent.id === currentAgent.id;
+                const action = protected ? `<td>—</td>` : `<td><button type="button" class="btn-delete" data-id="${agent.id}">Remove</button></td>`;
+                return `<tr>
+                    <td>${escapeHtml(agent.name)}</td>
+                    <td>${escapeHtml(agent.email)}</td>
+                    <td><span class="role-badge ${agent.role === "ADMIN" ? "admin" : ""}">${escapeHtml(agent.roleLabel)}</span></td>
+                    ${action}
+                </tr>`;
+            }).join("");
+            teamBody.querySelectorAll(".btn-delete").forEach(btn => {
+                btn.addEventListener("click", () => deleteMember(Number(btn.dataset.id)));
+            });
+        } catch (err) {
+            teamBody.innerHTML = `<tr><td colspan="4">${escapeHtml(err.message)}</td></tr>`;
+        }
+    }
+
+    async function deleteMember(id) {
+        const member = teamMembers.find(a => a.id === id);
+        if (!confirm(`Remove ${member?.name || "this user"} from Tripwire? Their cases will be unassigned.`)) return;
+        try {
+            const res = await fetch(`/agent/admin/${id}?adminId=${currentAgent.id}`, { method: "DELETE" });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error || "Could not remove user");
+            showFeedback("Team member removed.", false);
+            await loadTeam();
+        } catch (err) {
+            showFeedback(err.message, true);
+        }
+    }
+
+    function showFeedback(msg, isError) {
+        feedback.textContent = msg;
+        feedback.className = "banner " + (isError ? "error" : "success");
+    }
+    function clearFeedback() { feedback.textContent = ""; feedback.className = "banner"; }
+    function escapeHtml(v) {
+        return String(v).replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;");
+    }
+    loadTeam();
+</script>
+</body>
+</html>
