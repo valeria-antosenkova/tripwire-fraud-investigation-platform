@@ -22,6 +22,7 @@ public class TransactionMapper implements RowMapper<Transaction> {
         transaction.setCurrency(rs.getString("currency"));
         transaction.setRiskScore(rs.getDouble("risk_score"));
         transaction.setReasonText(rs.getString("reason_text"));
+        transaction.setAgentNote(rs.getString("agent_note"));
         transaction.setOrderId(rs.getString("order_id"));
         transaction.setOrderDate(rs.getString("order_date"));
         transaction.setItems(rs.getString("items"));

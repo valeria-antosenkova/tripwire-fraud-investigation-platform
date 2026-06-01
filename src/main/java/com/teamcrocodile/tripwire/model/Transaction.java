@@ -13,6 +13,7 @@ public class Transaction {
     private Double riskScore;
     private Status status;
     private String reasonText;
+    private String agentNote;
     private Date createdAt;
 
     // Order details submitted by the customer
@@ -46,6 +47,9 @@ public class Transaction {
 
     public String getReasonText() { return reasonText; }
     public void setReasonText(String reasonText) { this.reasonText = reasonText; }
+
+    public String getAgentNote() { return agentNote; }
+    public void setAgentNote(String agentNote) { this.agentNote = agentNote; }
 
     public Date getCreatedAt() { return createdAt; }
     public void setCreatedAt(Date createdAt) { this.createdAt = createdAt; }

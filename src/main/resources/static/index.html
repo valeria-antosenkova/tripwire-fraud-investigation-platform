@@ -1147,6 +1147,11 @@
         // ── Left: Customer Message (real DB field: reason_text) ────────────
         renderCustomerMessage(tx.reasonText);
 
+        // ── Right: Agent Notes (real DB field: agent_note) ─────────────────
+        if (document.activeElement !== els.investigationNotes) {
+            els.investigationNotes.value = tx.agentNote || '';
+        }
+
         // ── Right: Buttons ──────────────────────────────────────────────────
         els.approveBtn.disabled = !canAct;
         els.denyBtn.disabled    = !canAct;
@@ -1207,11 +1212,12 @@
         clearError();
         [els.approveBtn, els.denyBtn, els.reviewBtn, els.rescoreBtn].forEach(b => b.disabled = true);
         try {
+            const note = els.investigationNotes.value.trim();
+            const isFinalDecision = status === 'APPROVED' || status === 'DENIED';
             const payload = {
                 ...state.transaction,
                 status,
-                // persist agent notes back to reason_text only if the agent wrote something
-                reasonText: els.investigationNotes.value.trim() || state.transaction.reasonText || '',
+                agentNote: isFinalDecision ? (note || state.transaction.agentNote || '') : (state.transaction.agentNote || ''),
             };
             const updated = await request(`/transaction/${state.transaction.id}`, { method: 'PUT', body: payload });
             state.transaction = { ...updated, status };

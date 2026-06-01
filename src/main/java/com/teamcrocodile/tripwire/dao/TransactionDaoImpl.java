@@ -34,8 +34,8 @@ public class TransactionDaoImpl implements TransactionDao{
 
         final String SQL =
                 "INSERT INTO transactions (agent_id, account_id, amount, currency, risk_score, status_id," +
-                " order_id, order_date, items, payment_method, shipping_address, billing_address, reason_text)" +
-                " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                " order_id, order_date, items, payment_method, shipping_address, billing_address, reason_text, agent_note)" +
+                " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbc.update(con -> {
@@ -53,6 +53,7 @@ public class TransactionDaoImpl implements TransactionDao{
             ps.setString(11, transaction.getShippingAddress());
             ps.setString(12, transaction.getBillingAddress());
             ps.setString(13, transaction.getReasonText());
+            ps.setString(14, transaction.getAgentNote());
             return ps;
         }, keyHolder);
 
@@ -98,7 +99,7 @@ public class TransactionDaoImpl implements TransactionDao{
         //TODO
         final String UPDATE_TRANSACTIONS =
                 "UPDATE transactions " +
-                        "SET agent_id = ?, status_id = ?, risk_score = ?, amount = ? " +
+                        "SET agent_id = ?, status_id = ?, risk_score = ?, amount = ?, agent_note = ? " +
                         "WHERE transaction_id = ?";
         jdbc.update(
                 UPDATE_TRANSACTIONS,
@@ -106,6 +107,7 @@ public class TransactionDaoImpl implements TransactionDao{
                 getStatusId(transaction.getStatus()),
                 transaction.getRiskScore(),
                 transaction.getAmount(),
+                transaction.getAgentNote(),
                 transaction.getId()
         );
     }
