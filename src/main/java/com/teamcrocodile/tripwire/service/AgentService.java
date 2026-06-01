@@ -6,7 +6,6 @@ import java.util.List;
 
 public interface AgentService {
 
-
     Agent addNewAgent(Agent agent);
     List<Agent> getAllAgents();
     Agent getAgentById(int id);
@@ -16,4 +15,8 @@ public interface AgentService {
     void uploadProfilePicture(int id, String imageData);
     Agent updateAgentData(int id, Agent agent);
     void deleteAgent(int id);
+
+    Agent createAgentAsAdmin(int adminId, String name, String email, String password);
+    void deleteAgentAsAdmin(int adminId, int targetAgentId);
+    void requireAdmin(int agentId);
 }

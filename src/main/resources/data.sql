@@ -11,14 +11,15 @@ INSERT INTO Reason (reason_id, reason_name, description)
 VALUES (1, 'Not received', 'Buyer claims the item never arrived.');
 
 -- ----------------------------------------------------------
--- 2. Agent 
+-- 2. Agent (admin only — analysts created via Accounts page)
 -- ----------------------------------------------------------
-INSERT INTO Agent (agent_id, name, email, password_hash)
+INSERT INTO Agent (agent_id, name, email, password_hash, role)
 VALUES (
            1,
            'Sarah Okafor',
            'sarah.okafor@tripwire.internal',
-           '{noop}tripwire123'
+           '{noop}tripwire123',
+           'ADMIN'
        );
 
 -- ----------------------------------------------------------
@@ -205,11 +206,7 @@ VALUES (2, 1);
 INSERT INTO Reason (reason_id, reason_name, description)
 VALUES (2, 'Damaged on arrival', 'Item arrived in damaged condition.');
 
--- 2. Agent
-INSERT INTO Agent (agent_id, name, email, password_hash)
-VALUES (2, 'Vanessa Lee', 'vanessa_lee@internal.com', '{noop}tripwire123');
-
--- 3. Account
+-- 2. Account
 --    email   : outlook.com — clean domain, no disposable flag
 --    ip      : 118.200.44.91 — Singtel Fibre Broadband, residential SG
 --    phone   : +5511912345678 — Brazilian mobile (+55 11)
@@ -234,7 +231,7 @@ INSERT INTO Transactions (
     shipping_address, billing_address, created_at
 )
 VALUES
-    (3, 1, 3, 2,  124.00, 'USD', 0.0,
+    (3, NULL, 3, 2,  124.00, 'USD', 0.0,
      'The item I received is not the one I ordered. The size is completely wrong and the colour is different from the product page.',
      'ORD-30001', '2026-05-11', '["Nike Air Max 270", "Running Socks 3-pack"]', 'Credit Card (**** 5577)',
      '88 Orchard Rd, Singapore 238839', '88 Orchard Rd, Singapore 238839',
@@ -298,11 +295,7 @@ INSERT INTO Transaction_Reason (transaction_id, reason_id) VALUES (5, 2);
 --  Tripwire — Case 4 seed (new account burst / smash-and-grab)
 -- ============================================================
 
--- 2. Agent
-INSERT INTO Agent (agent_id, name, email, password_hash)
-VALUES (3, 'John Smith', 'john.smith@tripwire.internal', '{noop}tripwire123');
-
--- 3. Account
+-- 2. Account
 --    ip     : 46.161.11.11 — Petersburg Internet Network Ltd., RU
 --    email  : mail.ru domain — elevated fraud association
 --    phone  : +79161234567 — Russian mobile (MTS, +7 916 prefix)
@@ -327,19 +320,19 @@ INSERT INTO Transactions (
     shipping_address, billing_address, created_at
 )
 VALUES
-    (6, 3, 4, 2,  195.00, 'EUR', 0.0,
+    (6, NULL, 4, 2,  195.00, 'EUR', 0.0,
      'I never received my order. It has been two weeks with no updates on the tracking. Please refund the full amount.',
      'ORD-40001', '2026-05-20', '["Samsung 55-inch QLED TV", "HDMI 2.1 Cable"]', 'Credit Card (**** 8821)',
      '123 Main St, Austin, TX 78701', '54 River Dr, Atlanta, GA 30301',
      '2026-05-22 20:14:00'),
 
-    (7, 1, 4, 2,  340.00, 'EUR', 0.00,
+    (7, NULL, 4, 2,  340.00, 'EUR', 0.00,
      'Order still not delivered after 10 days. Shipping carrier says it is lost. This is the second time this happens. I want my money back now.',
      'ORD-40002', '2026-05-22', '["iPhone 15 Pro", "Apple Watch Series 9"]', 'Credit Card (**** 8821)',
      '123 Main St, Austin, TX 78701', '54 River Dr, Atlanta, GA 30301',
      '2026-05-24 11:30:00'),
 
-    (8, 2, 4, 1,  480.00, 'EUR', 0.00,
+    (8, 1, 4, 1,  480.00, 'EUR', 0.00,
      'Another lost parcel. The delivery company confirmed the package is missing. I have been waiting 3 weeks and I need an immediate refund.',
      'ORD-40003', '2026-05-24', '["MacBook Pro 16-inch", "AirPods Pro"]', 'Credit Card (**** 8821)',
      '123 Main St, Austin, TX 78701', '54 River Dr, Atlanta, GA 30301',
@@ -426,43 +419,43 @@ INSERT INTO Transactions (
     shipping_address, billing_address, created_at
 )
 VALUES
-    (10, 1, 5, 2,  45.00, 'GBP', 0.0,
+    (10, NULL, 5, 2,  45.00, 'GBP', 0.0,
      'I ordered this item over two weeks ago and it still has not arrived. Tracking shows no movement. Please issue a refund.',
      'ORD-50001', '2026-02-18', '["Phone Case", "Screen Protector"]', 'Credit Card (**** 6624)',
      '10 Cedar Ct, London EC1A 1BB', '10 Cedar Ct, London EC1A 1BB',
      '2026-03-02 10:14:00'),
 
-    (11, 1, 5, 2,  89.00, 'GBP', 0.0,
+    (11, NULL, 5, 2,  89.00, 'GBP', 0.0,
      'My parcel has not been delivered. I have waited patiently but the tracking has not updated in over a week. I need a refund.',
      'ORD-50002', '2026-03-05', '["Bluetooth Speaker"]', 'Credit Card (**** 6624)',
      '10 Cedar Ct, London EC1A 1BB', '10 Cedar Ct, London EC1A 1BB',
      '2026-03-18 11:30:00'),
 
-    (12, 2, 5, 2, 127.00, 'GBP', 0.0,
+    (12, NULL, 5, 2, 127.00, 'GBP', 0.0,
      'Another order that never arrived. The carrier website just says dispatched with no further updates. This is unacceptable, please refund.',
      'ORD-50003', '2026-03-19', '["Smart Watch Strap", "Wireless Charger"]', 'Credit Card (**** 6624)',
      '10 Cedar Ct, London EC1A 1BB', '10 Cedar Ct, London EC1A 1BB',
      '2026-04-01 09:52:00'),
 
-    (13, 2, 5, 2, 203.00, 'GBP', 0.0,
+    (13, NULL, 5, 2, 203.00, 'GBP', 0.0,
      'Item not received after 10 days. No delivery attempt was made at my address. Neighbours confirm nothing was left. Full refund required.',
      'ORD-50004', '2026-04-03', '["Mechanical Keyboard"]', 'Credit Card (**** 6624)',
      '10 Cedar Ct, London EC1A 1BB', '10 Cedar Ct, London EC1A 1BB',
      '2026-04-14 14:07:00'),
 
-    (14, 1, 5, 2, 298.00, 'GBP', 0.0,
+    (14, NULL, 5, 2, 298.00, 'GBP', 0.0,
      'Once again my order has not arrived. Tracking stopped updating after the label was created. I should not keep having this problem. Please refund immediately.',
      'ORD-50005', '2026-04-19', '["Sony WH-1000XM5"]', 'Credit Card (**** 6624)',
      '10 Cedar Ct, London EC1A 1BB', '10 Cedar Ct, London EC1A 1BB',
      '2026-04-28 08:45:00'),
 
-    (15, 3, 5, 2, 450.00, 'GBP', 0.0,
+    (15, NULL, 5, 2, 450.00, 'GBP', 0.0,
      'Package still not received after two weeks. I have contacted the courier and they have no record of a delivery attempt. I want my money back.',
      'ORD-50006', '2026-04-28', '["iPad Mini"]', 'Credit Card (**** 6624)',
      '10 Cedar Ct, London EC1A 1BB', '10 Cedar Ct, London EC1A 1BB',
      '2026-05-09 16:20:00'),
 
-    (16, 3, 5, 1, 612.00, 'GBP', 0.0,
+    (16, 1, 5, 1, 612.00, 'GBP', 0.0,
      'My item has not been delivered. This is the same issue I keep experiencing with orders from your store. Tracking is stuck at label created. Please refund the full amount as soon as possible.',
      'ORD-50007', '2026-05-13', '["iPhone 15"]', 'Credit Card (**** 6624)',
      '10 Cedar Ct, London EC1A 1BB', '10 Cedar Ct, London EC1A 1BB',
@@ -487,7 +480,7 @@ INSERT INTO Transaction_Reason (transaction_id, reason_id) VALUES (17, 1);
 -- Reset auto-increment past all manually inserted IDs
 ALTER TABLE Transactions ALTER COLUMN transaction_id RESTART WITH 18;
 ALTER TABLE Account      ALTER COLUMN account_id     RESTART WITH 6;
-ALTER TABLE Agent        ALTER COLUMN agent_id        RESTART WITH 4;
+ALTER TABLE Agent        ALTER COLUMN agent_id        RESTART WITH 2;
 
 -- ============================================================
 --  Scoring engine reference for transaction_id = 17
