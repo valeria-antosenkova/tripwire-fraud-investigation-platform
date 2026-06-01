@@ -7,7 +7,8 @@ public class Agent {
     private String email;
     private String pass_hash;
     private String profile_picture;
-    
+
+
     public int getId() {
         return id;
     }
