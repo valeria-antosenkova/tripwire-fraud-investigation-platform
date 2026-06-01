@@ -13,12 +13,13 @@ VALUES (1, 'Not received', 'Buyer claims the item never arrived.');
 -- ----------------------------------------------------------
 -- 2. Agent 
 -- ----------------------------------------------------------
-INSERT INTO Agent (agent_id, name, email, password_hash)
+INSERT INTO Agent (agent_id, name, email, password_hash, role)
 VALUES (
            1,
            'Sarah Okafor',
            'sarah.okafor@tripwire.internal',
-           '{noop}tripwire123'
+           '{noop}tripwire123',
+           'ADMIN'
        );
 
 -- ----------------------------------------------------------
@@ -205,11 +206,7 @@ VALUES (2, 1);
 INSERT INTO Reason (reason_id, reason_name, description)
 VALUES (2, 'Damaged on arrival', 'Item arrived in damaged condition.');
 
--- 2. Agent
-INSERT INTO Agent (agent_id, name, email, password_hash)
-VALUES (2, 'Vanessa Lee', 'vanessa_lee@internal.com', '{noop}tripwire123');
-
--- 3. Account
+-- 2. Account
 --    email   : outlook.com — clean domain, no disposable flag
 --    ip      : 118.200.44.91 — Singtel Fibre Broadband, residential SG
 --    phone   : +5511912345678 — Brazilian mobile (+55 11)
@@ -298,11 +295,7 @@ INSERT INTO Transaction_Reason (transaction_id, reason_id) VALUES (5, 2);
 --  Tripwire — Case 4 seed (new account burst / smash-and-grab)
 -- ============================================================
 
--- 2. Agent
-INSERT INTO Agent (agent_id, name, email, password_hash)
-VALUES (3, 'John Smith', 'john.smith@tripwire.internal', '{noop}tripwire123');
-
--- 3. Account
+-- 2. Account
 --    ip     : 46.161.11.11 — Petersburg Internet Network Ltd., RU
 --    email  : mail.ru domain — elevated fraud association
 --    phone  : +79161234567 — Russian mobile (MTS, +7 916 prefix)
@@ -327,7 +320,7 @@ INSERT INTO Transactions (
     shipping_address, billing_address, created_at
 )
 VALUES
-    (6, 3, 4, 2,  195.00, 'EUR', 0.0,
+    (6, 1, 4, 2,  195.00, 'EUR', 0.0,
      'I never received my order. It has been two weeks with no updates on the tracking. Please refund the full amount.',
      'ORD-40001', '2026-05-20', '["Samsung 55-inch QLED TV", "HDMI 2.1 Cable"]', 'Credit Card (**** 8821)',
      '123 Main St, Austin, TX 78701', '54 River Dr, Atlanta, GA 30301',
@@ -339,7 +332,7 @@ VALUES
      '123 Main St, Austin, TX 78701', '54 River Dr, Atlanta, GA 30301',
      '2026-05-24 11:30:00'),
 
-    (8, 2, 4, 1,  480.00, 'EUR', 0.00,
+    (8, 1, 4, 1,  480.00, 'EUR', 0.00,
      'Another lost parcel. The delivery company confirmed the package is missing. I have been waiting 3 weeks and I need an immediate refund.',
      'ORD-40003', '2026-05-24', '["MacBook Pro 16-inch", "AirPods Pro"]', 'Credit Card (**** 8821)',
      '123 Main St, Austin, TX 78701', '54 River Dr, Atlanta, GA 30301',
