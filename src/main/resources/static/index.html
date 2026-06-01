@@ -721,10 +721,6 @@
                 <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
                 Request More Info
             </button>
-            <button class="action-btn rescore" id="rescoreBtn">
-                <svg viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
-                Re-assess Risk
-            </button>
         </div>
 
         <!-- Agent Notes — blank for agent to fill in -->
@@ -810,7 +806,6 @@
         approveBtn:         document.querySelector('#approveBtn'),
         denyBtn:            document.querySelector('#denyBtn'),
         reviewBtn:          document.querySelector('#reviewBtn'),
-        rescoreBtn:         document.querySelector('#rescoreBtn'),
         investigationNotes: document.querySelector('#investigationNotes'),
         pageLoader:         document.querySelector('#pageLoader'),
         pageLoaderSub:      document.querySelector('#pageLoaderSub'),
@@ -1210,7 +1205,6 @@
             return;
         }
         clearError();
-        [els.approveBtn, els.denyBtn, els.reviewBtn, els.rescoreBtn].forEach(b => b.disabled = true);
         try {
             const note = els.investigationNotes.value.trim();
             const isFinalDecision = status === 'APPROVED' || status === 'DENIED';
@@ -1232,7 +1226,6 @@
     els.approveBtn.addEventListener('click', () => persistDecision('APPROVED'));
     els.denyBtn.addEventListener('click',    () => persistDecision('DENIED'));
     els.reviewBtn.addEventListener('click',  () => persistDecision('UNDER_REVIEW'));
-    els.rescoreBtn.addEventListener('click', scoreTransaction);
 
     (async function init() {
         try {
