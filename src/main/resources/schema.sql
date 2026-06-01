@@ -47,6 +47,7 @@ CREATE TABLE Transactions (
                               currency          VARCHAR(10),
                               risk_score        DECIMAL(5, 2)  DEFAULT 0,
                               reason_text       TEXT           DEFAULT NULL,
+                               agent_note        TEXT           DEFAULT NULL,
                               order_id          VARCHAR(50)    DEFAULT NULL,
                               order_date        DATE           DEFAULT NULL,
                               items             TEXT           DEFAULT NULL,
