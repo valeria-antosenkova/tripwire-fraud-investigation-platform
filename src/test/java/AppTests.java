@@ -1,4 +1,3 @@
-package com;
 
 import com.teamcrocodile.tripwire.App;
 import org.junit.jupiter.api.Test;
