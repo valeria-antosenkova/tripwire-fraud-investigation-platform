@@ -920,10 +920,6 @@
             }
         }
 
-        if (hasSignal('Phone country does not match IBAN country')) {
-            items.push({ title: 'Phone / IBAN Country Mismatch', desc: 'Phone country does not match the IBAN payout country.', severity: 'medium', ts: nowTs(1 * 60000) });
-        }
-
         if (hasSignal('Account is less than 24 hours old', 'Account is less than 7 days old')) {
             const sig = findSignal('Account is less than');
             items.push({ title: 'Very New Account', desc: sig || 'Account was recently created.', severity: 'high', ts: nowTs(2 * 60000) });
