@@ -8,6 +8,8 @@ import com.teamcrocodile.tripwire.model.Transaction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,17 +31,20 @@ public class TransactionDaoImpl implements TransactionDao{
     @Override
     @Transactional
     public Transaction createTransaction(Transaction transaction) {
+        SimpleJdbcInsert insert = new SimpleJdbcInsert(jdbc)
+                .withTableName("transactions")
+                .usingGeneratedKeyColumns("transaction_id");
 
-        final String INSERT_TRANSACTION = "INSERT INTO transactions (agent_id, account_id, amount, currency," +
-                " risk_score, status_id) VALUES (?, ?, ?, ?, ?, ?) ";
+        MapSqlParameterSource params = new MapSqlParameterSource()
+                .addValue("agent_id", transaction.getAgentId())
+                .addValue("account_id", transaction.getAccountId())
+                .addValue("amount", transaction.getAmount())
+                .addValue("currency", transaction.getCurrency())
+                .addValue("risk_score", transaction.getRiskScore())
+                .addValue("status_id", getStatusId(transaction.getStatus()));
 
-        jdbc.update(INSERT_TRANSACTION,
-                transaction.getAgentId(),
-                transaction.getAccountId(),
-                transaction.getAmount(),
-                transaction.getCurrency(),
-                transaction.getRiskScore(),
-                getStatusId(transaction.getStatus()));
+        Number generatedId = insert.executeAndReturnKey(params);
+        transaction.setId(generatedId.intValue());
         return transaction;
     }
 

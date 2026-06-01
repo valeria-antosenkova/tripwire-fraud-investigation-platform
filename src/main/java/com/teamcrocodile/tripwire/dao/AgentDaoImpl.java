@@ -2,6 +2,8 @@ package com.teamcrocodile.tripwire.dao;
 
 import com.teamcrocodile.tripwire.model.Agent;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,6 +18,7 @@ public class AgentDaoImpl implements AgentDao {
         this.jdbcTemplate = jdbcTemplate;
     }
 
+    /*
     @Override
     @Transactional
     public Agent createAgent(Agent agent) {
@@ -23,6 +26,23 @@ public class AgentDaoImpl implements AgentDao {
             final String sql = "INSERT INTO Agent(name, email, password_hash) VALUES(?,?,?);";
             jdbcTemplate.update(sql, agent.getName(), agent.getEmail(), agent.getPass_hash());
             return agent;
+    } */
+
+    @Override
+    @Transactional
+    public Agent createAgent(Agent agent) {
+        SimpleJdbcInsert insert = new SimpleJdbcInsert(jdbcTemplate)
+                .withTableName("Agent")
+                .usingGeneratedKeyColumns("agent_id");
+
+        MapSqlParameterSource params = new MapSqlParameterSource()
+                .addValue("name", agent.getName())
+                .addValue("email", agent.getEmail())
+                .addValue("password_hash", agent.getPass_hash());
+
+        Number generatedId = insert.executeAndReturnKey(params);
+        agent.setId(generatedId.intValue());
+        return agent;
     }
 
     @Override

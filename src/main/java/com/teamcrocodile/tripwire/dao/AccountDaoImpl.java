@@ -3,6 +3,8 @@ package com.teamcrocodile.tripwire.dao;
 import com.teamcrocodile.tripwire.dao.mappers.AccountMapper;
 import com.teamcrocodile.tripwire.model.Account;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,6 +19,8 @@ public class AccountDaoImpl implements AccountDao{
         this.jdbc = jdbc;
     }
 
+
+    /*
     @Override
     @Transactional
     public Account createAccount(Account account) {
@@ -24,6 +28,28 @@ public class AccountDaoImpl implements AccountDao{
         final String INSERT_ACCOUNT = "INSERT INTO account (email, ip_address, iban, phone_number) VALUES (?, ?, ?, ?) ";
         jdbc.update(INSERT_ACCOUNT, account.getEmail(), account.getIpAddress(), account.getIban(), account.getPhoneNumber());
 
+        return account;
+    }
+
+     */
+
+
+
+    @Override
+    @Transactional
+    public Account createAccount(Account account) {
+        SimpleJdbcInsert insert = new SimpleJdbcInsert(jdbc)
+                .withTableName("account")
+                .usingGeneratedKeyColumns("account_id");
+
+        MapSqlParameterSource params = new MapSqlParameterSource()
+                .addValue("email", account.getEmail())
+                .addValue("ip_address", account.getIpAddress())
+                .addValue("iban", account.getIban())
+                .addValue("phone_number", account.getPhoneNumber());
+
+        Number generatedId = insert.executeAndReturnKey(params);
+        account.setId(generatedId.intValue());
         return account;
     }
 
