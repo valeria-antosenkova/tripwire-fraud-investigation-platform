@@ -7,7 +7,8 @@ public class Agent {
     private String email;
     private String pass_hash;
     private String profile_picture;
-    
+    private String role = AgentRole.ANALYST.name();
+
     public int getId() {
         return id;
     }
@@ -43,4 +44,20 @@ public class Agent {
         this.profile_picture = profile_picture;
     }
 
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+    public AgentRole getAgentRole() {
+        return AgentRole.fromString(role);
+    }
+
+    public boolean isAdmin() {
+        return getAgentRole() == AgentRole.ADMIN;
+    }
 }
+

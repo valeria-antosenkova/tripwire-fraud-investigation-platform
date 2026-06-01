@@ -16,4 +16,7 @@ public interface AgentService {
     void uploadProfilePicture(int id, String imageData);
     Agent updateAgentData(int id, Agent agent);
     void deleteAgent(int id);
+    Agent createAgentAsAdmin(int adminId, String name, String email, String password);
+    void deleteAgentAsAdmin(int adminId, int targetAgentId);
+    void requireAdmin(int agentId);
 }
