@@ -108,9 +108,6 @@ class AccountDaoImplTest {
 
         accountDao.deleteAc(id);
 
-        assertThrows(
-                Exception.class,
-                () -> accountDao.getAccountById(id)
-        );
+        assertThrows(Exception.class, () -> accountDao.getAccountById(id));
     }
 }
