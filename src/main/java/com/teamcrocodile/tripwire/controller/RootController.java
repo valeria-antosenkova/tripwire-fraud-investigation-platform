@@ -10,5 +10,10 @@ public class RootController {
     public String redirectToLogin() {
         return "redirect:/login.html";
     }
+
+    @GetMapping("/accounts")
+    public String redirectToAccounts() {
+        return "redirect:/accounts.html";
+    }
 }
 

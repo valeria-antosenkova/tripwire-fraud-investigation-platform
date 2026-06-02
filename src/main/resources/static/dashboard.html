@@ -604,6 +604,10 @@
             <svg viewBox="0 0 24 24"><path d="M20 7H4a2 2 0 00-2 2v10a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2z"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg>
             <span>My Cases</span>
         </a>
+        <a class="sb-item" id="accountsNav" href="/accounts" style="display:none">
+            <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+            <span>Accounts</span>
+        </a>
 
         <div class="sb-section">System</div>
         <a class="sb-item" href="/settings.html">
@@ -617,7 +621,7 @@
             <div class="sb-avatar" id="agentInitials">—</div>
             <div class="sb-agent-info">
                 <div class="sb-agent-name" id="agentName">Loading…</div>
-                <div class="sb-agent-role">Fraud Analyst</div>
+                <div class="sb-agent-role" id="agentRole">Fraud Analyst</div>
             </div>
         </div>
         <button class="sb-logout" id="logoutBtn">
@@ -717,6 +721,11 @@
     const currentAgent = JSON.parse(agentJson);
 
     document.querySelector("#agentName").textContent = currentAgent.name;
+    document.querySelector("#agentRole").textContent =
+        currentAgent.roleLabel || (currentAgent.role === "ADMIN" ? "Fraud Detection Manager" : "Fraud Analyst");
+    if (currentAgent.role === "ADMIN") {
+        document.querySelector("#accountsNav").style.display = "";
+    }
 
     // Display profile picture or initials in sidebar
     const agentAvatarDiv = document.querySelector("#agentInitials");
@@ -861,9 +870,10 @@
         }
 
         if (!filtered.length) {
-            tableBody.innerHTML = `<tr class="empty-row"><td colspan="9">${
-                activeTab === "mine" ? "No cases assigned to you yet." : "No cases match the current filter."
-            }</td></tr>`;
+            const mineEmpty = activeTab === "mine"
+                ? "No cases assigned to you yet. Open <strong>Dashboard</strong>, filter <strong>Unassigned</strong>, and click <strong>Assign to me</strong> on a case."
+                : "No cases match the current filter.";
+            tableBody.innerHTML = `<tr class="empty-row"><td colspan="9">${mineEmpty}</td></tr>`;
             return;
         }
 

@@ -1,10 +1,15 @@
 package com.teamcrocodile.tripwire.controller;
 
+import com.teamcrocodile.tripwire.controller.dto.CreateAgentRequest;
+import com.teamcrocodile.tripwire.exception.AdminAccessDeniedException;
 import com.teamcrocodile.tripwire.model.Agent;
+import com.teamcrocodile.tripwire.model.AgentRole;
 import com.teamcrocodile.tripwire.service.AgentService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -24,6 +29,19 @@ public class AgentController {
         return agentService.getAllAgents();
     }
 
+    @GetMapping("/team")
+    public ResponseEntity<?> getTeam(@RequestParam int adminId) {
+        try {
+            agentService.requireAdmin(adminId);
+            List<Map<String, Object>> agents = agentService.getAllAgents().stream()
+                    .map(this::toPublicAgent)
+                    .toList();
+            return ResponseEntity.ok(agents);
+        } catch (AdminAccessDeniedException ex) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("error", ex.getMessage()));
+        }
+    }
+
     @GetMapping("/{id}")
     public Agent getAgentById(@PathVariable int id) {
         return agentService.getAgentById(id);
@@ -32,6 +50,23 @@ public class AgentController {
     @PostMapping("/add")
     public Agent addAgent(@RequestBody Agent agent) {
         return agentService.addNewAgent(agent);
+    }
+
+    @PostMapping("/admin/create")
+    public ResponseEntity<?> createAgentAsAdmin(@RequestBody CreateAgentRequest request) {
+        try {
+            Agent created = agentService.createAgentAsAdmin(
+                    request.getAdminId(),
+                    request.getName(),
+                    request.getEmail(),
+                    request.getPassword()
+            );
+            return ResponseEntity.status(HttpStatus.CREATED).body(toPublicAgent(created));
+        } catch (AdminAccessDeniedException ex) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("error", ex.getMessage()));
+        } catch (IllegalArgumentException ex) {
+            return ResponseEntity.badRequest().body(Map.of("error", ex.getMessage()));
+        }
     }
 
     @PutMapping("/{id}")
@@ -73,13 +108,21 @@ public class AgentController {
         agentService.deleteAgent(id);
     }
 
-    /**
-     * Login endpoint. Accepts { "email": "...", "password": "..." }
-     * Returns the agent (without password hash) on success, or 401 on failure.
-     */
+    @DeleteMapping("/admin/{id}")
+    public ResponseEntity<?> deleteAgentAsAdmin(@PathVariable int id, @RequestParam int adminId) {
+        try {
+            agentService.deleteAgentAsAdmin(adminId, id);
+            return ResponseEntity.ok(Map.of("message", "Team member removed"));
+        } catch (AdminAccessDeniedException ex) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("error", ex.getMessage()));
+        } catch (IllegalArgumentException ex) {
+            return ResponseEntity.badRequest().body(Map.of("error", ex.getMessage()));
+        }
+    }
+
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Map<String, String> credentials) {
-        String email    = credentials.get("email");
+        String email = credentials.get("email");
         String password = credentials.get("password");
 
         boolean ok = agentService.authenticateAgent(email, password);
@@ -88,13 +131,19 @@ public class AgentController {
         }
 
         Agent agent = agentService.getAgentByEmail(email);
-        // Return agent info without the password hash
-        return ResponseEntity.ok(Map.of(
-                "id",    agent.getId(),
-                "name",  agent.getName(),
-                "email", agent.getEmail(),
-                "profilePicture", agent.getProfile_picture() != null ? agent.getProfile_picture() : ""
-        ));
+        return ResponseEntity.ok(toPublicAgent(agent));
+    }
+
+    private Map<String, Object> toPublicAgent(Agent agent) {
+        AgentRole role = agent.getAgentRole();
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("id", agent.getId());
+        body.put("name", agent.getName());
+        body.put("email", agent.getEmail());
+        body.put("role", role.name());
+        body.put("roleLabel", role.displayLabel());
+        body.put("profilePicture", agent.getProfile_picture() != null ? agent.getProfile_picture() : "");
+        return body;
     }
 
     public static class ChangePasswordRequest {
@@ -117,5 +166,4 @@ public class AgentController {
             this.newPassword = newPassword;
         }
     }
-
 }
