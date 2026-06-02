@@ -717,10 +717,6 @@
                 <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
                 Reject Refund
             </button>
-            <button class="action-btn info" id="reviewBtn" disabled>
-                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-                Request More Info
-            </button>
         </div>
 
         <!-- Agent Notes — blank for agent to fill in -->
@@ -805,7 +801,6 @@
         customerMessage:    document.querySelector('#customerMessage'),
         approveBtn:         document.querySelector('#approveBtn'),
         denyBtn:            document.querySelector('#denyBtn'),
-        reviewBtn:          document.querySelector('#reviewBtn'),
         investigationNotes: document.querySelector('#investigationNotes'),
         pageLoader:         document.querySelector('#pageLoader'),
         pageLoaderSub:      document.querySelector('#pageLoaderSub'),
@@ -1150,7 +1145,6 @@
         // ── Right: Buttons ──────────────────────────────────────────────────
         els.approveBtn.disabled = !canAct;
         els.denyBtn.disabled    = !canAct;
-        els.reviewBtn.disabled  = !canAct;
     }
 
     /* ── API helpers ─────────────────────────────────────────────────────── */
@@ -1225,7 +1219,6 @@
 
     els.approveBtn.addEventListener('click', () => persistDecision('APPROVED'));
     els.denyBtn.addEventListener('click',    () => persistDecision('DENIED'));
-    els.reviewBtn.addEventListener('click',  () => persistDecision('UNDER_REVIEW'));
 
     (async function init() {
         try {
